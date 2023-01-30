@@ -7,7 +7,6 @@ attrs==21.2.0
 autobahn==21.2.1
 automat==20.2.0
 backports-datetime-fromisoformat==1.0.0
-cffi==1.14.6
 channels==3.0.4
 constantly==15.1.0
 cryptography==3.4.7
@@ -36,7 +35,6 @@ txaio==21.2.1
 yarl==1.6.3
 zope.interface==5.4.0
 django-filter==2.0.0
-#django-graphql-jwt==0.1.5
 django-graphql-jwt==0.2.1
 PyJWT==1.7.0
 django-cors-headers==3.0.2
@@ -46,5 +44,3 @@ django-utils-six==2.0
 
 graphene-django==2.2.0
 
-# mysqlclient==2.1.1
-# gunicorn==19.7.1
