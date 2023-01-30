@@ -8,7 +8,6 @@ import django.contrib.admin
 import django.contrib.auth
 import django.core.asgi
 import graphene
-import graphene_django.types
 
 import channels_graphql_ws
 
@@ -16,16 +15,19 @@ import graphene
 import graphql_jwt
 
 import server_app.schema as server_app
+import users.schema as users
 
 
 queries = (
     graphene.ObjectType,
     server_app.Query,
+    users.Query
 )
 
 mutations = (
     graphene.ObjectType,
     server_app.Mutation,
+    users.Mutation
 )
 
 class Query(*queries):
@@ -73,6 +75,5 @@ class MyGraphqlWsConsumer(channels_graphql_ws.GraphqlWsConsumer):
         # https://github.com/datadvance/DjangoChannelsGraphqlWs/issues/23
         self.scope["user"] = await channels.auth.get_user(self.scope)
 
-    # schema = graphene.Schema(query=Query, mutation=Mutation, subscription=goblins.Subscription)
     schema = schema
     middleware = [demo_middleware]
