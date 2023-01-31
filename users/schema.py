@@ -9,6 +9,7 @@ Neste módulo ficarão:
 
 By Beelzebruno <brunolcarli@gmail.com>
 """
+from datetime import datetime
 import graphene
 from graphene_django import DjangoObjectType
 from django.contrib.auth import get_user_model
@@ -126,6 +127,9 @@ class LogIn(graphene.relay.ClientIDMutation):
 
         if not user.check_password(kwargs['password']):
             raise Exception('Invalid password')
+
+        user.last_login = datetime.now()
+        user.save()
 
         session = graphql_jwt.ObtainJSONWebToken.mutate(
             self,
