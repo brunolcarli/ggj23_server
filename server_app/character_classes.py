@@ -1,3 +1,10 @@
+from graphene import Enum
+
+
+class ChracterClass(Enum):
+    DPS = 'dps'
+    SUPPORTER = 'supporter'
+    TANKER = 'tanker'
 
 
 classes = {
