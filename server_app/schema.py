@@ -109,6 +109,12 @@ class CharacterType(graphene.ObjectType):
         return json.loads(self.quests.decode('utf-8'))
 
 
+class MapAreaType(graphene.ObjectType):
+    name = graphene.String()
+    size_x = graphene.Int()
+    size_y = graphene.Int()
+    connections = graphene.List(graphene.String)
+
 
 ##########################
 # Query
@@ -141,6 +147,11 @@ class Query:
     skills = graphene.List(SkillType)
     def resolve_skills(self, info, **kwargs):
         return skill_list.values()
+
+    # Map areas
+    map_areas = graphene.List(MapAreaType)
+    def resolve_map_areas(self, info, **kwargs):
+        return areas.values()
 
 
 ##########################
