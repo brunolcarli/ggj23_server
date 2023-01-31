@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 
 
 class Character(models.Model):
@@ -23,7 +23,7 @@ class Character(models.Model):
     position_x = models.IntegerField(default=48, null=False)
     position_y = models.IntegerField(default=48, null=False)
     area_location = models.CharField(max_length=25, null=False, blank=False, default='citadel')
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     items = models.BinaryField(null=True)
     equipment = models.BinaryField(null=True)
     skills = models.BinaryField(null=False)

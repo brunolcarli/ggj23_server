@@ -8,7 +8,7 @@ skill_list = {
         'range': 1,
         'effect': None,
         'classes': ['dps', 'supporter', 'tanker'],
-        'description': 'Basic offensice attack',
+        'description': 'Basic offensive attack',
     },
     'fireball': {
         'name': 'fireball',
@@ -26,7 +26,7 @@ skill_list = {
         'range': 5,
         'effect': None,
         'classes': ['dps'],
-        'description': 'Use power of nature to pump a flow of melted rocks from undergroud',
+        'description': 'Use power of nature to pump a flow of melted rocks from underground',
     },
     'ice_lance': {
         'name': 'ice_lance',
@@ -80,7 +80,7 @@ skill_list = {
         'range': 8,
         'effect': None,
         'classes': ['dps'],
-        'description': 'Summons a devastating meteor from the skies above an enemy',
+        'description': 'Summon a devastating meteor from the skies above an enemy',
     },
     'blind': {
         'name': 'blind',
@@ -106,7 +106,7 @@ skill_list = {
             'value': .30
         },
     'classes': ['supporter', 'tanker'],
-    'description': 'Restores up to 30% from target max HP',
+    'description': 'Restore up to 30% from target max HP',
     },
     'super_cure': {
         'name': 'super_cure',
@@ -119,7 +119,7 @@ skill_list = {
             'value': .60
         },
         'classes':['supporter'],
-        'description': 'Restores up to 60% from target max HP',
+        'description': 'Restore up to 60% from target max HP',
     },
     'revive': {
         'name': 'revive',
@@ -172,7 +172,7 @@ skill_list = {
             'value': .10
         },
         'classes': ['supporter'],
-        'description': 'Increases a target player power and resistance in 10% for 2 minutes',
+        'description': 'Increase a target player power and resistance in 10% for 2 minutes',
     },
     'enemy_down': {
         'name': 'enemy_down',

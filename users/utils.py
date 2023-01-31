@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 from datetime import datetime
 import graphql_jwt
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 
 
 
@@ -35,8 +35,8 @@ def access_required(function):
         now = datetime.now() - timedelta(hours=3)
 
         try:
-            user = get_user_model().objects.get(username=username)
-        except get_user_model().DoesNotExist:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
             raise Exception('Invalid validation data!')
 
         if (now.timestamp() > expiration_time):

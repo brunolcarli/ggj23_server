@@ -6,7 +6,7 @@ from site import ENABLE_USER_SITE
 import graphene
 from graphql import GraphQLObjectType
 from django.conf import settings
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from server_app.models import Character
 from server_app.skills import skill_list
 from server_app.map_areas import areas
@@ -192,13 +192,12 @@ class CreateCharacter(graphene.relay.ClientIDMutation):
         email = graphene.String(required=True)
 
     def mutate_and_get_payload(self, info, **kwargs):
-        user_model = get_user_model()
         try:
-            user = user_model.objects.get(
+            user = User.objects.get(
                 username=kwargs['username'],
                 email=kwargs['email']
             )
-        except user_model.DoesNotExist:
+        except User.DoesNotExist:
             raise Exception('Invalid user profile')
 
         try:
