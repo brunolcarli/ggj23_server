@@ -51,6 +51,7 @@ class SkillType(graphene.ObjectType):
     classes = graphene.List(graphene.String)
 
 
+
 class CharacterType(graphene.ObjectType):
     name = graphene.String()
     lv = graphene.Int()
@@ -70,11 +71,11 @@ class CharacterType(graphene.ObjectType):
     position_y = graphene.Int()
     area_location = graphene.String()
     items = graphene.List(ItemType)
-    # equipment = models.BinaryField(null=True)  # TODO use Dynamic scalar
+    # equipment = graphene.List(EquipmentType)  # TODO
     skills = graphene.List(SkillType)
-    # quests = models.BinaryField(null=True)  # TODO use Dynamic scalar
+    # quests = graphene.List(QuestType)  # TODO
     class_type = graphene.String()
-    # effects = models.BinaryField(null=True)   # TODO use Dynamic scalar
+    effects = graphene.List(EffectType)
     aim = graphene.Int()
 
     def resolve_skills(self, info, **kwargs):
@@ -82,6 +83,9 @@ class CharacterType(graphene.ObjectType):
 
     def resolve_items(self, info, **kwargs):
         return json.loads(self.items.decode('utf-8')).values()
+
+    def resolve_effects(self, info, **kwargs):
+        return json.loads(self.effects.decode('utf-8'))
 
 
 
