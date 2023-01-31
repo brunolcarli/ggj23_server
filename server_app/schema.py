@@ -129,9 +129,18 @@ class Query:
         del info
         return chats[chatroom] if chatroom in chats else []
 
+    # Characters
+    # TODO filters
     characters = graphene.List(CharacterType)
     def resolve_characters(self, info, **kwargs):
         return Character.objects.filter(**kwargs)
+
+    # TODO query single character
+
+    # Skills
+    skills = graphene.List(SkillType)
+    def resolve_skills(self, info, **kwargs):
+        return skill_list.values()
 
 
 ##########################
