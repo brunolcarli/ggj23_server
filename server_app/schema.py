@@ -33,6 +33,14 @@ class EffectType(graphene.ObjectType):
     condition = graphene.String()
 
 
+class ItemType(graphene.ObjectType):
+    name = graphene.String()
+    kind = graphene.String()
+    effect = graphene.Field(EffectType)
+    count = graphene.Int()
+    description = graphene.String()
+
+
 class SkillType(graphene.ObjectType):
     name = graphene.String()
     sp_cost = graphene.Int()
@@ -61,7 +69,7 @@ class CharacterType(graphene.ObjectType):
     position_x = graphene.Int()
     position_y = graphene.Int()
     area_location = graphene.String()
-    # items = models.BinaryField(null=True)  # TODO use Dynamic scalar
+    items = graphene.List(ItemType)
     # equipment = models.BinaryField(null=True)  # TODO use Dynamic scalar
     skills = graphene.List(SkillType)
     # quests = models.BinaryField(null=True)  # TODO use Dynamic scalar
@@ -71,6 +79,9 @@ class CharacterType(graphene.ObjectType):
 
     def resolve_skills(self, info, **kwargs):
         return json.loads(self.skills.decode('utf-8')).values()
+
+    def resolve_items(self, info, **kwargs):
+        return json.loads(self.items.decode('utf-8')).values()
 
 
 
@@ -158,6 +169,18 @@ class CreateCharacter(graphene.relay.ClientIDMutation):
         # set base skills
         base_skills = json.dumps({'base_attack': skill_list['base_attack']}).encode('utf-8')
         character.skills = base_skills
+
+        # Set item bag
+        character.items = json.dumps({}).encode('utf-8')
+
+        # Set equipments
+        character.equipment = json.dumps({}).encode('utf-8')
+
+        # Set quests
+        character.quests = json.dumps({}).encode('utf-8')
+
+        # Set effects (status ailments)
+        character.effects = json.dumps([]).encode('utf-8')
 
         # Add class bonus attributes
         bonus_attrs = classes[kwargs['character_class']]
