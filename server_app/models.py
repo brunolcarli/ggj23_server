@@ -29,3 +29,5 @@ class Character(models.Model):
     skills = models.BinaryField(null=False)
     quests = models.BinaryField(null=True)
     class_type = models.CharField(max_length=25, null=False, blank=False)
+    effects = models.BinaryField(null=True)
+    aim = models.IntegerField(default=100)
