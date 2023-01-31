@@ -51,6 +51,15 @@ class SkillType(graphene.ObjectType):
     classes = graphene.List(graphene.String)
 
 
+class EquipmentType(graphene.ObjectType):
+    head = graphene.Field(ItemType)
+    torso = graphene.Field(ItemType)
+    legs = graphene.Field(ItemType)
+    weapon = graphene.Field(ItemType)
+    shield = graphene.Field(ItemType)
+    accessory_1 = graphene.Field(ItemType)
+    accessory_2 = graphene.Field(ItemType)
+
 
 class CharacterType(graphene.ObjectType):
     name = graphene.String()
@@ -71,7 +80,7 @@ class CharacterType(graphene.ObjectType):
     position_y = graphene.Int()
     area_location = graphene.String()
     items = graphene.List(ItemType)
-    # equipment = graphene.List(EquipmentType)  # TODO
+    equipment = graphene.Field(EquipmentType)
     skills = graphene.List(SkillType)
     # quests = graphene.List(QuestType)  # TODO
     class_type = graphene.String()
@@ -171,14 +180,23 @@ class CreateCharacter(graphene.relay.ClientIDMutation):
             raise Exception('Failed to create the character')
 
         # set base skills
-        base_skills = json.dumps({'base_attack': skill_list['base_attack']}).encode('utf-8')
-        character.skills = base_skills
+        base_skills = {'base_attack': skill_list['base_attack']}
+        character.skills = json.dumps(base_skills).encode('utf-8')
 
         # Set item bag
         character.items = json.dumps({}).encode('utf-8')
 
         # Set equipments
-        character.equipment = json.dumps({}).encode('utf-8')
+        equipment = {
+            'head': None,
+            'torso': None,
+            'legs': None,
+            'weapon': None,
+            'shield': None,
+            'accessory_1': None,
+            'accessory_2': None
+        }
+        character.equipment = json.dumps(equipment).encode('utf-8')
 
         # Set quests
         character.quests = json.dumps({}).encode('utf-8')
