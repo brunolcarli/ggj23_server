@@ -26,6 +26,12 @@ class Message(  # type: ignore
     sender = graphene.String()
 
 
+class QuestType(graphene.ObjectType):
+    name = graphene.String()
+    completed = graphene.Boolean()
+    description = graphene.String()
+
+
 class EffectType(graphene.ObjectType):
     target_attributes = graphene.List(graphene.String)
     duration = graphene.Int()
@@ -82,7 +88,7 @@ class CharacterType(graphene.ObjectType):
     items = graphene.List(ItemType)
     equipment = graphene.Field(EquipmentType)
     skills = graphene.List(SkillType)
-    # quests = graphene.List(QuestType)  # TODO
+    quests = graphene.List(QuestType)
     class_type = graphene.String()
     effects = graphene.List(EffectType)
     aim = graphene.Int()
@@ -95,6 +101,12 @@ class CharacterType(graphene.ObjectType):
 
     def resolve_effects(self, info, **kwargs):
         return json.loads(self.effects.decode('utf-8'))
+
+    def resolve_equipment(self, info, **kwargs):
+        return json.loads(self.equipment.decode('utf-8'))
+
+    def resolve_quests(self, info, **kwargs):
+        return json.loads(self.quests.decode('utf-8'))
 
 
 
