@@ -26,6 +26,47 @@ class Message(  # type: ignore
     sender = graphene.String()
 
 
+class QuestType(graphene.ObjectType):
+    name = graphene.String()
+    completed = graphene.Boolean()
+    description = graphene.String()
+
+
+class EffectType(graphene.ObjectType):
+    target_attributes = graphene.List(graphene.String)
+    duration = graphene.Int()
+    value = graphene.Float()
+    condition = graphene.String()
+
+
+class ItemType(graphene.ObjectType):
+    name = graphene.String()
+    kind = graphene.String()
+    effect = graphene.Field(EffectType)
+    count = graphene.Int()
+    description = graphene.String()
+
+
+class SkillType(graphene.ObjectType):
+    name = graphene.String()
+    sp_cost = graphene.Int()
+    power = graphene.Int()
+    range = graphene.Int()
+    effect = graphene.Field(EffectType)
+    description = graphene.String()
+    classes = graphene.List(graphene.String)
+
+
+class EquipmentType(graphene.ObjectType):
+    head = graphene.Field(ItemType)
+    torso = graphene.Field(ItemType)
+    legs = graphene.Field(ItemType)
+    weapon = graphene.Field(ItemType)
+    shield = graphene.Field(ItemType)
+    accessory_1 = graphene.Field(ItemType)
+    accessory_2 = graphene.Field(ItemType)
+
+
 class CharacterType(graphene.ObjectType):
     name = graphene.String()
     lv = graphene.Int()
@@ -44,15 +85,35 @@ class CharacterType(graphene.ObjectType):
     position_x = graphene.Int()
     position_y = graphene.Int()
     area_location = graphene.String()
-    # items = models.BinaryField(null=True)  # TODO use Dynamic scalar
-    # equipment = models.BinaryField(null=True)  # TODO use Dynamic scalar
-    # skills = models.BinaryField(null=False)  # TODO use Dynamic scalar
-    # quests = models.BinaryField(null=True)  # TODO use Dynamic scalar
+    items = graphene.List(ItemType)
+    equipment = graphene.Field(EquipmentType)
+    skills = graphene.List(SkillType)
+    quests = graphene.List(QuestType)
     class_type = graphene.String()
-    # effects = models.BinaryField(null=True)   # TODO use Dynamic scalar
+    effects = graphene.List(EffectType)
     aim = graphene.Int()
 
+    def resolve_skills(self, info, **kwargs):
+        return json.loads(self.skills.decode('utf-8')).values()
 
+    def resolve_items(self, info, **kwargs):
+        return json.loads(self.items.decode('utf-8')).values()
+
+    def resolve_effects(self, info, **kwargs):
+        return json.loads(self.effects.decode('utf-8'))
+
+    def resolve_equipment(self, info, **kwargs):
+        return json.loads(self.equipment.decode('utf-8'))
+
+    def resolve_quests(self, info, **kwargs):
+        return json.loads(self.quests.decode('utf-8'))
+
+
+class MapAreaType(graphene.ObjectType):
+    name = graphene.String()
+    size_x = graphene.Int()
+    size_y = graphene.Int()
+    connections = graphene.List(graphene.String)
 
 
 ##########################
@@ -74,9 +135,23 @@ class Query:
         del info
         return chats[chatroom] if chatroom in chats else []
 
+    # Characters
+    # TODO filters
     characters = graphene.List(CharacterType)
     def resolve_characters(self, info, **kwargs):
         return Character.objects.filter(**kwargs)
+
+    # TODO query single character
+
+    # Skills
+    skills = graphene.List(SkillType)
+    def resolve_skills(self, info, **kwargs):
+        return skill_list.values()
+
+    # Map areas
+    map_areas = graphene.List(MapAreaType)
+    def resolve_map_areas(self, info, **kwargs):
+        return areas.values()
 
 
 ##########################
@@ -137,8 +212,29 @@ class CreateCharacter(graphene.relay.ClientIDMutation):
             raise Exception('Failed to create the character')
 
         # set base skills
-        base_skills = json.dumps({'base_attack': skill_list['base_attack']}).encode('utf-8')
-        character.skills = base_skills
+        base_skills = {'base_attack': skill_list['base_attack']}
+        character.skills = json.dumps(base_skills).encode('utf-8')
+
+        # Set item bag
+        character.items = json.dumps({}).encode('utf-8')
+
+        # Set equipments
+        equipment = {
+            'head': None,
+            'torso': None,
+            'legs': None,
+            'weapon': None,
+            'shield': None,
+            'accessory_1': None,
+            'accessory_2': None
+        }
+        character.equipment = json.dumps(equipment).encode('utf-8')
+
+        # Set quests
+        character.quests = json.dumps({}).encode('utf-8')
+
+        # Set effects (status ailments)
+        character.effects = json.dumps([]).encode('utf-8')
 
         # Add class bonus attributes
         bonus_attrs = classes[kwargs['character_class']]
