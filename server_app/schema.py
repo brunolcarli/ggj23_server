@@ -26,6 +26,23 @@ class Message(  # type: ignore
     sender = graphene.String()
 
 
+class EffectType(graphene.ObjectType):
+    target_attributes = graphene.List(graphene.String)
+    duration = graphene.Int()
+    value = graphene.Float()
+    condition = graphene.String()
+
+
+class SkillType(graphene.ObjectType):
+    name = graphene.String()
+    sp_cost = graphene.Int()
+    power = graphene.Int()
+    range = graphene.Int()
+    effect = graphene.Field(EffectType)
+    description = graphene.String()
+    classes = graphene.List(graphene.String)
+
+
 class CharacterType(graphene.ObjectType):
     name = graphene.String()
     lv = graphene.Int()
@@ -46,12 +63,14 @@ class CharacterType(graphene.ObjectType):
     area_location = graphene.String()
     # items = models.BinaryField(null=True)  # TODO use Dynamic scalar
     # equipment = models.BinaryField(null=True)  # TODO use Dynamic scalar
-    # skills = models.BinaryField(null=False)  # TODO use Dynamic scalar
+    skills = graphene.List(SkillType)
     # quests = models.BinaryField(null=True)  # TODO use Dynamic scalar
     class_type = graphene.String()
     # effects = models.BinaryField(null=True)   # TODO use Dynamic scalar
     aim = graphene.Int()
 
+    def resolve_skills(self, info, **kwargs):
+        return json.loads(self.skills.decode('utf-8')).values()
 
 
 
