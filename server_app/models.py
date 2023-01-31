@@ -19,7 +19,7 @@ class Character(models.Model):
     agility = models.IntegerField(default=1)
     is_ko = models.BooleanField(default=False)
     is_logged = models.BooleanField(default=False)
-    last_activity = models.DateField(null=True)
+    last_activity = models.DateTimeField(null=True)
     position_x = models.IntegerField(default=48, null=False)
     position_y = models.IntegerField(default=48, null=False)
     area_location = models.CharField(max_length=25, null=False, blank=False, default='citadel')
