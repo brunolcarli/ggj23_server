@@ -12,7 +12,7 @@ By Beelzebruno <brunolcarli@gmail.com>
 from datetime import datetime
 import graphene
 from graphene_django import DjangoObjectType
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from users.utils import access_required
 # from server_app.models import Character
 import graphql_jwt
@@ -23,7 +23,7 @@ class UserType(DjangoObjectType):
     Modelo de usuário padrão do django
     """ 
     class Meta:
-        model = get_user_model()
+        model = User
         interfaces = (graphene.relay.Node,)
 
 
@@ -45,7 +45,7 @@ class Query(object):
         """
         Retorna uma lista de todos os usuários registrados no sistema.
         """
-        return get_user_model().objects.all()
+        return User.objects.all()
 
 
 class CreateUser(graphene.relay.ClientIDMutation):
@@ -69,7 +69,7 @@ class CreateUser(graphene.relay.ClientIDMutation):
         email = _input.get('email')
 
         try:
-            user = get_user_model().objects.create(
+            user = User.objects.create_user(
                 username=username,
                 email=email
             )
@@ -119,10 +119,10 @@ class LogIn(graphene.relay.ClientIDMutation):
 
     def mutate_and_get_payload(self, info, **kwargs):
         try:
-            user = get_user_model().objects.get(
+            user = User.objects.get(
                 email=kwargs['email']
             )
-        except get_user_model().DoesNotExist:
+        except User.DoesNotExist:
             raise Exception('User not found')
 
         if not user.check_password(kwargs['password']):
