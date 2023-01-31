@@ -1,3 +1,4 @@
+import json
 from collections import defaultdict
 import channels_graphql_ws
 from ast import literal_eval
@@ -5,10 +6,15 @@ from site import ENABLE_USER_SITE
 import graphene
 from graphql import GraphQLObjectType
 from django.conf import settings
-
+from django.contrib.auth import get_user_model
+from server_app.models import Character
+from server_app.skills import skill_list
+from server_app.map_areas import areas
+from server_app.character_classes import classes, ChracterClass
 
 
 chats = defaultdict(list)
+
 
 class Message(  # type: ignore
     graphene.ObjectType, default_resolver=graphene.types.resolver.dict_resolver
@@ -20,25 +26,57 @@ class Message(  # type: ignore
     sender = graphene.String()
 
 
+class CharacterType(graphene.ObjectType):
+    name = graphene.String()
+    lv = graphene.Int()
+    next_lv = graphene.Int()
+    exp = graphene.Int()
+    max_hp = graphene.Int()
+    max_sp = graphene.Int()
+    current_hp = graphene.Int()
+    current_sp = graphene.Int()
+    power = graphene.Int()
+    resistance = graphene.Int()
+    agility = graphene.Int()
+    is_ko = graphene.Boolean()
+    is_logged = graphene.Boolean()
+    last_activity = graphene.DateTime()
+    position_x = graphene.Int()
+    position_y = graphene.Int()
+    area_location = graphene.String()
+    # items = models.BinaryField(null=True)  # TODO use Dynamic scalar
+    # equipment = models.BinaryField(null=True)  # TODO use Dynamic scalar
+    # skills = models.BinaryField(null=False)  # TODO use Dynamic scalar
+    # quests = models.BinaryField(null=True)  # TODO use Dynamic scalar
+    class_type = graphene.String()
+    # effects = models.BinaryField(null=True)   # TODO use Dynamic scalar
+    aim = graphene.Int()
+
+
+
 
 ##########################
 # Query
 ##########################
 class Query:
 
+    # API Version
     version = graphene.String(
         description='Returns service version'
     )
-
     def resolve_version(self, info, **kwargs):
         return settings.VERSION
 
+    # Chat History
     history = graphene.List(Message, chatroom=graphene.String())
     def resolve_history(self, info, chatroom):
         """Return chat history."""
         del info
         return chats[chatroom] if chatroom in chats else []
 
+    characters = graphene.List(CharacterType)
+    def resolve_characters(self, info, **kwargs):
+        return Character.objects.filter(**kwargs)
 
 
 ##########################
@@ -69,10 +107,57 @@ class SendChatMessage(graphene.Mutation, name="SendChatMessagePayload"):  # type
         return SendChatMessage(ok=True)
 
 
+class CreateCharacter(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        name = graphene.String(required=True)
+        character_class = ChracterClass(required=True)
+        username = graphene.String(required=True)
+        email = graphene.String(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        user_model = get_user_model()
+        try:
+            user = user_model.objects.get(
+                username=kwargs['username'],
+                email=kwargs['email']
+            )
+        except user_model.DoesNotExist:
+            raise Exception('Invalid user profile')
+
+        try:
+            character = Character.objects.create(
+                name=kwargs['name'],
+                class_type=kwargs['character_class'],
+                user=user
+            )
+        except Exception as ex:
+            print(ex)
+            raise Exception('Failed to create the character')
+
+        # set base skills
+        base_skills = json.dumps({'base_attack': skill_list['base_attack']}).encode('utf-8')
+        character.skills = base_skills
+
+        # Add class bonus attributes
+        bonus_attrs = classes[kwargs['character_class']]
+        character.max_hp += bonus_attrs['hp']
+        character.max_sp += bonus_attrs['sp']
+        character.current_hp += bonus_attrs['hp']
+        character.current_sp += bonus_attrs['sp']
+        character.power += bonus_attrs['power']
+        character.resistance += bonus_attrs['resistance']
+        character.agility += bonus_attrs['agility']
+
+        character.save()
+
+        return CreateCharacter(character)
 
 
 class Mutation:
     send_chat_message = SendChatMessage.Field()
+    create_character = CreateCharacter.Field()
 
 
 #################
