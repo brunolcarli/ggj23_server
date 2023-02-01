@@ -71,9 +71,9 @@ class CreateUser(graphene.relay.ClientIDMutation):
         try:
             user = User.objects.create_user(
                 username=username,
-                email=email
+                email=email,
+                password=password
             )
-            user.set_password(password)
             user.save()
         except Exception as ex:
             print(ex)
