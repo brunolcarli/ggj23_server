@@ -11,7 +11,7 @@ from server_app.models import Character
 from server_app.skills import skill_list
 from server_app.map_areas import areas
 from server_app.character_classes import classes, ChracterClass
-
+from server_app.engine import target_position_is_valid
 
 chats = defaultdict(list)
 
@@ -68,6 +68,7 @@ class EquipmentType(graphene.ObjectType):
 
 
 class CharacterType(graphene.ObjectType):
+    id = graphene.ID()
     name = graphene.String()
     lv = graphene.Int()
     next_lv = graphene.Int()
@@ -250,9 +251,46 @@ class CreateCharacter(graphene.relay.ClientIDMutation):
         return CreateCharacter(character)
 
 
+class LocationInput(graphene.InputObjectType):
+    x = graphene.Int(required=True)
+    y = graphene.Int(required=True)
+
+
+class UpdatePosition(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        id = graphene.ID(required=True)
+        location = graphene.Argument(LocationInput, required=True)
+
+    # @access_required
+    def mutate_and_get_payload(self, info, **kwargs):
+        location = kwargs.get('location')
+        x = location.get('x', 48)
+        y = location.get('y', 48)
+        character_id = kwargs.get('id')
+
+        char = Character.objects.get(
+            # user=kwargs.get('user'),
+            id=character_id
+        )
+        if not target_position_is_valid([x, y], char.area_location):
+            raise Exception('Invalid location')
+        char.position_x = x
+        char.position_y = y
+        char.save()
+
+
+        # TODO broadcast movement
+        # OnCharacterMovement.character_movement(reference=reference, x=x, y=y)
+
+        return UpdatePosition(char)
+
+
 class Mutation:
     send_chat_message = SendChatMessage.Field()
     create_character = CreateCharacter.Field()
+    update_position = UpdatePosition.Field()
 
 
 #################
