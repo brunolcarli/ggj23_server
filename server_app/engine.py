@@ -1,4 +1,7 @@
 import json
+from math import ceil
+from random import randint
+from django.conf import settings
 from server_app.map_areas import areas
 from server_app.models import Character
 
@@ -80,3 +83,39 @@ def reachable_target(skill_user, target, skill_range):
         y_reach = abs(cy - ty) <= skill_range
 
     return x_reach or y_reach
+
+
+def next_lv(level):
+    """
+    Calculates the amount Exp needed to level up based on the current level.
+    param : level : <int>
+    """
+    return ceil((2 * (level ** 2.6)) / 2)
+
+
+def lv_up(character):
+    """
+    Levels up a character, if possible.
+    """
+    config = settings.GAME_CONFIG
+    while character.exp >= character.next_lv and character.lv < config['MAX_LV']:
+        character.lv += 1
+        character.next_lv = next_lv(character.lv)
+
+        character.max_hp += randint(10, 50)
+        character.max_sp += randint(5, 25)
+        character.power += randint(0, 2)
+        character.resistance += randint(0, 2)
+
+    character.save()
+    return character
+
+
+def exp_up(character, value, factor=1):
+    character.exp += value * factor
+
+    if character.exp >= character.next_lv:
+        character = lv_up(character)
+        # TODO broadcast character lv up
+
+    character.save()
