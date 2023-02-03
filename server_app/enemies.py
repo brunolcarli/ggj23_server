@@ -5,7 +5,35 @@ from server_app.map_areas import areas
 from server_app.engine import target_position_is_valid
 
 
-enemies = {
+enemies_spots = {
+    'citadel': [],
+    'open_fields': ['spider', 'goblin', 'wolf'],
+    'yggdrasil': ['orc', 'ent', 'poison_snake', 'spirit', 'bear', 'killer_fungus',  'golem'],
+    'combat_zone': [],
+    'ancient_forest_area1': ['spider', 'goblin'],
+    'ancient_forest_area2': ['spider', 'killer_fungus'],
+    'ancient_forest_area3': ['ent', 'poison_snake', 'killer_fungus'],
+    'ancient_forest_elder_cave': ['spider', 'goblin', 'wolf', 'ent'],
+    'ancient_forest_village': [],
+    'vulcanic_zone_area1': ['spider', 'goblin'],
+    'vulcanic_zone_area2': ['goblin', 'wolf'],
+    'vulcanic_zone_area3': ['goblin', 'wolf', 'poison_snake'],
+    'vulcanic_zone_elder_cave': ['goblin', 'wolf', 'orc', 'poison_snake'],
+    'vulcanic_zone_village': [],
+    'snowfields_area1': ['goblin', 'wolf'],
+    'snowfields_area2': ['wolf', 'bear'],
+    'snowfields_area3': ['wolf', 'orc'],
+    'snowfields_elder_cave': ['wolf', 'orc', 'spirit', 'bear'],
+    'snowfields_village': [],
+    'chrono_mountains_area1': ['spider', 'goblin', 'wolf'],
+    'chrono_mountains_area2': ['goblin', 'wolf', 'bear'],
+    'chrono_mountains_area3': ['goblin', 'wolf', 'orc'],
+    'chrono_mountains_elder_cave': ['goblin', 'wolf', 'orc', 'poison_snake'],
+    'chrono_mountains_village': []
+}
+
+
+enemy_list = {
     'spider': {
         'lv': 1,
         'name': 'spider',
@@ -17,10 +45,7 @@ enemies = {
         'class_type': 'enemy',
         'exp': 3,
         'drops': [],
-        'skills': {
-            skill_list['base_attack']
-        },
-        'effects': []
+        'skills': [skill_list['base_attack']]
     },
     'goblin': {
         'lv': 1,
@@ -33,11 +58,10 @@ enemies = {
         'class_type': 'enemy',
         'exp': 5,
         'drops': [],
-        'skills': {
+        'skills': [
             skill_list['base_attack'],
             skill_list['fireball']
-        },
-        'effects': []
+        ],
     },
     'wolf': {
         'lv': 1,
@@ -50,11 +74,10 @@ enemies = {
         'class_type': 'enemy',
         'exp': 6,
         'drops': [],
-        'skills': {
+        'skills': [
             skill_list['base_attack'],
             skill_list['fireball']
-        },
-        'effects': []
+        ],
     },
     'orc': {
         'lv': 2,
@@ -67,12 +90,11 @@ enemies = {
         'class_type': 'enemy',
         'exp': 12,
         'drops': [],
-        'skills': {
+        'skills': [
             skill_list['base_attack'],
             skill_list['ice_lance'],
             skill_list['air_cutter']
-        },
-        'effects': []
+        ],
     },
     'poison_snake': {
         'lv': 2,
@@ -85,11 +107,10 @@ enemies = {
         'class_type': 'enemy',
         'exp': 9,
         'drops': [],
-        'skills': {
+        'skills': [
             skill_list['base_attack'],
             skill_list['eruption']
-        },
-        'effects': []
+        ],
     },
     'ent': {
         'lv': 3,
@@ -102,12 +123,11 @@ enemies = {
         'class_type': 'enemy',
         'exp': 16,
         'drops': [],
-        'skills': {
+        'skills': [
             skill_list['base_attack'],
-            skill_list['wind_cutter'],
+            skill_list['air_cutter'],
             skill_list['windstorm']
-        },
-        'effects': []
+        ],
     },
     'spirit': {
         'lv': 3,
@@ -120,14 +140,13 @@ enemies = {
         'class_type': 'enemy',
         'exp': 20,
         'drops': [],
-        'skills': {
+        'skills': [
             skill_list['base_attack'],
             skill_list['fireball'],
             skill_list['eruption'],
             skill_list['windstorm'],
             skill_list['air_cutter']
-        },
-        'effects': []
+        ],
     },
     'bear': {
         'lv': 4,
@@ -140,12 +159,11 @@ enemies = {
         'class_type': 'enemy',
         'exp': 33,
         'drops': [],
-        'skills': {
+        'skills': [
             skill_list['base_attack'],
             skill_list['eruption'],
             skill_list['air_cutter']
-        },
-        'effects': []
+        ],
     },
     'killer_fungus': {
         'lv': 4,
@@ -158,13 +176,12 @@ enemies = {
         'class_type': 'enemy',
         'exp': 26,
         'drops': [],
-        'skills': {
+        'skills': [
             skill_list['base_attack'],
             skill_list['windstorm'],
             skill_list['blind'],
             skill_list['enemy_down']
-        },
-        'effects': []
+        ],
     },
     'golem': {
         'lv': 5,
@@ -177,41 +194,12 @@ enemies = {
         'class_type': 'enemy',
         'exp': 100,
         'drops': [],
-        'skills': {
+        'skills': [
             skill_list['base_attack'],
             skill_list['rock_throw'],
             skill_list['eruption']
-        },
-        'effects': []
+        ],
     },
-}
-
-
-enemies_spots = {
-    'citadel': [],
-    'open_fields': [],
-    'yggdrasil': [],
-    'combat_zone': [],
-    'ancient_forest_area1': [],
-    'ancient_forest_area2': [],
-    'ancient_forest_area3': [],
-    'ancient_forest_elder_cave': [],
-    'ancient_forest_village': [],
-    'vulcanic_zone_area1': [],
-    'vulcanic_zone_area2': [],
-    'vulcanic_zone_area3': [],
-    'vulcanic_zone_elder_cave': [],
-    'vulcanic_zone_village': [],
-    'snowfields_area1': [],
-    'snowfields_area2': [],
-    'snowfields_area3': [],
-    'snowfields_elder_cave': [],
-    'snowfields_village': [],
-    'chrono_mountains_area1': [],
-    'chrono_mountains_area2': [],
-    'chrono_mountains_area3': [],
-    'chrono_mountains_elder_cave': [],
-    'chrono_mountains_village': []
 }
 
 
@@ -230,9 +218,10 @@ class Enemy:
         self.aim = data['aim']
         self.drops = data['drops']
         self.skills = data['skills']
-        self.effects = data['effects']
+        self.effects = []
         self.exp = data['exp']
-        self.is_ko = True
+        self.class_type = data['class_type']
+        self.is_ko = False
         self.area = areas[area]
         self.position_x = self._get_possible_pixel(self.area['size_x'])
         self.position_y = self._get_possible_pixel(self.area['size_y'])

@@ -12,6 +12,8 @@ from server_app.skills import skill_list
 from server_app.map_areas import areas
 from server_app.character_classes import classes, ChracterClass
 from server_app.engine import target_position_is_valid, use_skill
+from server_app.enemies import enemy_list
+
 
 chats = defaultdict(list)
 
@@ -117,6 +119,21 @@ class MapAreaType(graphene.ObjectType):
     connections = graphene.List(graphene.String)
 
 
+class EnemyType(graphene.ObjectType):
+    lv = graphene.Int()
+    name = graphene.String()
+    hp = graphene.Int()
+    power = graphene.Int()
+    resistance = graphene.String()
+    agility = graphene.Int()
+    aim = graphene.Int()
+    class_type = graphene.String()
+    exp = graphene.Int()
+    drops = graphene.List(ItemType)
+    skills = graphene.List(SkillType)
+
+
+
 ##########################
 # Query
 ##########################
@@ -154,6 +171,12 @@ class Query:
     def resolve_map_areas(self, info, **kwargs):
         return areas.values()
 
+    # Enemies
+    enemies = graphene.List(EnemyType)
+    def resolve_enemies(self, info, **kwargs):
+        return enemy_list.values()
+
+    # TODO Enemy
 
 ##########################
 # Mutation
