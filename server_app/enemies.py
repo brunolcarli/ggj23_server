@@ -227,7 +227,7 @@ class Enemy:
         self.position_y = self._get_possible_pixel(self.area['size_y'])
 
     def _get_possible_pixel(self, area_max):
-        return choice([48*i for i in range(1, (area_max)+1)])
+        return choice([48*i for i in range(1, (area_max//48)+1)])
 
     def move(self):
         directions = ['up', 'down', 'left', 'right', 'none']
