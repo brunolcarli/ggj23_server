@@ -176,7 +176,14 @@ class Query:
     def resolve_enemies(self, info, **kwargs):
         return enemy_list.values()
 
-    # TODO Enemy
+    # Enemy
+    enemy = graphene.Field(
+        EnemyType,
+        name=graphene.String(required=True)
+    )
+    def resolve_enemy(self, info, **kwargs):
+        return enemy_list.get(kwargs['name'])
+
 
 ##########################
 # Mutation
