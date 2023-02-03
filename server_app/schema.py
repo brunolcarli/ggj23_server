@@ -287,10 +287,90 @@ class UpdatePosition(graphene.relay.ClientIDMutation):
         return UpdatePosition(char)
 
 
+class CharacterLogIn(graphene.relay.ClientIDMutation):
+    """Enters the game with a selected character"""
+    
+    log_status = graphene.Boolean()
+
+    class Input:
+        id = graphene.ID(required=True)
+
+    # @access_required
+    def mutate_and_get_payload(self, info, **kwargs):
+        # user = kwargs.get('user')
+        # if not user:
+        #     raise Exception('Unauthorized!')
+
+        # Try recover the Character
+        try:
+            char = Character.objects.get(
+                # user=user,
+                id=kwargs['id']
+            )
+        except Character.DoesNotExist:
+            raise Exception('Invalid character!')
+
+        # Good to go
+        char.is_logged = True
+        char.save()
+
+        # TODO Broadcast character login
+        # OnCharacterLogIn.character_login(
+        #     reference=char.name,
+        #     x=position['x'],
+        #     y=position['y']
+        # )
+
+        # API response
+
+        return CharacterLogIn(True)
+
+
+class CharacterLogOut(graphene.relay.ClientIDMutation):
+    """Leaves the game with a selected character"""
+    
+    log_status = graphene.Boolean()
+
+    class Input:
+        id = graphene.ID(required=True)
+
+    # @access_required
+    def mutate_and_get_payload(self, info, **kwargs):
+        # user = kwargs.get('user')
+        # if not user:
+        #     raise Exception('Unauthorized!')
+
+        # Try recover the Character
+        try:
+            char = Character.objects.get(
+                # user=user,
+                id=kwargs['id']
+            )
+        except Character.DoesNotExist:
+            raise Exception('Invalid character!')
+
+        # Good to go
+        char.is_logged = False
+        char.save()
+
+        # TODO Broadcast character login
+        # OnCharacterLogIn.character_login(
+        #     reference=char.name,
+        #     x=position['x'],
+        #     y=position['y']
+        # )
+
+        # API response
+
+        return CharacterLogIn(True)
+
+
 class Mutation:
     send_chat_message = SendChatMessage.Field()
     create_character = CreateCharacter.Field()
     update_position = UpdatePosition.Field()
+    character_login = CharacterLogIn.Field()
+    character_logout = CharacterLogOut.Field()
 
 
 #################
