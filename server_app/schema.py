@@ -11,7 +11,7 @@ from server_app.models import Character
 from server_app.skills import skill_list
 from server_app.map_areas import areas
 from server_app.character_classes import classes, ChracterClass
-from server_app.engine import target_position_is_valid
+from server_app.engine import target_position_is_valid, use_skill
 
 chats = defaultdict(list)
 
@@ -365,12 +365,31 @@ class CharacterLogOut(graphene.relay.ClientIDMutation):
         return CharacterLogIn(True)
 
 
+class CharacterUseSkill(graphene.relay.ClientIDMutation):
+    result = graphene.Boolean()
+
+    class Input:
+        skill_user_id = graphene.ID(required=True)
+        target_id = graphene.ID(required=True)
+        skill_name = graphene.String(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            skill_user = Character.objects.get(id=kwargs['skill_user_id'])
+            target = Character.objects.get(id=kwargs['target_id'])
+        except Character.DoesNotExist:
+            raise Exception('Invalid character')
+
+        return CharacterUseSkill(use_skill(skill_user, kwargs['skill_name'], target))
+
+
 class Mutation:
     send_chat_message = SendChatMessage.Field()
     create_character = CreateCharacter.Field()
     update_position = UpdatePosition.Field()
     character_login = CharacterLogIn.Field()
     character_logout = CharacterLogOut.Field()
+    character_use_skill = CharacterUseSkill.Field()
 
 
 #################
