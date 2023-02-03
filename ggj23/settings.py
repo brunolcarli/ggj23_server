@@ -149,3 +149,9 @@ ASGI_APPLICATION = "ggj23.asgi.application"
 GRAPHENE = {
     'SCHEMA': 'ggj23.schema.schema',
 }
+
+
+# GAME CONFIGS
+GAME_CONFIG = {
+    'MAX_LV': 100,
+}
