@@ -175,11 +175,20 @@ class Query:
 
     # Characters
     # TODO filters
-    characters = graphene.List(CharacterType)
+    characters = graphene.List(
+        CharacterType,
+        is_logged=graphene.Boolean(required=True),
+        area_location=graphene.String(required=True)
+    )
     def resolve_characters(self, info, **kwargs):
         return Character.objects.filter(**kwargs)
 
-    # TODO query single character
+    character = graphene.Field(
+        CharacterType,
+        id=graphene.ID(required=True)
+    )
+    def resolve_character(self, info, **kwargs):
+        return Character.objects.get(id=kwargs['id'])
 
     # Skills
     skills = graphene.List(SkillType)
@@ -190,6 +199,13 @@ class Query:
     map_areas = graphene.List(MapAreaType)
     def resolve_map_areas(self, info, **kwargs):
         return areas.values()
+
+    map_area = graphene.Field(
+        MapAreaType,
+        name=graphene.String(required=True)
+    )
+    def resolve_map_area(self, info, **kwargs):
+        return areas.get(kwargs['name'])
 
     # Enemies
     enemies = graphene.List(EnemyType)
