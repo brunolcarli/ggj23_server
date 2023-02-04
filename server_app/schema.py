@@ -199,6 +199,19 @@ class Query:
     )
     def resolve_enemy(self, info, **kwargs):
         return enemy_list.get(kwargs['name'])
+    
+    # Items
+    items = graphene.List(ItemType)
+    def resolve_items(self, info, **kwargs):
+        return item_list.values()
+
+    # Item
+    item = graphene.Field(
+        ItemType,
+        name=graphene.String(required=True)
+    )
+    def resolve_item(self, info, **kwargs):
+        return item_list.get(kwargs['name'])
 
 
 ##########################
