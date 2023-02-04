@@ -34,3 +34,23 @@ class Character(models.Model):
     effects = models.BinaryField(null=True)
     aim = models.IntegerField(default=100)
     wallet = models.BigIntegerField(default=0)
+    
+    def getItems(self):
+        return json.loads(self.items.decode('utf-8'))
+    
+    def setItems(self, items):
+        self.items = json.dumps(items).encode('utf-8')
+        
+class ItemOffer(models.Model):
+    """
+    Defines item offer to be bought by other players
+    """
+    seller = models.ForeignKey(Character, on_delete=models.CASCADE, null=False)
+    price = models.BigIntegerField(default=0)
+    items = models.BinaryField(default=b'{}')
+    
+    def getItems(self):
+        return json.loads(self.items.decode('utf-8'))
+    
+    def setItems(self, items):
+        self.items = json.dumps(items).encode('utf-8')
