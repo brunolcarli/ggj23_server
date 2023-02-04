@@ -7,7 +7,7 @@ import graphene
 from graphql import GraphQLObjectType
 from django.conf import settings
 from django.contrib.auth.models import User
-from server_app.models import Character
+from server_app.models import Character, ItemOffer
 from server_app.skills import skill_list
 from server_app.map_areas import areas
 from server_app.character_classes import classes, ChracterClass
@@ -147,8 +147,26 @@ class EnemyType(graphene.ObjectType):
     exp = graphene.Int()
     drops = graphene.List(ItemType)
     skills = graphene.List(SkillType)
+    
+class ItemOfferInputType(graphene.InputObjectType):
+    name = graphene.String()
+    count = graphene.Int()
+       
+class ItemBatchOfferType(graphene.ObjectType):
+    id = graphene.ID()
+    price = graphene.Field(WalletType)
+    seller = graphene.Field(CharacterType)
+    items = graphene.List(ItemType)
 
+    def resolve_items(self, info, **kwargs):
+        return self.getItems()
 
+    def resolve_price(self, info, **kwargs):
+        return {
+            'copper_coins': self.price % 100,
+            'silver_coins': (self.price // 100) % 100,
+            'gold_coins': self.price // 10000
+        }
 
 ##########################
 # Query
@@ -212,6 +230,19 @@ class Query:
     )
     def resolve_item(self, info, **kwargs):
         return item_list.get(kwargs['name'])
+    
+    # Item offers
+    offers = graphene.List(ItemBatchOfferType)
+    def resolve_offers(self, info, **kwargs):
+        return ItemOffer.objects.filter(**kwargs)
+    
+    # Item offer
+    offer = graphene.Field(
+        ItemBatchOfferType,
+        id=graphene.ID(required=True)
+    )
+    def resolve_offer(self, info, **kwargs):
+        return ItemOffer.objects.get(id=kwargs['id'])
 
 
 ##########################
@@ -461,7 +492,7 @@ class CharacterUpdateItem(graphene.relay.ClientIDMutation):
         if item_name not in item_list:
             raise Exception('Invalid item')
         
-        char_items = json.loads(character.items.decode('utf-8'))
+        char_items = character.getItems()
         
         if item_name in char_items.keys():
             item = char_items[item_name]
@@ -480,7 +511,7 @@ class CharacterUpdateItem(graphene.relay.ClientIDMutation):
         if item['count'] <= 0:
             char_items.pop(item_name)
             
-        character.items = json.dumps(char_items).encode('utf-8')
+        character.setItems(char_items)
         character.save()
 
         return CharacterUpdateItem(character)
@@ -502,7 +533,7 @@ class CharacterUseItem(graphene.relay.ClientIDMutation):
         if item_name not in item_list:
             raise Exception('Invalid item')
         
-        char_items = json.loads(character.items.decode('utf-8'))
+        char_items = character.getItems()
         
         if item_name not in char_items.keys():
             raise Exception("You don't have any of this item!")
@@ -518,7 +549,7 @@ class CharacterUseItem(graphene.relay.ClientIDMutation):
         if item['count'] <= 0:
             char_items.pop(item_name)
             
-        character.items = json.dumps(char_items).encode('utf-8')
+        character.setItems(char_items)
         character.save()
 
         return CharacterUseItem(character)
@@ -543,7 +574,7 @@ class CharacterSellItem(graphene.relay.ClientIDMutation):
         if item_name not in item_list:
             raise Exception('Invalid item')
         
-        char_items = json.loads(character.items.decode('utf-8'))
+        char_items = character.getItems()
         
         if item_name not in char_items.keys():
             raise Exception("You don't have any of this item to sell")
@@ -561,7 +592,7 @@ class CharacterSellItem(graphene.relay.ClientIDMutation):
         if item['count'] <= 0:  
             char_items.pop(item_name)
             
-        character.items = json.dumps(char_items).encode('utf-8')
+        character.setItems(char_items)
         character.save()
 
         return CharacterSellItem(character)
@@ -586,7 +617,7 @@ class CharacterBuyItem(graphene.relay.ClientIDMutation):
         if item_name not in item_list:
             raise Exception('Invalid item')
         
-        char_items = json.loads(character.items.decode('utf-8'))
+        char_items = character.getItems()
         
         if item_name in char_items.keys():
             item = char_items[item_name]
@@ -604,10 +635,142 @@ class CharacterBuyItem(graphene.relay.ClientIDMutation):
         if item_name not in char_items.keys():
             char_items[item_name] = item
             
-        character.items = json.dumps(char_items).encode('utf-8')
+        character.setItems(char_items)
         character.save()
 
         return CharacterBuyItem(character)
+    
+class CharacterBatchSellOffer(graphene.relay.ClientIDMutation):
+    batch_offer = graphene.Field(ItemBatchOfferType)
+
+    class Input:
+        character_id = graphene.ID(required=True)
+        copper_price = graphene.Int(default=0)
+        silver_price = graphene.Int(default=0)
+        gold_price = graphene.Int(default=0)
+        items = graphene.List(ItemOfferInputType, required=True)
+    
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+        except Character.DoesNotExist:
+            raise Exception("Invalid character")
+        
+        copper_price = kwargs.get('copper_price', 0)
+        silver_price = kwargs.get('silver_price', 0)
+        gold_price = kwargs.get('gold_price', 0)
+        
+        if  (copper_price < 0) or (copper_price > GAME_CONFIG['MAX_COPPER_COINS']) or\
+            (silver_price < 0) or (silver_price > GAME_CONFIG['MAX_SILVER_COINS']) or\
+            (gold_price < 0) or (gold_price > GAME_CONFIG['MAX_GOLD_COINS']):
+                raise Exception('Invalid coin amounts')
+        price = copper_price + 100*silver_price + 10000*gold_price
+
+        char_items = character.getItems()
+        item_input = {i['name']: i['count'] for i in kwargs['items']}
+        items = [i.copy() for i in char_items.values() if i['name'] in item_input]
+        
+        if len(items) == 0:
+            raise Exception('No valid items were provided')
+        
+        for i in items:
+            i['count'] = item_input[i['name']]
+            player_count = char_items[i['name']]['count']
+            if i['count'] <= 0:
+                raise Exception(f'Invalid item count of {i["name"]}') 
+            if player_count < i['count']:
+                raise Exception(f'Character doesn\'t have enough of {i["name"]}')
+            
+        for i in items:
+            char_items[i['name']]['count'] -= i['count']
+        
+        offer = ItemOffer.objects.create(
+            seller=character,
+            price=price
+        )
+        print(items)
+        offer.setItems(items)
+        character.setItems(char_items)
+        character.save()
+        offer.save()
+        
+        # TODO: Broadcast offer available
+        
+        return CharacterBatchSellOffer(offer)
+    
+class CharacterBatchBuyOffer(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        character_id = graphene.ID(required=True)
+        offer_id = graphene.ID(required=True)
+    
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+            offer = ItemOffer.objects.get(id=kwargs['offer_id'])
+        except Character.DoesNotExist:
+            raise Exception("Invalid character")
+        except ItemOffer.DoesNotExist:
+            raise Exception("Invalid offer")
+        
+        if character == offer.seller:
+            raise Exception("Player cannot buy from itself")
+    
+        if character.wallet < offer.price:
+            raise Exception("Character doesn't have enough money")
+        
+        char_items = character.getItems()
+        offer_items = offer.getItems()
+        for item in offer_items:
+            if item['name'] in char_items.keys():
+                char_items[item['name']]['count'] += item['count']
+            else:
+                char_items[item['name']] = item.copy()
+        
+        character.wallet -= offer.price
+        offer.delete()
+        character.setItems(char_items)
+        character.save()
+        
+        # TODO: Broadcast offer accepted
+        
+        return CharacterBatchBuyOffer(character)
+    
+class CharacterBatchRevokeOffer(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        character_id = graphene.ID(required=True)
+        offer_id = graphene.ID(required=True)
+    
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+            offer = ItemOffer.objects.get(id=kwargs['offer_id'])
+        except Character.DoesNotExist:
+            raise Exception("Invalid character")
+        except ItemOffer.DoesNotExist:
+            raise Exception("Invalid offer")
+        
+        if character != offer.seller:
+            raise Exception("Only seller can revoke the offer")
+    
+        char_items = character.getItems()
+        offer_items = offer.getItems()
+        for item in offer_items:
+            if item['name'] in char_items.keys():
+                char_items[item['name']]['count'] += item['count']
+            else:
+                char_items[item['name']] = item.copy()
+        
+        offer.delete()
+        character.setItems(char_items)
+        character.save()
+        
+        # TODO: Broadcast offer accepted
+        
+        return CharacterBatchBuyOffer(character)
 
 class Mutation:
     send_chat_message = SendChatMessage.Field()
@@ -620,6 +783,9 @@ class Mutation:
     character_use_item = CharacterUseItem.Field()
     character_buy_item = CharacterBuyItem.Field()
     character_sell_item = CharacterSellItem.Field()
+    character_batch_sell_offer = CharacterBatchSellOffer.Field()
+    character_batch_buy_offer = CharacterBatchBuyOffer.Field()
+    character_batch_revoke_offer = CharacterBatchRevokeOffer.Field()
 
 
 #################
