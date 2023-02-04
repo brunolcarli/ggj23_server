@@ -17,7 +17,7 @@ import sys
 import uuid
 
 
-VERSION = '0.0.2'
+VERSION = '0.0.3'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -148,4 +148,11 @@ CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}
 ASGI_APPLICATION = "ggj23.asgi.application"
 GRAPHENE = {
     'SCHEMA': 'ggj23.schema.schema',
+}
+
+
+# GAME CONFIGS
+GAME_CONFIG = {
+    'MAX_LV': 100,
+
 }

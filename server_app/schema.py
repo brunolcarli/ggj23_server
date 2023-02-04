@@ -12,6 +12,9 @@ from server_app.skills import skill_list
 from server_app.map_areas import areas
 from server_app.character_classes import classes, ChracterClass
 from server_app.engine import target_position_is_valid, use_skill
+from server_app.enemies import enemy_list
+from server_app.types import DynamicScalar
+
 
 chats = defaultdict(list)
 
@@ -117,6 +120,25 @@ class MapAreaType(graphene.ObjectType):
     connections = graphene.List(graphene.String)
 
 
+class EnemyType(graphene.ObjectType):
+    lv = graphene.Int()
+    name = graphene.String()
+    hp = graphene.Int()
+    power = graphene.Int()
+    resistance = graphene.String()
+    agility = graphene.Int()
+    aim = graphene.Int()
+    class_type = graphene.String()
+    exp = graphene.Int()
+    drops = graphene.List(ItemType)
+    skills = graphene.List(SkillType)
+
+
+class CharacterEventType(graphene.ObjectType):
+    event_type = graphene.String()
+    data = DynamicScalar()
+
+
 ##########################
 # Query
 ##########################
@@ -153,6 +175,19 @@ class Query:
     map_areas = graphene.List(MapAreaType)
     def resolve_map_areas(self, info, **kwargs):
         return areas.values()
+
+    # Enemies
+    enemies = graphene.List(EnemyType)
+    def resolve_enemies(self, info, **kwargs):
+        return enemy_list.values()
+
+    # Enemy
+    enemy = graphene.Field(
+        EnemyType,
+        name=graphene.String(required=True)
+    )
+    def resolve_enemy(self, info, **kwargs):
+        return enemy_list.get(kwargs['name'])
 
 
 ##########################
@@ -280,9 +315,16 @@ class UpdatePosition(graphene.relay.ClientIDMutation):
         char.position_y = y
         char.save()
 
-
-        # TODO broadcast movement
-        # OnCharacterMovement.character_movement(reference=reference, x=x, y=y)
+        payload = {
+            'id': char.id,
+            'x': char.position_x,
+            'y': char.position_y,
+            'map_area': char.area_location
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'character_movement',
+            'data': payload
+        })
 
         return UpdatePosition(char)
 
@@ -314,14 +356,18 @@ class CharacterLogIn(graphene.relay.ClientIDMutation):
         char.is_logged = True
         char.save()
 
-        # TODO Broadcast character login
-        # OnCharacterLogIn.character_login(
-        #     reference=char.name,
-        #     x=position['x'],
-        #     y=position['y']
-        # )
-
-        # API response
+        # Broadcast character login
+        payload = {
+            'id': char.id,
+            'name': char.name,
+            'x': char.position_x,
+            'y': char.position_y,
+            'map_area': char.area_location,
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'character_login',
+            'data': payload
+        })
 
         return CharacterLogIn(True)
 
@@ -353,14 +399,18 @@ class CharacterLogOut(graphene.relay.ClientIDMutation):
         char.is_logged = False
         char.save()
 
-        # TODO Broadcast character login
-        # OnCharacterLogIn.character_login(
-        #     reference=char.name,
-        #     x=position['x'],
-        #     y=position['y']
-        # )
-
-        # API response
+        # Broadcast character login
+        payload = {
+            'id': char.id,
+            'name': char.name,
+            'x': char.position_x,
+            'y': char.position_y,
+            'map_area': char.area_location,
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'character_logout',
+            'data': payload
+        })
 
         return CharacterLogIn(True)
 
@@ -454,7 +504,26 @@ class OnNewChatMessage(channels_graphql_ws.Subscription):
         )
 
 
+class OnCharacterEvent(channels_graphql_ws.Subscription):
+    character_event = graphene.Field(CharacterEventType)
+
+    def subscribe(self, info, **kwargs):
+        del info
+        return ['character_event']
+
+    def publish(self, info, **kwargs):
+        return OnCharacterEvent(character_event=self)
+
+    @classmethod
+    def char_event(cls, params):
+        cls.broadcast(
+            group='character_event',
+            payload={"event_type": params['event_type'], 'data': params['data']}
+        )
+
+
 class Subscription(graphene.ObjectType):
     """GraphQL subscriptions."""
 
     on_new_chat_message = OnNewChatMessage.Field()
+    on_character_event = OnCharacterEvent.Field()
