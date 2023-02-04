@@ -10,6 +10,8 @@ def use_skill(skill_user, skill_name, target):
     """
     Targeted enemy based skill usage mechanic. 
     """
+
+
     if skill_user.is_ko:
         raise Exception('Cannot perform this action while knocked out')
 
@@ -42,9 +44,16 @@ def use_skill(skill_user, skill_name, target):
         # TODO broadcast knock out
         print(f'{target.name} was knockouted')
 
+    if target.class_type == "enemy":
+        if target.is_ko:
+            # Enemy mobs give exp points
+            skill_user.exp += target.exp
+            # TODO broadcast exp gain
+            print(f'{skill_user.name} has earned {target.exp} EXP')
+            lv_up(skill_user)
+    else:
+        target.save()
     # TODO apply skill effect
-
-    target.save()
 
     return True
 
@@ -106,6 +115,8 @@ def lv_up(character):
         character.max_sp += randint(5, 25)
         character.power += randint(0, 2)
         character.resistance += randint(0, 2)
+        # TODO broadcast lv up
+        print(f'{character.name} has leveled up to lv: {character.lv}')
 
     character.save()
     return character
