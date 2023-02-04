@@ -13,6 +13,7 @@ from server_app.map_areas import areas
 from server_app.character_classes import classes, ChracterClass
 from server_app.engine import target_position_is_valid, use_skill
 from server_app.enemies import enemy_list
+from server_app.items import item_list
 
 
 chats = defaultdict(list)
@@ -47,6 +48,8 @@ class ItemType(graphene.ObjectType):
     effect = graphene.Field(EffectType)
     count = graphene.Int()
     description = graphene.String()
+    buy_price = graphene.Int()
+    sell_price = graphene.Int()
 
 
 class SkillType(graphene.ObjectType):
@@ -411,7 +414,82 @@ class CharacterUseSkill(graphene.relay.ClientIDMutation):
             raise Exception('Invalid character')
 
         return CharacterUseSkill(use_skill(skill_user, kwargs['skill_name'], target))
+    
+class CharacterUpdateItem(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+    
+    class Input:
+        character_id = graphene.ID(required=True)
+        item_name = graphene.String(required=True)
+        count = graphene.Int(required=True)
+        
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+        except Character.DoesNotExist:
+            raise Exception('Invalid character')
+        
+        item_name = kwargs['item_name']
+        count = kwargs['count']
+        
+        if item_name not in item_list:
+            raise Exception('Invalid item')
+        
+        char_items = json.loads(character.items.decode('utf-8'))
+        
+        if item_name in char_items.keys():
+            item = char_items[item_name]
+            item['count'] += count
+        else:
+            item = item_list[item_name].copy()
+            item['count'] = count
+            char_items[item_name] = item
+            
+        if item['count'] <= 0:
+            char_items.pop(item_name)
+            
+        character.items = json.dumps(char_items).encode('utf-8')
+        character.save()
 
+        return CharacterUpdateItem(character)
+
+class CharacterUseItem(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        character_id = graphene.ID()
+        item_name = graphene.String()
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+        except Character.DoesNotExist:
+            raise Exception('Invalid character')
+        
+        item_name = kwargs['item_name']
+        if item_name not in item_list:
+            raise Exception('Invalid item')
+        
+        char_items = json.loads(character.items.decode('utf-8'))
+        
+        if item_name not in char_items.keys():
+            raise Exception("You don't have any of this item!")
+        
+        item = char_items[item_name]
+        
+        if item['count'] <= 0:
+            raise Exception("You don't have any of this item!")
+        
+        # use item
+        item['count'] -= 1
+        
+        if item['count'] <= 0:
+            char_items.pop(item_name)
+            
+        character.items = json.dumps(char_items).encode('utf-8')
+        character.save()
+
+        return CharacterUseItem(character)
 
 class Mutation:
     send_chat_message = SendChatMessage.Field()
@@ -420,6 +498,8 @@ class Mutation:
     character_login = CharacterLogIn.Field()
     character_logout = CharacterLogOut.Field()
     character_use_skill = CharacterUseSkill.Field()
+    character_update_item = CharacterUpdateItem.Field()
+    character_use_item = CharacterUseItem.Field()
 
 
 #################
