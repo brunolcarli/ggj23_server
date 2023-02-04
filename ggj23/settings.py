@@ -17,7 +17,7 @@ import sys
 import uuid
 
 
-VERSION = '0.0.3'
+VERSION = '0.0.4'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -154,5 +154,7 @@ GRAPHENE = {
 # GAME CONFIGS
 GAME_CONFIG = {
     'MAX_LV': 100,
-
+    'MAX_COPPER_COINS': 100,
+    'MAX_SILVER_COINS': 100,
+    'MAX_GOLD_COINS': 1000000,
 }

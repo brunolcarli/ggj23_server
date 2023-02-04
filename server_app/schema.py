@@ -14,6 +14,7 @@ from server_app.character_classes import classes, ChracterClass
 from server_app.engine import target_position_is_valid, use_skill
 from server_app.enemies import enemy_list
 from server_app.types import DynamicScalar
+from server_app.items import item_list, max_currency
 
 
 chats = defaultdict(list)
@@ -48,6 +49,8 @@ class ItemType(graphene.ObjectType):
     effect = graphene.Field(EffectType)
     count = graphene.Int()
     description = graphene.String()
+    buy_price = graphene.Int()
+    sell_price = graphene.Int()
 
 
 class SkillType(graphene.ObjectType):
@@ -69,7 +72,11 @@ class EquipmentType(graphene.ObjectType):
     accessory_1 = graphene.Field(ItemType)
     accessory_2 = graphene.Field(ItemType)
 
-
+class WalletType(graphene.ObjectType):
+    copper_coins = graphene.Int()
+    silver_coins = graphene.Int()
+    gold_coins = graphene.Int()
+    
 class CharacterType(graphene.ObjectType):
     id = graphene.ID()
     name = graphene.String()
@@ -96,6 +103,7 @@ class CharacterType(graphene.ObjectType):
     class_type = graphene.String()
     effects = graphene.List(EffectType)
     aim = graphene.Int()
+    wallet = graphene.Field(WalletType)
 
     def resolve_skills(self, info, **kwargs):
         return json.loads(self.skills.decode('utf-8')).values()
@@ -111,6 +119,13 @@ class CharacterType(graphene.ObjectType):
 
     def resolve_quests(self, info, **kwargs):
         return json.loads(self.quests.decode('utf-8'))
+    
+    def resolve_wallet(self, info, **kwargs):
+        return {
+            'copper_coins': self.wallet % 100,
+            'silver_coins': (self.wallet // 100) % 100,
+            'gold_coins': self.wallet // 10000
+        }
 
 
 class MapAreaType(graphene.ObjectType):
@@ -447,7 +462,174 @@ class CharacterUseSkill(graphene.relay.ClientIDMutation):
             raise Exception('Invalid character')
 
         return CharacterUseSkill(use_skill(skill_user, kwargs['skill_name'], target))
+    
+class CharacterUpdateItem(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+    
+    class Input:
+        character_id = graphene.ID(required=True)
+        item_name = graphene.String(required=True)
+        count = graphene.Int(required=True)
+        
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+        except Character.DoesNotExist:
+            raise Exception('Invalid character')
+        
+        item_name = kwargs['item_name']
+        count = kwargs['count']
+        
+        if item_name not in item_list:
+            raise Exception('Invalid item')
+        
+        char_items = json.loads(character.items.decode('utf-8'))
+        
+        if item_name in char_items.keys():
+            item = char_items[item_name]
+            item['count'] += count
+        else:
+            item = item_list[item_name].copy()
+            item['count'] = count
+            char_items[item_name] = item
+            
+        if item['kind'] == 'currency':
+            item['count'] = 0
+            character.wallet += item['value'] * count
+            character.wallet = min(character.wallet, max_currency())
+            character.wallet = max(character.wallet, 0)
+            
+        if item['count'] <= 0:
+            char_items.pop(item_name)
+            
+        character.items = json.dumps(char_items).encode('utf-8')
+        character.save()
 
+        return CharacterUpdateItem(character)
+
+class CharacterUseItem(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        character_id = graphene.ID()
+        item_name = graphene.String()
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+        except Character.DoesNotExist:
+            raise Exception('Invalid character')
+        
+        item_name = kwargs['item_name']
+        if item_name not in item_list:
+            raise Exception('Invalid item')
+        
+        char_items = json.loads(character.items.decode('utf-8'))
+        
+        if item_name not in char_items.keys():
+            raise Exception("You don't have any of this item!")
+        
+        item = char_items[item_name]
+        
+        if item['count'] <= 0:
+            raise Exception("You don't have any of this item!")
+        
+        # use item
+        item['count'] -= 1
+        
+        if item['count'] <= 0:
+            char_items.pop(item_name)
+            
+        character.items = json.dumps(char_items).encode('utf-8')
+        character.save()
+
+        return CharacterUseItem(character)
+    
+class CharacterSellItem(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+    
+    class Input:
+        character_id = graphene.ID(required=True)
+        item_name = graphene.String(required=True)
+        count = graphene.Int(required=True)
+        
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+        except Character.DoesNotExist:
+            raise Exception('Invalid character')
+        
+        item_name = kwargs['item_name']
+        count = kwargs['count']
+        
+        if item_name not in item_list:
+            raise Exception('Invalid item')
+        
+        char_items = json.loads(character.items.decode('utf-8'))
+        
+        if item_name not in char_items.keys():
+            raise Exception("You don't have any of this item to sell")
+        
+        item = char_items[item_name]
+        
+        if count <= 0:
+            raise Exception("Invalid amount")
+        if count > item['count']:
+            raise Exception("You don't have enough of this item to sell")
+        
+        character.wallet += item['sell_price'] * count
+        
+        item['count'] -= count    
+        if item['count'] <= 0:  
+            char_items.pop(item_name)
+            
+        character.items = json.dumps(char_items).encode('utf-8')
+        character.save()
+
+        return CharacterSellItem(character)
+    
+class CharacterBuyItem(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+    
+    class Input:
+        character_id = graphene.ID(required=True)
+        item_name = graphene.String(required=True)
+        count = graphene.Int(required=True)
+        
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+        except Character.DoesNotExist:
+            raise Exception('Invalid character')
+        
+        item_name = kwargs['item_name']
+        count = kwargs['count']
+        
+        if item_name not in item_list:
+            raise Exception('Invalid item')
+        
+        char_items = json.loads(character.items.decode('utf-8'))
+        
+        if item_name in char_items.keys():
+            item = char_items[item_name]
+        else:
+            item = item_list[item_name].copy()
+            item['count'] = 0
+            
+        buy_price = item['buy_price'] * count
+        if character.wallet < buy_price:
+            raise Exception("You don't have enough money to buy this item")
+            
+        character.wallet -= buy_price
+        item['count'] += count
+
+        if item_name not in char_items.keys():
+            char_items[item_name] = item
+            
+        character.items = json.dumps(char_items).encode('utf-8')
+        character.save()
+
+        return CharacterBuyItem(character)
 
 class Mutation:
     send_chat_message = SendChatMessage.Field()
@@ -456,6 +638,10 @@ class Mutation:
     character_login = CharacterLogIn.Field()
     character_logout = CharacterLogOut.Field()
     character_use_skill = CharacterUseSkill.Field()
+    character_update_item = CharacterUpdateItem.Field()
+    character_use_item = CharacterUseItem.Field()
+    character_buy_item = CharacterBuyItem.Field()
+    character_sell_item = CharacterSellItem.Field()
 
 
 #################
