@@ -81,18 +81,10 @@ def reachable_target(skill_user, target, skill_range):
     tx, ty = target.position_x, target.position_y
     skill_range = skill_range * 48
 
-    if cx < tx:
-        x_reach = abs(tx - cx) <= skill_range
-    else:
-        x_reach = abs(cx - tx) <= skill_range
-
-    if cy < ty:
-        y_reach = abs(ty - cy) <= skill_range
-    else:
-        y_reach = abs(cy - ty) <= skill_range
-
-    return x_reach or y_reach
-
+    x_diff = abs(cx - tx)
+    y_diff = abs(cy - ty)
+    
+    return x_diff <= skill_range and y_diff <= skill_range
 
 def next_lv(level):
     """
