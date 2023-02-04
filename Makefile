@@ -11,8 +11,12 @@ run:
 shell:
 	python manage.py shell
 
+enemy_daemon:
+	python manage.py enemy_daemon
+
+target: enemy_daemon run
 
 pipe:
 	make install
 	make migrate
-	make run
+	make -j2 target

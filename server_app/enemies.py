@@ -1,8 +1,9 @@
 import uuid
-from random import choice
+from random import choice, random
 from server_app.skills import skill_list
 from server_app.map_areas import areas
 from server_app.engine import target_position_is_valid
+from server_app.models import Character
 
 
 enemies_spots = {
@@ -252,3 +253,25 @@ class Enemy:
             return
 
         # TODO broadcast enemy movement
+        
+def manage_enemies(enemies_spawned):
+    spawn_chance = .2
+    max_enemies_in_area = 20
+        
+    for area in areas:
+        characters_in_area = Character.objects.filter(is_logged=True, area_location=area)
+        if len(characters_in_area) <= 0:
+            enemies_spawned[area] = []
+            continue
+        
+        enemies_spawned[area] = [e for e in enemies_spawned[area] if not e.is_ko]
+        
+        possible_enemies = enemies_spots[area]
+        
+        if  (len(possible_enemies) > 0) and \
+            (len(enemies_spawned[area]) < max_enemies_in_area) and \
+            (random() < spawn_chance):
+                enemy_type = enemy_list[choice(possible_enemies)]
+                enemy = Enemy(enemy_type, area)
+                enemies_spawned[area].append(enemy)
+        
