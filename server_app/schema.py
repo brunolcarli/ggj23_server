@@ -399,14 +399,18 @@ class CharacterLogOut(graphene.relay.ClientIDMutation):
         char.is_logged = False
         char.save()
 
-        # TODO Broadcast character login
-        # OnCharacterLogIn.character_login(
-        #     reference=char.name,
-        #     x=position['x'],
-        #     y=position['y']
-        # )
-
-        # API response
+        # Broadcast character login
+        payload = {
+            'id': char.id,
+            'name': char.name,
+            'x': char.position_x,
+            'y': char.position_y,
+            'map_area': char.area_location,
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'character_logout',
+            'data': payload
+        })
 
         return CharacterLogIn(True)
 
