@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -24,10 +26,11 @@ class Character(models.Model):
     position_y = models.IntegerField(default=48, null=False)
     area_location = models.CharField(max_length=25, null=False, blank=False, default='citadel')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-    items = models.BinaryField(null=True)
+    items = models.BinaryField(default=json.dumps(dict()).encode('utf-8'))
     equipment = models.BinaryField(null=True)
     skills = models.BinaryField(null=False)
     quests = models.BinaryField(null=True)
     class_type = models.CharField(max_length=25, null=False, blank=False)
     effects = models.BinaryField(null=True)
     aim = models.IntegerField(default=100)
+    wallet = models.BigIntegerField(default=0)
