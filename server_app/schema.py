@@ -160,11 +160,19 @@ class Query:
 
     # Characters
     # TODO filters
-    characters = graphene.List(CharacterType)
+    characters = graphene.List(
+        CharacterType,
+        is_logged=graphene.Boolean(required=True)
+    )
     def resolve_characters(self, info, **kwargs):
         return Character.objects.filter(**kwargs)
 
-    # TODO query single character
+    character = graphene.Field(
+        CharacterType,
+        id=graphene.ID(required=True)
+    )
+    def resolve_character(self, info, **kwargs):
+        return Character.objects.get(id=kwargs['id'])
 
     # Skills
     skills = graphene.List(SkillType)
