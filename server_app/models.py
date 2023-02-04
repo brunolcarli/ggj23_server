@@ -33,3 +33,4 @@ class Character(models.Model):
     class_type = models.CharField(max_length=25, null=False, blank=False)
     effects = models.BinaryField(null=True)
     aim = models.IntegerField(default=100)
+    wallet = models.BigIntegerField(default=0)

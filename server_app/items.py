@@ -1,5 +1,7 @@
 import uuid
 
+from ggj23.settings import GAME_CONFIG
+
 item_list = {
     'mp': {
         'name': 'mp',
@@ -333,19 +335,22 @@ item_list = {
         'name': 'copper_coin',
         'kind': 'currency',
         'effect': None,
-        'description': 'A regular coin of copper'
+        'description': 'A regular coin of copper',
+        'value': 1
     },
     'silver_coin': {
         'name': 'silver_coin',
         'kind': 'currency',
         'effect': None,
-        'description': 'A regular coin of silver. It is worth 100 copper coins'
+        'description': 'A regular coin of silver. It is worth 100 copper coins',
+        'value': 100
     },
     'gold_coin': {
         'name': 'gold_coin',
         'kind': 'currency',
         'effect': None,
-        'description': 'A regular coin of gold. It is worth 100 silver coins'
+        'description': 'A regular coin of gold. It is worth 100 silver coins',
+        'value': 10000
     },
     'book_fireball': {
         'name': 'book_fireball',
@@ -493,3 +498,6 @@ class Item:
         pass        
         # TODO: self.effect.apply()
         # TODO: broadcast use item
+        
+def max_currency():
+    return (GAME_CONFIG['MAX_GOLD_COINS']-1) * item_list['gold_coin']['value'] + (GAME_CONFIG['MAX_SILVER_COINS']-1) * item_list['silver_coin']['value'] + (GAME_CONFIG['MAX_COPPER_COINS']-1) * item_list['copper_coin']['value']
