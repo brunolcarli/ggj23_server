@@ -14,7 +14,7 @@ import graphene
 from graphene_django import DjangoObjectType
 from django.contrib.auth.models import User
 from users.utils import access_required
-# from server_app.models import Character
+from server_app.schema import CharacterType
 import graphql_jwt
 
 
@@ -22,9 +22,13 @@ class UserType(DjangoObjectType):
     """
     Modelo de usuário padrão do django
     """ 
+    characters = graphene.List(CharacterType)
     class Meta:
         model = User
         interfaces = (graphene.relay.Node,)
+
+    def resolve_characters(self, info, **kwargs):
+        return self.character_set.all()
 
 
 class UserConnection(graphene.relay.Connection):
@@ -46,6 +50,13 @@ class Query(object):
         Retorna uma lista de todos os usuários registrados no sistema.
         """
         return User.objects.all()
+
+    user = graphene.Field(
+        UserType,
+        email=graphene.String(required=True)
+    )
+    def resolve_user(self, info, **kwargs):
+        return User.objects.get(email=kwargs['email'])
 
 
 class CreateUser(graphene.relay.ClientIDMutation):
