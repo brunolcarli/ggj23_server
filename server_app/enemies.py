@@ -1,9 +1,13 @@
 import uuid
+import json
 from random import choice, random
 from server_app.skills import skill_list
 from server_app.map_areas import areas
 from server_app.engine import target_position_is_valid
 from server_app.models import Character
+from ggj23.settings import REDIS_HOST, REDIS_PORT
+from redis import Redis
+from server_app.serializer import Serializer
 
 
 enemies_spots = {
@@ -253,25 +257,47 @@ class Enemy:
             return
 
         # TODO broadcast enemy movement
+
+class EnemyList:     
+    def __init__(self):
+        self.enemies_spawned = {a: [] for a in areas}
+        self._r_conn = Redis(host=REDIS_HOST, port=int(REDIS_PORT))
+        self._r_conn.set('ggj23', json.dumps(self.enemies_spawned).encode('utf-8'))
+
+    def setEnemyList(self, enemies_spawned):
+        self.enemies_spawned = {a: [Serializer.serialize(c) for c in b] for a, b in enemies_spawned.items()}
+        es = json.dumps(self.enemies_spawned).encode('utf-8')
+        self._r_conn.set('ggj23', es)
         
-def manage_enemies(enemies_spawned):
-    spawn_chance = .2
-    max_enemies_in_area = 20
+    def getEnemyList(self):
+        es = json.loads(self._r_conn.get('ggj23').decode('utf-8'))
+        es = {a: [Serializer.deserialize(c) for c in b] for a, b in es.items()}
+        self.enemies_spawned = es
+        return self.enemies_spawned
+
+    def manage_enemies(self):
+        spawn_chance = .2
+        max_enemies_in_area = 20
+            
+        enemies_spawned = {}
+        for area in areas:
+            characters_in_area = Character.objects.filter(is_logged=True, area_location=area)
+            if len(characters_in_area) <= 0:
+                enemies_spawned[area] = []
+                continue
+            
+            enemies_spawned[area] = [e for e in self.getEnemyList()[area] if not e.is_ko]
+            
+            possible_enemies = enemies_spots[area]
+            
+            if  (len(possible_enemies) > 0) and \
+                (len(enemies_spawned[area]) < max_enemies_in_area) and \
+                (random() < spawn_chance):
+                    enemy_type = enemy_list[choice(possible_enemies)]
+                    enemy = Enemy(enemy_type, area)
+                    enemies_spawned[area].append(enemy)
+
+        self.setEnemyList(enemies_spawned)
         
-    for area in areas:
-        characters_in_area = Character.objects.filter(is_logged=True, area_location=area)
-        if len(characters_in_area) <= 0:
-            enemies_spawned[area] = []
-            continue
-        
-        enemies_spawned[area] = [e for e in enemies_spawned[area] if not e.is_ko]
-        
-        possible_enemies = enemies_spots[area]
-        
-        if  (len(possible_enemies) > 0) and \
-            (len(enemies_spawned[area]) < max_enemies_in_area) and \
-            (random() < spawn_chance):
-                enemy_type = enemy_list[choice(possible_enemies)]
-                enemy = Enemy(enemy_type, area)
-                enemies_spawned[area].append(enemy)
-        
+enemies_spawned = EnemyList()
+            
