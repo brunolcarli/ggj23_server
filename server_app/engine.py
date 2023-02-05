@@ -4,6 +4,7 @@ from random import randint
 from django.conf import settings
 from server_app.map_areas import areas
 from server_app.models import Character
+from server_app.events import OnCharacterEvent
 
 
 def use_skill(skill_user, skill_name, target):
@@ -29,28 +30,71 @@ def use_skill(skill_user, skill_name, target):
 
     skill_user.current_sp -= skill['sp_cost']
     skill_user.save()
-    # TODO broadcast skill using
+    
+    # broadcast skill using
     print(f'{skill_user.name} used {skill["name"]}')
+    payload = {
+        'skill_user_id': skill_user.id,
+        'skill_user_name': skill_user.name,
+        'skill_name': skill["name"],
+        'target_id': target.id,
+        'target_name': target.name
+    }
+    OnCharacterEvent.char_event(params={
+        'event_type': 'character_use_skill',
+        'data': payload
+    })
 
     damage = get_damage(skill_user, skill['power'], target.resistance)
     target.current_hp -= damage
-    # TODO broadcast damage
+    
+    # broadcast damage
     print(f'{target.name} has lost {damage} HP due to {skill["name"]}')
+    payload = {
+        'target_id': target.id,
+        'target_name': target.name,
+        'target_hp': target.current_hp,
+        'damage': damage,
+        'skill_name': skill['name'],
+    }
+    OnCharacterEvent.char_event(params={
+        'event_type': 'target_damaged',
+        'data': payload
+    })
 
     # Check if enemy is knockouted
     if target.current_hp <= 0:
         target.current_hp = 0
         target.is_ko = True
-        # TODO broadcast knock out
+        # broadcast knock out
         print(f'{target.name} was knockouted')
+        payload = {
+            'target_id': target.id,
+            'target_name': target.name,
+            'target_is_ko': target.is_ko
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'target_knockout',
+            'data': payload
+        })
 
     if target.class_type == "enemy":
         if target.is_ko:
             # Enemy mobs give exp points
             skill_user.exp += target.exp
-            # TODO broadcast exp gain
             print(f'{skill_user.name} has earned {target.exp} EXP')
             lv_up(skill_user)
+            
+            # broadcast exp gain
+            payload = {
+                'skill_user_id': skill_user.id,
+                'exp': target.exp
+            }
+            OnCharacterEvent.char_event(params={
+                'event_type': 'character_exp_gain',
+                'data': payload
+            })
+            
     else:
         target.save()
     # TODO apply skill effect
@@ -107,8 +151,17 @@ def lv_up(character):
         character.max_sp += randint(5, 25)
         character.power += randint(0, 2)
         character.resistance += randint(0, 2)
-        # TODO broadcast lv up
+        
+        # broadcast lv up
         print(f'{character.name} has leveled up to lv: {character.lv}')
+        payload = {
+            'character_id': character.id,
+            'lv': character.lv
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'character_lv_up',
+            'data': payload
+        })
 
     character.save()
     return character
@@ -119,6 +172,5 @@ def exp_up(character, value, factor=1):
 
     if character.exp >= character.next_lv:
         character = lv_up(character)
-        # TODO broadcast character lv up
 
     character.save()

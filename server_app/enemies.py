@@ -8,7 +8,7 @@ from server_app.models import Character
 from ggj23.settings import REDIS_HOST, REDIS_PORT
 from redis import Redis
 from server_app.serializer import Serializer
-
+from server_app.events import OnCharacterEvent
 
 enemies_spots = {
     'citadel': [],
@@ -256,7 +256,16 @@ class Enemy:
             self.position_y = current_y
             return
 
-        # TODO broadcast enemy movement
+        # broadcast enemy movement
+        payload = {
+            'enemy_id': self.id,
+            'position_x': self.position_x,
+            'position_y': self.position_y
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'enemy_movement',
+            'data': payload
+        })
 
 class EnemyList:     
     def __init__(self):
@@ -296,6 +305,19 @@ class EnemyList:
                     enemy_type = enemy_list[choice(possible_enemies)]
                     enemy = Enemy(enemy_type, area)
                     enemies_spawned[area].append(enemy)
+                    
+                    # broadcast enemy spawn
+                    payload = {
+                        'enemy_id': enemy.id,
+                        'enemy_name': enemy.name,
+                        'position_x': enemy.position_x,
+                        'position_y': enemy.position_y,
+                        'area': area
+                    }
+                    OnCharacterEvent.char_event(params={
+                        'event_type': 'enemy_spawn',
+                        'data': payload
+                    })
 
         self.setEnemyList(enemies_spawned)
         
