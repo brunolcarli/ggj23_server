@@ -887,7 +887,7 @@ class CharacterMapAreaTransfer(graphene.relay.ClientIDMutation):
         if current_area == target_area:
             raise Exception('Cannot transfer to same area')
 
-        if not target_area in areas[target_area]['connections']:
+        if not target_area in areas[current_area]['connections']:
             raise Exception('Cannot move to the requested area frm current area')
 
         character.area_location = target_area
