@@ -1,6 +1,7 @@
 import uuid
 
 from ggj23.settings import GAME_CONFIG
+from server_app.events import OnCharacterEvent
 
 item_list = {
     'mp': {
@@ -497,7 +498,14 @@ class Item:
     def use(self):
         pass        
         # TODO: self.effect.apply()
-        # TODO: broadcast use item
+        # broadcast use item
+        payload = {
+            'item_name': self.name
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'item_use',
+            'data': payload
+        })
         
 def max_currency():
     return (GAME_CONFIG['MAX_GOLD_COINS']-1) * item_list['gold_coin']['value'] + (GAME_CONFIG['MAX_SILVER_COINS']-1) * item_list['silver_coin']['value'] + (GAME_CONFIG['MAX_COPPER_COINS']-1) * item_list['copper_coin']['value']
