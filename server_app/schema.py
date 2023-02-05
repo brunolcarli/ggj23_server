@@ -13,8 +13,8 @@ from server_app.map_areas import areas
 from server_app.character_classes import classes, ChracterClass
 from server_app.engine import target_position_is_valid, use_skill
 from server_app.enemies import enemy_list, enemies_spawned as es
-from server_app.types import DynamicScalar
 from server_app.items import item_list, max_currency
+from server_app.events import OnCharacterEvent
 from ggj23.settings import GAME_CONFIG
 
 
@@ -26,6 +26,7 @@ class Message(  # type: ignore
 ):
     """Message GraphQL type."""
 
+    id = graphene.ID()
     chatroom = graphene.String()
     text = graphene.String()
     sender = graphene.String()
@@ -169,10 +170,6 @@ class ItemBatchOfferType(graphene.ObjectType):
             'silver_coins': (self.price // 100) % 100,
             'gold_coins': self.price // 10000
         }
-
-class CharacterEventType(graphene.ObjectType):
-    event_type = graphene.String()
-    data = DynamicScalar()
     
 class EnemiesSpawnedType(graphene.ObjectType):
     area = graphene.String()
@@ -295,6 +292,7 @@ class SendChatMessage(graphene.Mutation, name="SendChatMessagePayload"):  # type
     class Arguments:
         """Mutation arguments."""
 
+        id = graphene.ID()
         chatroom = graphene.String()
         text = graphene.String()
 
@@ -304,10 +302,10 @@ class SendChatMessage(graphene.Mutation, name="SendChatMessagePayload"):  # type
         sender = kwargs.get('user')
 
         # Store a message.
-        chats[chatroom].append({"chatroom": chatroom, "text": text, "sender": sender})
+        chats[chatroom].append({"id": kwargs['id'], "chatroom": chatroom, "text": text, "sender": sender})
 
         # Notify subscribers.
-        OnNewChatMessage.new_chat_message(chatroom=chatroom, text=text, sender=sender)
+        OnNewChatMessage.new_chat_message(id=kwargs['id'], chatroom=chatroom, text=text, sender=sender)
 
         return SendChatMessage(ok=True)
 
@@ -599,6 +597,7 @@ class CharacterUseItem(graphene.relay.ClientIDMutation):
         
         # use item
         item['count'] -= 1
+        item.use()
         
         if item['count'] <= 0:
             char_items.pop(item_name)
@@ -748,7 +747,24 @@ class CharacterBatchSellOffer(graphene.relay.ClientIDMutation):
         character.save()
         offer.save()
         
-        # TODO: Broadcast offer available
+        # Broadcast offer available
+        payload = {
+            'id': offer.id,
+            'seller_id': character.id,
+            'price': {
+                'copper_coins': price % 100,
+                'silver_coins': (price // 100) % 100,
+                'gold_coins': price // 10000
+            },
+            'items': [{
+                'id': item['name'],
+                'count': item['count']
+            } for item in offer.getItems()]
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'offer_available',
+            'data': payload
+        })
         
         return CharacterBatchSellOffer(offer)
     
@@ -783,11 +799,37 @@ class CharacterBatchBuyOffer(graphene.relay.ClientIDMutation):
                 char_items[item['name']] = item.copy()
         
         character.wallet -= offer.price
-        offer.delete()
+        offer.seller.wallet += offer.price
+
+        offer.seller.save()
         character.setItems(char_items)
         character.save()
         
-        # TODO: Broadcast offer accepted
+        # Broadcast offer accepted
+        payload = {
+            'buyer': {
+                'id': character.id,
+                'wallet': {
+                    'copper_coins': character.wallet % 100,
+                    'silver_coins': (character.wallet // 100) % 100,
+                    'gold_coins': character.wallet // 10000
+                }
+            },
+            'seller': {
+                'id': offer.seller.id,
+                'wallet': {
+                    'copper_coins': offer.seller.wallet % 100,
+                    'silver_coins': (offer.seller.wallet // 100) % 100,
+                    'gold_coins': offer.seller.wallet // 10000
+                }
+            }
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'offer_accepted',
+            'data': payload
+        })
+
+        offer.delete()
         
         return CharacterBatchBuyOffer(character)
     
@@ -822,8 +864,6 @@ class CharacterBatchRevokeOffer(graphene.relay.ClientIDMutation):
         character.setItems(char_items)
         character.save()
         
-        # TODO: Broadcast offer accepted
-        
         return CharacterBatchBuyOffer(character)
 
 class Mutation:
@@ -850,6 +890,7 @@ class Mutation:
 class OnNewChatMessage(channels_graphql_ws.Subscription):
     """Subscription triggers on a new chat message."""
 
+    id = graphene.ID()
     sender = graphene.String()
     chatroom = graphene.String()
     text = graphene.String()
@@ -887,40 +928,23 @@ class OnNewChatMessage(channels_graphql_ws.Subscription):
             return OnNewChatMessage.SKIP
 
         return OnNewChatMessage(
-            chatroom=chatroom, text=new_msg_text, sender=new_msg_sender
+            id=id, chatroom=chatroom, text=new_msg_text, sender=new_msg_sender
         )
 
     @classmethod
-    def new_chat_message(cls, chatroom, text, sender):
+    def new_chat_message(cls, id, chatroom, text, sender):
         """Auxiliary function to send subscription notifications.
         It is generally a good idea to encapsulate broadcast invocation
         inside auxiliary class methods inside the subscription class.
         That allows to consider a structure of the `payload` as an
         implementation details.
         """
+        print(id)
         cls.broadcast(
             group=chatroom,
-            payload={"chatroom": chatroom, "text": text, "sender": sender},
+            payload={"id": id, "chatroom": chatroom, "text": text, "sender": sender},
         )
-
-
-class OnCharacterEvent(channels_graphql_ws.Subscription):
-    character_event = graphene.Field(CharacterEventType)
-
-    def subscribe(self, info, **kwargs):
-        del info
-        return ['character_event']
-
-    def publish(self, info, **kwargs):
-        return OnCharacterEvent(character_event=self)
-
-    @classmethod
-    def char_event(cls, params):
-        cls.broadcast(
-            group='character_event',
-            payload={"event_type": params['event_type'], 'data': params['data']}
-        )
-
+        
 
 class Subscription(graphene.ObjectType):
     """GraphQL subscriptions."""
