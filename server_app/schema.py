@@ -26,6 +26,7 @@ class Message(  # type: ignore
 ):
     """Message GraphQL type."""
 
+    id = graphene.ID()
     chatroom = graphene.String()
     text = graphene.String()
     sender = graphene.String()
@@ -291,6 +292,7 @@ class SendChatMessage(graphene.Mutation, name="SendChatMessagePayload"):  # type
     class Arguments:
         """Mutation arguments."""
 
+        id = graphene.ID()
         chatroom = graphene.String()
         text = graphene.String()
 
@@ -300,10 +302,10 @@ class SendChatMessage(graphene.Mutation, name="SendChatMessagePayload"):  # type
         sender = kwargs.get('user')
 
         # Store a message.
-        chats[chatroom].append({"chatroom": chatroom, "text": text, "sender": sender})
+        chats[chatroom].append({"id": kwargs['id'], "chatroom": chatroom, "text": text, "sender": sender})
 
         # Notify subscribers.
-        OnNewChatMessage.new_chat_message(chatroom=chatroom, text=text, sender=sender)
+        OnNewChatMessage.new_chat_message(id=kwargs['id'], chatroom=chatroom, text=text, sender=sender)
 
         return SendChatMessage(ok=True)
 
@@ -888,6 +890,7 @@ class Mutation:
 class OnNewChatMessage(channels_graphql_ws.Subscription):
     """Subscription triggers on a new chat message."""
 
+    id = graphene.ID()
     sender = graphene.String()
     chatroom = graphene.String()
     text = graphene.String()
@@ -925,20 +928,21 @@ class OnNewChatMessage(channels_graphql_ws.Subscription):
             return OnNewChatMessage.SKIP
 
         return OnNewChatMessage(
-            chatroom=chatroom, text=new_msg_text, sender=new_msg_sender
+            id=id, chatroom=chatroom, text=new_msg_text, sender=new_msg_sender
         )
 
     @classmethod
-    def new_chat_message(cls, chatroom, text, sender):
+    def new_chat_message(cls, id, chatroom, text, sender):
         """Auxiliary function to send subscription notifications.
         It is generally a good idea to encapsulate broadcast invocation
         inside auxiliary class methods inside the subscription class.
         That allows to consider a structure of the `payload` as an
         implementation details.
         """
+        print(id)
         cls.broadcast(
             group=chatroom,
-            payload={"chatroom": chatroom, "text": text, "sender": sender},
+            payload={"id": id, "chatroom": chatroom, "text": text, "sender": sender},
         )
         
 
