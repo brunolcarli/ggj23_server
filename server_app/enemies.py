@@ -267,6 +267,7 @@ class Enemy:
             'data': payload
         })
 
+
 class EnemyList:     
     def __init__(self):
         self.enemies_spawned = {a: [] for a in areas}
@@ -279,24 +280,27 @@ class EnemyList:
         self._r_conn.set('ggj23', es)
         
     def getEnemyList(self):
-        es = json.loads(self._r_conn.get('ggj23').decode('utf-8'))
+        es = self._r_conn.get('ggj23')
+        if not es:
+            return {}
+        
+        es = json.loads(es.decode('utf-8'))
         es = {a: [Serializer.deserialize(c) for c in b] for a, b in es.items()}
         self.enemies_spawned = es
         return self.enemies_spawned
 
     def manage_enemies(self):
-        spawn_chance = .2
+        spawn_chance = .4
         max_enemies_in_area = 20
             
         enemies_spawned = {}
         for area in areas:
-            characters_in_area = Character.objects.filter(is_logged=True, area_location=area)
-            if len(characters_in_area) <= 0:
+            characters_in_area = Character.objects.filter(is_logged=True, area_location=area).count()
+            if not characters_in_area:
                 enemies_spawned[area] = []
                 continue
-            
+
             enemies_spawned[area] = [e for e in self.getEnemyList()[area] if not e.is_ko]
-            
             possible_enemies = enemies_spots[area]
             
             if  (len(possible_enemies) > 0) and \
@@ -318,8 +322,8 @@ class EnemyList:
                         'event_type': 'enemy_spawn',
                         'data': payload
                     })
+                    print('published enemy spawn')
 
-        self.setEnemyList(enemies_spawned)
         
 enemies_spawned = EnemyList()
             

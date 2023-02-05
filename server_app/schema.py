@@ -768,6 +768,7 @@ class CharacterBatchSellOffer(graphene.relay.ClientIDMutation):
         
         return CharacterBatchSellOffer(offer)
     
+
 class CharacterBatchBuyOffer(graphene.relay.ClientIDMutation):
     character = graphene.Field(CharacterType)
 
@@ -866,6 +867,37 @@ class CharacterBatchRevokeOffer(graphene.relay.ClientIDMutation):
         
         return CharacterBatchBuyOffer(character)
 
+
+class CharacterMapAreaTransfer(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        id = graphene.ID(required=True)
+        area_name = graphene.String(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['id'])
+        except Character.DoesNotExist:
+            raise Exception('Character not found')
+
+        current_area = character.area_location
+        target_area = kwargs['area_name']
+
+        if current_area == target_area:
+            raise Exception('Cannot transfer to same area')
+
+        if not target_area in areas[target_area]['connections']:
+            raise Exception('Cannot move to the requested area frm current area')
+
+        character.area_location = target_area
+        character.position_x = 100
+        character.position_y = 100
+        character.save()
+
+        return CharacterMapAreaTransfer(character)
+
+
 class Mutation:
     send_chat_message = SendChatMessage.Field()
     create_character = CreateCharacter.Field()
@@ -880,6 +912,9 @@ class Mutation:
     character_batch_sell_offer = CharacterBatchSellOffer.Field()
     character_batch_buy_offer = CharacterBatchBuyOffer.Field()
     character_batch_revoke_offer = CharacterBatchRevokeOffer.Field()
+    character_map_area_transefr = CharacterMapAreaTransfer.Field()
+
+
 
 
 #################
