@@ -12,7 +12,7 @@ from server_app.skills import skill_list
 from server_app.map_areas import areas
 from server_app.character_classes import classes, ChracterClass
 from server_app.engine import target_position_is_valid, use_skill
-from server_app.enemies import enemy_list
+from server_app.enemies import enemy_list, enemies_spawned as es
 from server_app.types import DynamicScalar
 from server_app.items import item_list, max_currency
 from ggj23.settings import GAME_CONFIG
@@ -139,7 +139,8 @@ class MapAreaType(graphene.ObjectType):
 class EnemyType(graphene.ObjectType):
     lv = graphene.Int()
     name = graphene.String()
-    hp = graphene.Int()
+    max_hp = graphene.Int()
+    current_hp = graphene.Int()
     power = graphene.Int()
     resistance = graphene.String()
     agility = graphene.Int()
@@ -172,6 +173,10 @@ class ItemBatchOfferType(graphene.ObjectType):
 class CharacterEventType(graphene.ObjectType):
     event_type = graphene.String()
     data = DynamicScalar()
+    
+class EnemiesSpawnedType(graphene.ObjectType):
+    area = graphene.String()
+    enemies = graphene.List(EnemyType)
 
 ##########################
 # Query
@@ -264,6 +269,19 @@ class Query:
     )
     def resolve_offer(self, info, **kwargs):
         return ItemOffer.objects.get(id=kwargs['id'])
+    
+    # Enemies spawned
+    enemies_spawned = graphene.List(EnemiesSpawnedType)
+    def resolve_enemies_spawned(self, info, **kwargs):
+        return [{'area':a, 'enemies':b} for a, b in es.getEnemyList().items()]
+    
+    # Enemies spawned in specific area
+    enemies_in_area = graphene.Field(
+        EnemiesSpawnedType,
+        area=graphene.String(required=True)
+    )
+    def resolve_enemies_in_area(self, info, **kwargs):
+        return es.getEnemyList()[kwargs['area']]
 
 
 ##########################

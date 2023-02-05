@@ -17,7 +17,7 @@ import sys
 import uuid
 
 
-VERSION = '0.0.7'
+VERSION = '0.0.8'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -149,6 +149,9 @@ ASGI_APPLICATION = "ggj23.asgi.application"
 GRAPHENE = {
     'SCHEMA': 'ggj23.schema.schema',
 }
+
+REDIS_HOST = os.environ.get('REDIS_HOST')
+REDIS_PORT = os.environ.get('REDIS_PORT')
 
 
 # GAME CONFIGS
