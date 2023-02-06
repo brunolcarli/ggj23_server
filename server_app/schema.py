@@ -1,4 +1,5 @@
 import json
+from base64 import b64decode
 from collections import defaultdict
 import channels_graphql_ws
 from ast import literal_eval
@@ -899,6 +900,25 @@ class CharacterMapAreaTransfer(graphene.relay.ClientIDMutation):
         return CharacterMapAreaTransfer(character)
 
 
+
+class NotifyEnemyEvent(graphene.relay.ClientIDMutation):
+    result = graphene.Boolean()
+
+    class Input:
+        event_type = graphene.String(required=True)
+        data = graphene.String(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        data = json.loads(b64decode(kwargs['data'].encode('utf-8').decode('utf-8')))
+        event_type = kwargs['event_type']
+
+        OnCharacterEvent.char_event(params={
+            'event_type': event_type,
+            'data': data
+        })
+        return NotifyEnemyEvent(True)
+
+        
 class Mutation:
     send_chat_message = SendChatMessage.Field()
     create_character = CreateCharacter.Field()
@@ -914,7 +934,7 @@ class Mutation:
     character_batch_buy_offer = CharacterBatchBuyOffer.Field()
     character_batch_revoke_offer = CharacterBatchRevokeOffer.Field()
     character_map_area_transefr = CharacterMapAreaTransfer.Field()
-
+    notify_enemy_event = NotifyEnemyEvent.Field()
 
 
 

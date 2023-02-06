@@ -1,5 +1,8 @@
+from base64 import b64encode
 import uuid
 import json
+import requests
+from django.conf import settings
 from random import choice, random
 from server_app.skills import skill_list
 from server_app.map_areas import areas
@@ -318,12 +321,21 @@ class EnemyList:
                         'position_y': enemy.position_y,
                         'area': area
                     }
-                    OnCharacterEvent.char_event(params={
-                        'event_type': 'enemy_spawn',
-                        'data': payload
-                    })
-                    print('published enemy spawn')
-
+                    query = f'''
+                        mutation{{
+                            notifyEnemyEvent(input:{{
+                                eventType: "enemy_spawn"
+                                data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
+                            }}){{
+                            result
+                            }}
+                        }}
+                    '''
+                    requests.post(
+                        settings.GQL_URL,
+                        json={'query': query}
+                    )
+                    print(f'published enemy spawn: {payload}')
         
 enemies_spawned = EnemyList()
             
