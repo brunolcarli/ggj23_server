@@ -945,6 +945,7 @@ class OnNewChatMessage(channels_graphql_ws.Subscription):
         """Called to prepare the subscription notification message."""
 
         # The `self` contains payload delivered from the `broadcast()`.
+        new_msg_id = self["id"]
         new_msg_chatroom = self["chatroom"]
         new_msg_text = self["text"]
         new_msg_sender = self["sender"]
@@ -963,7 +964,7 @@ class OnNewChatMessage(channels_graphql_ws.Subscription):
             return OnNewChatMessage.SKIP
 
         return OnNewChatMessage(
-            id=id, chatroom=chatroom, text=new_msg_text, sender=new_msg_sender
+            id=new_msg_id, chatroom=chatroom, text=new_msg_text, sender=new_msg_sender
         )
 
     @classmethod
