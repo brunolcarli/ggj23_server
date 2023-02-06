@@ -18,6 +18,7 @@ class OnCharacterEvent(channels_graphql_ws.Subscription):
 
     @classmethod
     def char_event(cls, params):
+        print(f'publishing {params}')
         cls.broadcast(
             group='character_event',
             payload={"event_type": params['event_type'], 'data': params['data']}
