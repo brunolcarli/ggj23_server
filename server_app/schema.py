@@ -455,6 +455,7 @@ class CharacterLogIn(graphene.relay.ClientIDMutation):
             'x': char.position_x,
             'y': char.position_y,
             'map_area': char.area_location,
+            'classType': char.class_type
         }
         OnCharacterEvent.char_event(params={
             'event_type': 'character_login',
