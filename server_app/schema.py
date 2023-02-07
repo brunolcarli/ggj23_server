@@ -437,7 +437,7 @@ class UpdatePosition(graphene.relay.ClientIDMutation):
 class CharacterLogIn(graphene.relay.ClientIDMutation):
     """Enters the game with a selected character"""
     
-    log_status = graphene.Boolean()
+    character = graphene.Field(CharacterType)
 
     class Input:
         id = graphene.ID(required=True)
@@ -478,7 +478,7 @@ class CharacterLogIn(graphene.relay.ClientIDMutation):
             'data': payload
         })
 
-        return CharacterLogIn(True)
+        return CharacterLogIn(char)
 
 
 class CharacterLogOut(graphene.relay.ClientIDMutation):
