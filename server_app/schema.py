@@ -468,7 +468,10 @@ class CharacterLogIn(graphene.relay.ClientIDMutation):
             'x': char.position_x,
             'y': char.position_y,
             'map_area': char.area_location,
-            'classType': char.class_type
+            'classType': char.class_type,
+            'max_hp': char.max_hp,
+            'current_hp': char.max_hp,
+            'lv': char.lv
         }
         OnCharacterEvent.char_event(params={
             'event_type': 'character_login',
@@ -925,6 +928,24 @@ class CharacterMapAreaTransfer(graphene.relay.ClientIDMutation):
         character.position_x = 100
         character.position_y = 100
         character.save()
+
+        # Broadcast character area transfer
+        payload = {
+            'id': character.id,
+            'name': character.name,
+            'x': character.position_x,
+            'y': character.position_y,
+            'from_map': current_area,
+            'to_area': character.area_location,
+            'classType': character.class_type,
+            'max_hp': character.max_hp,
+            'current_hp': character.max_hp,
+            'lv': character.lv
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'area_transfer',
+            'data': payload
+        })
 
         return CharacterMapAreaTransfer(character)
 

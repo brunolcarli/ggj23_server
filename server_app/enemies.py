@@ -277,7 +277,10 @@ class EnemySpawnController:
                 'enemy_name': enemy.name,
                 'position_x': enemy.position_x,
                 'position_y': enemy.position_y,
-                'area': area
+                'area': area,
+                'lv': enemy.lv,
+                'max_hp': enemy.max_hp,
+                'current_hp': enemy.current_hp,
             }
             query = f'''
                 mutation{{
