@@ -40,7 +40,8 @@ class Character(models.Model):
     
     def setItems(self, items):
         self.items = json.dumps(items).encode('utf-8')
-        
+
+
 class ItemOffer(models.Model):
     """
     Defines item offer to be bought by other players
@@ -54,3 +55,26 @@ class ItemOffer(models.Model):
     
     def setItems(self, items):
         self.items = json.dumps(items).encode('utf-8')
+
+
+class SpawnedEnemy(models.Model):
+    lv = models.IntegerField(default=1)
+    name = models.CharField(max_length=50, null=False, blank=False)
+    exp = models.IntegerField(default=0)
+    max_hp = models.IntegerField(default=200)
+    max_sp = models.IntegerField(default=99999)
+    current_hp = models.IntegerField(default=200)
+    current_sp = models.IntegerField(default=99999)
+    power = models.IntegerField(default=10)
+    resistance = models.IntegerField(default=10)
+    agility = models.IntegerField(default=1)
+    is_ko = models.BooleanField(default=False)
+    position_x = models.IntegerField(default=48, null=False)
+    position_y = models.IntegerField(default=48, null=False)
+    area_location = models.CharField(max_length=25, null=False, blank=False)
+    aim = models.IntegerField(default=100)
+    skills = models.BinaryField(null=False)
+    class_type = models.CharField(max_length=25, null=False, blank=False, default='enemy')
+    effects = models.BinaryField(null=True)
+    drops = models.BinaryField(null=True)
+
