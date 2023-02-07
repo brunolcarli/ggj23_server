@@ -11,8 +11,6 @@ def use_skill(skill_user, skill_name, target):
     """
     Targeted enemy based skill usage mechanic. 
     """
-
-
     if skill_user.is_ko:
         raise Exception('Cannot perform this action while knocked out')
 
@@ -38,7 +36,8 @@ def use_skill(skill_user, skill_name, target):
         'skill_user_name': skill_user.name,
         'skill_name': skill["name"],
         'target_id': target.id,
-        'target_name': target.name
+        'target_name': target.name,
+        'target_class_type': target.class_type
     }
     OnCharacterEvent.char_event(params={
         'event_type': 'character_use_skill',
@@ -56,6 +55,9 @@ def use_skill(skill_user, skill_name, target):
         'target_hp': target.current_hp,
         'damage': damage,
         'skill_name': skill['name'],
+        'skill_user_id': skill_user.id,
+        'skill_user_sp': skill_user.current_sp,
+        'area': skill_user.area_location
     }
     OnCharacterEvent.char_event(params={
         'event_type': 'target_damaged',
@@ -71,7 +73,9 @@ def use_skill(skill_user, skill_name, target):
         payload = {
             'target_id': target.id,
             'target_name': target.name,
-            'target_is_ko': target.is_ko
+            'target_is_ko': target.is_ko,
+            'target_hp': target.current_hp,
+            'area': target.area_location
         }
         OnCharacterEvent.char_event(params={
             'event_type': 'target_knockout',
@@ -88,19 +92,22 @@ def use_skill(skill_user, skill_name, target):
             # broadcast exp gain
             payload = {
                 'skill_user_id': skill_user.id,
-                'exp': target.exp
+                'exp': target.exp,
+                'lv': skill_user.lv,
+                'area': skill_user.area_location
             }
             OnCharacterEvent.char_event(params={
                 'event_type': 'character_exp_gain',
                 'data': payload
             })
+            target.delete()
             
     else:
         target.save()
+    skill_user.save()
     # TODO apply skill effect
 
     return True
-
 
 
 def get_damage(skill_user, skill_power, target_resistance):
@@ -129,6 +136,7 @@ def reachable_target(skill_user, target, skill_range):
     y_diff = abs(cy - ty)
     
     return x_diff <= skill_range and y_diff <= skill_range
+
 
 def next_lv(level):
     """
