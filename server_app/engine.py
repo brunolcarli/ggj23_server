@@ -46,6 +46,7 @@ def use_skill(skill_user, skill_name, target):
 
     damage = get_damage(skill_user, skill['power'], target.resistance)
     target.current_hp -= damage
+    target.save()
     
     # broadcast damage
     print(f'{target.name} has lost {damage} HP due to {skill["name"]}')
@@ -116,7 +117,7 @@ def get_damage(skill_user, skill_power, target_resistance):
     if damage < 0:
         damage = 0
 
-    return damage
+    return int(damage)
 
 
 def target_position_is_valid(target_position, map_area):
