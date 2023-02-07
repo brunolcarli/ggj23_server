@@ -8,12 +8,12 @@ import graphene
 from graphql import GraphQLObjectType
 from django.conf import settings
 from django.contrib.auth.models import User
-from server_app.models import Character, ItemOffer
+from server_app.models import Character, ItemOffer, SpawnedEnemy
 from server_app.skills import skill_list
 from server_app.map_areas import areas
 from server_app.character_classes import classes, ChracterClass
 from server_app.engine import target_position_is_valid, use_skill
-from server_app.enemies import enemy_list, enemies_spawned as es
+from server_app.enemies import enemy_list
 from server_app.items import item_list, max_currency
 from server_app.events import OnCharacterEvent
 from ggj23.settings import GAME_CONFIG
@@ -142,20 +142,27 @@ class EnemyType(graphene.ObjectType):
     lv = graphene.Int()
     name = graphene.String()
     max_hp = graphene.Int()
-    current_hp = graphene.Int()
     power = graphene.Int()
-    resistance = graphene.String()
+    resistance = graphene.Int()
     agility = graphene.Int()
     aim = graphene.Int()
     class_type = graphene.String()
     exp = graphene.Int()
     drops = graphene.List(ItemType)
     skills = graphene.List(SkillType)
-    
+
+    def resolve_drops(self, info, **kwargs):
+        return json.loads(self.drops.decode('utf-8'))
+
+    def resolve_skills(self, info, **kwargs):
+        return json.loads(self.skills.decode('utf-8'))
+
+
 class ItemOfferInputType(graphene.InputObjectType):
     name = graphene.String()
     count = graphene.Int()
-       
+
+
 class ItemBatchOfferType(graphene.ObjectType):
     id = graphene.ID()
     price = graphene.Field(WalletType)
@@ -171,10 +178,19 @@ class ItemBatchOfferType(graphene.ObjectType):
             'silver_coins': (self.price // 100) % 100,
             'gold_coins': self.price // 10000
         }
-    
-class EnemiesSpawnedType(graphene.ObjectType):
-    area = graphene.String()
-    enemies = graphene.List(EnemyType)
+
+
+class EnemiesSpawnedType(EnemyType):
+    area_location = graphene.String()
+    current_hp = graphene.Int()
+    effects = graphene.List(EffectType)
+    is_ko = graphene.Boolean()
+    position_x = graphene.Int()
+    position_y = graphene.Int()
+
+    def resolve_effects(self, info, **kwargs):
+        return json.loads(self.effects.decode('utf-8'))
+
 
 ##########################
 # Query
@@ -267,19 +283,14 @@ class Query:
     )
     def resolve_offer(self, info, **kwargs):
         return ItemOffer.objects.get(id=kwargs['id'])
-    
+
     # Enemies spawned
-    enemies_spawned = graphene.List(EnemiesSpawnedType)
-    def resolve_enemies_spawned(self, info, **kwargs):
-        return [{'area':a, 'enemies':b} for a, b in es.getEnemyList().items()]
-    
-    # Enemies spawned in specific area
-    enemies_in_area = graphene.Field(
+    enemies_spawned = graphene.List(
         EnemiesSpawnedType,
-        area=graphene.String(required=True)
+        area_location=graphene.String()
     )
-    def resolve_enemies_in_area(self, info, **kwargs):
-        return es.getEnemyList()[kwargs['area']]
+    def resolve_enemies_spawned(self, info, **kwargs):
+        return SpawnedEnemy.objects.filter(**kwargs)
 
 
 ##########################
@@ -525,7 +536,8 @@ class CharacterUseSkill(graphene.relay.ClientIDMutation):
             raise Exception('Invalid character')
 
         return CharacterUseSkill(use_skill(skill_user, kwargs['skill_name'], target))
-    
+
+   
 class CharacterUpdateItem(graphene.relay.ClientIDMutation):
     character = graphene.Field(CharacterType)
     
@@ -570,6 +582,7 @@ class CharacterUpdateItem(graphene.relay.ClientIDMutation):
 
         return CharacterUpdateItem(character)
 
+
 class CharacterUseItem(graphene.relay.ClientIDMutation):
     character = graphene.Field(CharacterType)
 
@@ -608,7 +621,8 @@ class CharacterUseItem(graphene.relay.ClientIDMutation):
         character.save()
 
         return CharacterUseItem(character)
-    
+
+
 class CharacterSellItem(graphene.relay.ClientIDMutation):
     character = graphene.Field(CharacterType)
     
@@ -651,7 +665,8 @@ class CharacterSellItem(graphene.relay.ClientIDMutation):
         character.save()
 
         return CharacterSellItem(character)
-    
+
+
 class CharacterBuyItem(graphene.relay.ClientIDMutation):
     character = graphene.Field(CharacterType)
     
@@ -694,7 +709,8 @@ class CharacterBuyItem(graphene.relay.ClientIDMutation):
         character.save()
 
         return CharacterBuyItem(character)
-    
+
+
 class CharacterBatchSellOffer(graphene.relay.ClientIDMutation):
     batch_offer = graphene.Field(ItemBatchOfferType)
 
@@ -835,7 +851,8 @@ class CharacterBatchBuyOffer(graphene.relay.ClientIDMutation):
         offer.delete()
         
         return CharacterBatchBuyOffer(character)
-    
+
+
 class CharacterBatchRevokeOffer(graphene.relay.ClientIDMutation):
     character = graphene.Field(CharacterType)
 
@@ -900,7 +917,6 @@ class CharacterMapAreaTransfer(graphene.relay.ClientIDMutation):
         return CharacterMapAreaTransfer(character)
 
 
-
 class NotifyEnemyEvent(graphene.relay.ClientIDMutation):
     result = graphene.Boolean()
 
@@ -933,7 +949,7 @@ class Mutation:
     character_batch_sell_offer = CharacterBatchSellOffer.Field()
     character_batch_buy_offer = CharacterBatchBuyOffer.Field()
     character_batch_revoke_offer = CharacterBatchRevokeOffer.Field()
-    character_map_area_transefr = CharacterMapAreaTransfer.Field()
+    character_map_area_transfer = CharacterMapAreaTransfer.Field()
     notify_enemy_event = NotifyEnemyEvent.Field()
 
 
