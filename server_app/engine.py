@@ -117,7 +117,7 @@ def get_damage(skill_user, skill_power, target_resistance):
     if damage < 0:
         damage = 0
 
-    return damage
+    return int(damage)
 
 
 def target_position_is_valid(target_position, map_area):
