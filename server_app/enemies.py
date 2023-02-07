@@ -282,7 +282,7 @@ class EnemySpawnController:
     def _get_possible_pixel(self, area_max):
         return choice([48*i for i in range(1, (area_max//48)+1)])
 
-    def run(self):
+    def spawn(self):
         """
         Main spawn controller runner.
         Checks if is possible to spawn a new monster in an area.
@@ -353,8 +353,56 @@ class EnemySpawnController:
                 settings.GQL_URL,
                 json={'query': query}
             )
-            print(f'published enemy spawn: {payload}')
 
+    def move(self):
+        """
+        Move an enemy randomly
+        """
+        directions = ['up', 'down', 'left', 'right', 'none']
+        for mob in SpawnedEnemy.objects.all():
+            move_to = choice(directions)
+
+            current_x, current_y = mob.position_x, mob.position_y
+            if move_to == 'up':
+                mob.position_y -= 48
+            elif move_to == 'down':
+                mob.position_y += 48
+            elif move_to == 'right':
+                mob.position_x += 48
+            elif move_to == 'left':
+                mob.position_x -= 48
+            else:
+                continue
+
+            if not target_position_is_valid([mob.position_x, mob.position_y], mob.area_location):
+                mob.position_x = current_x
+                mob.position_y = current_y
+                mob.save()
+                continue
+            mob.save()
+
+            # Broadcast enemy movement
+            payload = {
+                'enemy_id': mob.id,
+                'enemy_name': mob.name,
+                'position_x': mob.position_x,
+                'position_y': mob.position_y,
+                'area': mob.area_location
+            }
+            query = f'''
+                mutation{{
+                    notifyEnemyEvent(input:{{
+                        eventType: "enemy_movement"
+                        data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
+                    }}){{
+                    result
+                    }}
+                }}
+            '''
+            requests.post(
+                settings.GQL_URL,
+                json={'query': query}
+            )
 
 
 class EnemyList:     
