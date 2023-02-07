@@ -528,13 +528,24 @@ class CharacterUseSkill(graphene.relay.ClientIDMutation):
         skill_user_id = graphene.ID(required=True)
         target_id = graphene.ID(required=True)
         skill_name = graphene.String(required=True)
+        class_type = graphene.String(required=True)
 
     def mutate_and_get_payload(self, info, **kwargs):
-        try:
-            skill_user = Character.objects.get(id=kwargs['skill_user_id'])
-            target = Character.objects.get(id=kwargs['target_id'])
-        except Character.DoesNotExist:
-            raise Exception('Invalid character')
+        if kwargs['class_type'] == 'enemy':
+            try:
+                skill_user = Character.objects.get(id=kwargs['skill_user_id'])
+                target = SpawnedEnemy.objects.get(id=kwargs['target_id'])
+            except (Character.DoesNotExist, SpawnedEnemy.DoesNotExist):
+                raise Exception('Invalid character')
+
+        elif kwargs['class_type'] == 'player':
+            try:
+                skill_user = Character.objects.get(id=kwargs['skill_user_id'])
+                target = Character.objects.get(id=kwargs['target_id'])
+            except Character.DoesNotExist:
+                raise Exception('Invalid character')
+        else:
+            raise Exception('Invalid class type')
 
         return CharacterUseSkill(use_skill(skill_user, kwargs['skill_name'], target))
 
