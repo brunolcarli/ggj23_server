@@ -280,7 +280,7 @@ class EnemySpawnController:
         self.max_enemies = settings.GAME_CONFIG['MAX_ENEMIES_PER_AREA']
 
     def _get_possible_pixel(self, area_max):
-        return choice([48*i for i in range(1, (area_max//48)+1)])
+        return choice([28*i for i in range(1, (area_max//28)+1)])
 
     def spawn(self):
         """
@@ -364,13 +364,13 @@ class EnemySpawnController:
 
             current_x, current_y = mob.position_x, mob.position_y
             if move_to == 'up':
-                mob.position_y -= 48
+                mob.position_y -= 28
             elif move_to == 'down':
-                mob.position_y += 48
+                mob.position_y += 28
             elif move_to == 'right':
-                mob.position_x += 48
+                mob.position_x += 28
             elif move_to == 'left':
-                mob.position_x -= 48
+                mob.position_x -= 28
             else:
                 continue
 
