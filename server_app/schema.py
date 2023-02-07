@@ -181,6 +181,7 @@ class ItemBatchOfferType(graphene.ObjectType):
 
 
 class EnemiesSpawnedType(EnemyType):
+    id = graphene.ID()
     area_location = graphene.String()
     current_hp = graphene.Int()
     effects = graphene.List(EffectType)
