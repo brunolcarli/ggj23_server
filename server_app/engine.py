@@ -7,7 +7,7 @@ from server_app.models import Character
 from server_app.events import OnCharacterEvent
 
 
-def use_skill(skill_user, skill_name, target):
+def use_skill(skill_user, skill_name, target, class_type):
     """
     Targeted enemy based skill usage mechanic. 
     """
@@ -37,7 +37,7 @@ def use_skill(skill_user, skill_name, target):
         'skill_name': skill["name"],
         'target_id': target.id,
         'target_name': target.name,
-        'target_class_type': target.class_type
+        'target_class_type': class_type
     }
     OnCharacterEvent.char_event(params={
         'event_type': 'character_use_skill',
@@ -58,7 +58,8 @@ def use_skill(skill_user, skill_name, target):
         'skill_name': skill['name'],
         'skill_user_id': skill_user.id,
         'skill_user_sp': skill_user.current_sp,
-        'area': skill_user.area_location
+        'area': skill_user.area_location,
+        'classType': class_type
     }
     OnCharacterEvent.char_event(params={
         'event_type': 'target_damaged',
@@ -76,7 +77,8 @@ def use_skill(skill_user, skill_name, target):
             'target_name': target.name,
             'target_is_ko': target.is_ko,
             'target_hp': target.current_hp,
-            'area': target.area_location
+            'area': target.area_location,
+            'classType': class_type
         }
         OnCharacterEvent.char_event(params={
             'event_type': 'target_knockout',
@@ -95,7 +97,8 @@ def use_skill(skill_user, skill_name, target):
                 'skill_user_id': skill_user.id,
                 'exp': target.exp,
                 'lv': skill_user.lv,
-                'area': skill_user.area_location
+                'area': skill_user.area_location,
+                'classType': class_type
             }
             OnCharacterEvent.char_event(params={
                 'event_type': 'character_exp_gain',

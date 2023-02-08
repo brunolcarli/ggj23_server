@@ -550,7 +550,7 @@ class CharacterUseSkill(graphene.relay.ClientIDMutation):
         else:
             raise Exception('Invalid class type')
 
-        return CharacterUseSkill(use_skill(skill_user, kwargs['skill_name'], target))
+        return CharacterUseSkill(use_skill(skill_user, kwargs['skill_name'], target, class_type))
 
    
 class CharacterUpdateItem(graphene.relay.ClientIDMutation):
