@@ -1009,7 +1009,7 @@ class Mutation:
     character_batch_revoke_offer = CharacterBatchRevokeOffer.Field()
     character_map_area_transfer = CharacterMapAreaTransfer.Field()
     notify_enemy_event = NotifyEnemyEvent.Field()
-
+    character_respawn = CharacterRespawn.Field()
 
 
 #################
