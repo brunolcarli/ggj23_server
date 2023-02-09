@@ -1,3 +1,5 @@
+import requests
+from base64 import b64encode
 import json
 from math import ceil
 from random import randint
@@ -161,19 +163,37 @@ def lv_up(character):
 
         character.max_hp += randint(10, 50)
         character.max_sp += randint(5, 25)
+        character.current_hp = character.max_hp
+        character.current_sp = character.max_sp
         character.power += randint(0, 2)
         character.resistance += randint(0, 2)
         
         # broadcast lv up
         print(f'{character.name} has leveled up to lv: {character.lv}')
         payload = {
-            'character_id': character.id,
-            'lv': character.lv
+            'id': character.id,
+            'lv': character.lv,
+            'area': character.area_location,
+            'max_hp': character.max_hp,
+            'current_hp': character.max_hp,
+            'max_sp': character.max_sp,
+            'current_sp': character.max_sp,
+            'classType': character.class_type
         }
-        OnCharacterEvent.char_event(params={
-            'event_type': 'character_lv_up',
-            'data': payload
-        })
+        query = f'''
+                mutation{{
+                    notifyEnemyEvent(input:{{
+                        eventType: "character_lv_up"
+                        data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
+                    }}){{
+                    result
+                    }}
+                }}
+            '''
+        requests.post(
+            settings.GQL_URL,
+            json={'query': query}
+        )
 
     character.save()
     return character
