@@ -968,7 +968,7 @@ class NotifyEnemyEvent(graphene.relay.ClientIDMutation):
         return NotifyEnemyEvent(True)
 
 
-class CharacterRespawn(graphene.ObjectType):
+class CharacterRespawn(graphene.relay.ClientIDMutation):
     character = graphene.Field(CharacterType)
 
     class Input:
