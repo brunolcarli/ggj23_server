@@ -967,7 +967,32 @@ class NotifyEnemyEvent(graphene.relay.ClientIDMutation):
         })
         return NotifyEnemyEvent(True)
 
-        
+
+class CharacterRespawn(graphene.ObjectType):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        id = graphene.ID(required=True)
+        area_location = graphene.String(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['id'])
+        except Character.DoesNotExist:
+            raise Exception('Invalid character')
+
+        if kwargs['area_location'] not in areas:
+            raise Exception('Invalid area')
+
+        character.is_ko = False
+        character.current_hp = character.max_hp
+        character.current_sp = character.max_sp
+        character.area_location = kwargs['area_location']
+        character.save()
+
+        return CharacterRespawn(character)
+
+
 class Mutation:
     send_chat_message = SendChatMessage.Field()
     create_character = CreateCharacter.Field()
