@@ -984,11 +984,32 @@ class CharacterRespawn(graphene.ObjectType):
         if kwargs['area_location'] not in areas:
             raise Exception('Invalid area')
 
+        current_area = character.area_location
+
         character.is_ko = False
         character.current_hp = character.max_hp
         character.current_sp = character.max_sp
         character.area_location = kwargs['area_location']
         character.save()
+
+        # Broadcast the area transfer when respawn to re-render character sprite
+        # TODO wrap broadcast payloads and broadcasts in a objet to avoid redundance
+        payload = {
+            'id': character.id,
+            'name': character.name,
+            'x': character.position_x,
+            'y': character.position_y,
+            'from_map': current_area,
+            'to_area': character.area_location,
+            'classType': character.class_type,
+            'max_hp': character.max_hp,
+            'current_hp': character.max_hp,
+            'lv': character.lv
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'character_login',
+            'data': payload
+        })
 
         return CharacterRespawn(character)
 
