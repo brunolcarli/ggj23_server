@@ -27,20 +27,20 @@ areas = {
     },
     'ancient_forest_area1': {
         'name': 'acient_forest_area1',
-        'size_x': 760,
-        'size_y': 760,
+        'size_x': 626,
+        'size_y': 726,
         'connections': ['open_fields', 'ancient_forest_village']
     },
     'ancient_forest_area2': {
         'name': 'acient_forest_area2',
-        'size_x': 760,
-        'size_y': 760,
+        'size_x': 674,
+        'size_y': 1006,
         'connections': ['ancient_forest_village', 'ancient_forest_area3', 'ancient_forest_elder_cave']
     },
     'ancient_forest_area3': {
         'name': 'acient_forest_area3',
-        'size_x': 760,
-        'size_y': 760,
+        'size_x': 672,
+        'size_y': 960,
         'connections': ['ancient_forest_village', 'ancient_forest_area2', 'ancient_forest_elder_cave']
     },
     'ancient_forest_elder_cave': {
@@ -51,8 +51,8 @@ areas = {
     },
     'ancient_forest_village': {
         'name': 'acient_forest_village',
-        'size_x': 760,
-        'size_y': 760,
+        'size_x': 656,
+        'size_y': 704,
         'connections': ['ancient_forest_area1', 'ancient_forest_area3', 'ancient_forest_area2']
     },
     'vulcanic_zone_area1': {
