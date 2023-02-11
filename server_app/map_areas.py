@@ -176,13 +176,13 @@ areas = {
         'name': 'yggdrasil',
         'size_x': 760,
         'size_y': 760,
-        'connections': ['citadel']
+        'connections': ['citadel_north_area']
     },
     'combat_zone': {
         'name': 'combat_zone',
         'size_x': 760,
         'size_y': 760,
-        'connections': ['citadel']
+        'connections': ['citadel_north_area']
     },
     'ancient_forest_area1': {
         'name': 'acient_forest_area1',
