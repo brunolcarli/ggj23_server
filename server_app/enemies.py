@@ -237,7 +237,7 @@ class EnemySpawnController:
         self.max_enemies = settings.GAME_CONFIG['MAX_ENEMIES_PER_AREA']
 
     def _get_possible_pixel(self, area_max):
-        return choice([28*i for i in range(1, (area_max//28)+1)])
+        return choice([28*i for i in range(3, (area_max//48)+1)])
 
     def spawn(self):
         """
@@ -318,7 +318,7 @@ class EnemySpawnController:
         """
         Move an enemy randomly
         """
-        directions = ['up', 'down', 'left', 'right', 'none']
+        directions = ['up', 'down', 'left', 'right']
         for mob in SpawnedEnemy.objects.all():
             move_to = choice(directions)
 
