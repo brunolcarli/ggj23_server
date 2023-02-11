@@ -64,6 +64,7 @@ class SkillType(graphene.ObjectType):
     effect = graphene.Field(EffectType)
     description = graphene.String()
     classes = graphene.List(graphene.String)
+    ep_cost = graphene.Int()
 
 
 class EquipmentType(graphene.ObjectType):
