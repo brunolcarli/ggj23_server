@@ -310,36 +310,36 @@ areas = {
 area_transfer_coord_map = {
     'citadel_central_area': {
         'citadel_north_area': (300, 900),
-        'citadel_south_area': (300, 16),
-        'citadel_east_area': (2, 475),
+        'citadel_south_area': (300, 48),
+        'citadel_east_area': (48, 475),
         'citadel_west_area': (720, 475)
     },
     'citadel_north_area': {
         'yggdrasil': (100, 100),
         'combat_zone': (100, 100),
         'open_fields_area8': (245, 890),
-        'citadel_central_area': (380, 16)
+        'citadel_central_area': (380, 48)
     },
     'citadel_south_area': {
         'citadel_central_area': (380, 900),
-        'open_fields_area1': (300, 16)
+        'open_fields_area1': (300, 48)
     },
     'citadel_east_area': {
         'citadel_central_area': (720, 460),
-        'open_fields_area5': (2, 500)
+        'open_fields_area5': (48, 500)
     },
     'citadel_west_area': {
-        'citadel_central_area': (2, 470),
+        'citadel_central_area': (48, 470),
         'open_fields_area11': (565, 400)
     },
     'open_fields_area1': {
         'citadel_south_area': (300, 900),
-        'open_fields_area2': (2, 450),
+        'open_fields_area2': (48, 450),
         'open_fields_area14': (580, 400)
     },
     'open_fields_area2': {
         'open_fields_area1': (580, 400),
-        'open_fields_area3': (2, 458)
+        'open_fields_area3': (48, 458)
     },
     'open_fields_area3': {
         'open_fields_area2': (590, 450),
@@ -347,50 +347,50 @@ area_transfer_coord_map = {
     },
     'open_fields_area4': {
         'open_fields_area5': (279, 900),
-        'open_fields_area3': (314, 10)
+        'open_fields_area3': (314, 48)
     },
     'open_fields_area5': {
         'open_fields_area6': (273, 890),
-        'open_fields_area4': (273, 10),
+        'open_fields_area4': (273, 48),
         'citadel_east_area': (730, 470)
     },
     'open_fields_area6': {
         'open_fields_area7': (590, 450),
-        'open_fields_area5': (279, 10)
+        'open_fields_area5': (279, 48)
     },
     'open_fields_area7': {
         'open_fields_area8': (540, 444),
-        'open_fields_area6': (2, 450)
+        'open_fields_area6': (48, 450)
     },
     'open_fields_area8': {
-        'open_fields_area7': (2, 450),
+        'open_fields_area7': (48, 450),
         'open_fields_area9': (569, 445),
-        'citadel_north_area':(300, 16)
+        'citadel_north_area':(300, 48)
     },
     'open_fields_area9': {
-        'open_fields_area8': (2, 444),
+        'open_fields_area8': (48, 444),
         'open_fields_area10': (590, 450)
     },
     'open_fields_area10': {
-        'open_fields_area9': (2, 445),
-        'open_fields_area11': (300, 10)
+        'open_fields_area9': (48, 445),
+        'open_fields_area11': (300, 48)
     },
     'open_fields_area11': {
-        'open_fields_area12': (300, 10),
+        'open_fields_area12': (300, 48),
         'open_fields_area10': (305, 900),
-        'citadel_west_area': (2, 470)
+        'citadel_west_area': (48, 470)
     },
     'open_fields_area12': {
-        'open_fields_area13': (300, 16),
+        'open_fields_area13': (300, 48),
         'open_fields_area11': (300, 900)
     },
     'open_fields_area13': {
-        'open_fields_area14': (2, 400),
+        'open_fields_area14': (48, 400),
         'open_fields_area12': (300, 900),
         'ancient_forest_area1': (590, 335)
     },
     'open_fields_area14': {
-        'open_fields_area1': (2, 400),
+        'open_fields_area1': (48, 400),
         'open_fields_area13': (300, 900)
     },
     'yggdrasil': {
@@ -400,16 +400,16 @@ area_transfer_coord_map = {
         'citadel_north_area': (100, 100)
     },
     'ancient_forest_area1': {
-        'open_fields_area13': (2, 455),
+        'open_fields_area13': (48, 455),
         'ancient_forest_village': (620, 401)
     },
     'ancient_forest_area2': {
-        'ancient_forest_village': (2, 165),
-        'ancient_forest_area3': (234, 16),
+        'ancient_forest_village': (48, 165),
+        'ancient_forest_area3': (234, 48),
         'ancient_forest_elder_cave': (100, 100)
     },
     'ancient_forest_area3': {
-        'ancient_forest_village': (2, 600),
+        'ancient_forest_village': (48, 600),
         'ancient_forest_area2': (244, 980),
         'ancient_forest_elder_cave': (100, 100)
     },
