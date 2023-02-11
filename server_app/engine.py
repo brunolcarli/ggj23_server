@@ -167,6 +167,7 @@ def lv_up(character):
         character.current_sp = character.max_sp
         character.power += randint(0, 2)
         character.resistance += randint(0, 2)
+        character.ep += 2
 
         # broadcast lv up
         payload = {
