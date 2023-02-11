@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from server_app.models import Character, ItemOffer, SpawnedEnemy
 from server_app.skills import skill_list
-from server_app.map_areas import areas
+from server_app.map_areas import areas, area_transfer_coord_map
 from server_app.character_classes import classes, ChracterClass
 from server_app.engine import target_position_is_valid, use_skill
 from server_app.enemies import enemy_list
@@ -471,6 +471,7 @@ class CharacterLogIn(graphene.relay.ClientIDMutation):
             'classType': char.class_type,
             'max_hp': char.max_hp,
             'current_hp': char.max_hp,
+            'is_ko': char.is_ko,
             'lv': char.lv
         }
         OnCharacterEvent.char_event(params={
@@ -922,11 +923,13 @@ class CharacterMapAreaTransfer(graphene.relay.ClientIDMutation):
             raise Exception('Cannot transfer to same area')
 
         if not target_area in areas[current_area]['connections']:
-            raise Exception('Cannot move to the requested area frm current area')
+            raise Exception('Cannot move to the requested area from current area')
+
+        x, y = area_transfer_coord_map[current_area][target_area]
 
         character.area_location = target_area
-        character.position_x = 100
-        character.position_y = 100
+        character.position_x = x
+        character.position_y = y
         character.save()
 
         # Broadcast character area transfer
