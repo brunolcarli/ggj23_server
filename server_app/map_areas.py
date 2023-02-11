@@ -1,17 +1,176 @@
 
 
 areas = {
-    'citadel': {
-        'name': 'citadel',
+    'citadel_central_area': {
+        'name': 'citadel_central_area',
         'size_x': 760,
-        'size_y': 760,
-        'connections': ['yggdrasil', 'combat_zone', 'open_fields']
+        'size_y': 962,
+        'connections': [
+            'citadel_north_area',
+            'citadel_south_area',
+            'citadel_east_area',
+            'citadel_west_area'
+        ]
     },
-    'open_fields': {
-        'name': 'open_fields',
+    'citadel_north_area': {
+        'name': 'citadel_north_area',
         'size_x': 760,
-        'size_y': 760,
-        'connections': ['citadel', 'ancient_forest_area1', 'vulcanic_zone_area1', 'snowfields_area1', 'chrono_mountains_area1']
+        'size_y': 962,
+        'connections': [
+            'yggdrasil',
+            'combat_zone',
+            'open_fields_area8',
+            'citadel_central_area'
+        ]
+    },
+    'citadel_south_area': {
+        'name': 'citadel_south_area',
+        'size_x': 760,
+        'size_y': 962,
+        'connections': ['citadel_central_area', 'open_fields_area1']
+    },
+    'citadel_east_area': {
+        'name': 'citadel_east_area',
+        'size_x': 760,
+        'size_y': 962,
+        'connections': ['citadel_central_area', 'open_fields_area5']
+    },
+    'citadel_west_area': {
+        'name': 'citadel_west_area',
+        'size_x': 760,
+        'size_y': 962,
+        'connections': ['citadel_central_area', 'open_fields_area11']
+    },
+    'open_fields_area1': {
+        'name': 'open_fields_area1',
+        'size_x': 578,
+        'size_y': 916,
+        'connections': [
+            'citadel_south_area',
+            'open_fields_area2',
+            'open_fields_area14'
+            ]
+    },
+    'open_fields_area2': {
+        'name': 'open_fields_area2',
+        'size_x': 628,
+        'size_y': 906,
+        'connections': [
+            'open_fields_area1',
+            'open_fields_area3'
+            ]
+    },
+    'open_fields_area3': {
+        'name': 'open_fields_area3',
+        'size_x': 576,
+        'size_y': 916,
+        'connections': [
+            'open_fields_area2',
+            'open_fields_area4'
+            ]
+    },
+    'open_fields_area4': {
+        'name': 'open_fields_area4',
+        'size_x': 546,
+        'size_y': 912,
+        'connections': [
+            'open_fields_area5',
+            'open_fields_area3'
+        ]
+    },
+    'open_fields_area5': {
+        'name': 'open_fields_area5',
+        'size_x': 558,
+        'size_y': 914,
+        'connections': [
+            'open_fields_area6',
+            'open_fields_area4',
+            'citadel_east_area
+        ]
+    },
+    'open_fields_area6': {
+        'name': 'open_fields_area6',
+        'size_x': 578,
+        'size_y': 908,
+        'connections': [
+            'open_fields_area7',
+            'open_fields_area5'
+        ]
+    },
+    'open_fields_area7': {
+        'name': 'open_fields_area7',
+        'size_x': 626,
+        'size_y': 908,
+        'connections': [
+            'open_fields_area8',
+            'open_fields_area6'
+        ]
+    },
+    'open_fields_area8': {
+        'name': 'open_fields_area8',
+        'size_x': 576,
+        'size_y': 888,
+        'connections': [
+            'open_fields_area7',
+            'open_fields_area9',
+            'citadel_north_area'
+        ]
+    },
+    'open_fields_area9': {
+        'name': 'open_fields_area9',
+        'size_x': 576,
+        'size_y': 890,
+        'connections': [
+            'open_fields_area8',
+            'open_fields_area10'
+        ]
+    },
+    'open_fields_area10': {
+        'name': 'open_fields_area10',
+        'size_x': 626,
+        'size_y': 912,
+        'connections': [
+            'open_fields_area9',
+            'open_fields_area11'
+        ]
+    },
+    'open_fields_area11': {
+        'name': 'open_fields_area11',
+        'size_x': 600,
+        'size_y': 910,
+        'connections': [
+            'open_fields_area12',
+            'open_fields_area10',
+            'citadel_west_area'
+        ]
+    },
+    'open_fields_area12': {
+        'name': 'open_fields_area12',
+        'size_x': 600,
+        'size_y': 912,
+        'connections': [
+            'open_fields_area13',
+            'open_fields_area11'
+        ]
+    },
+    'open_fields_area13': {
+        'name': 'open_fields_area13',
+        'size_x': 620,
+        'size_y': 910,
+        'connections': [
+            'open_fields_area14',
+            'open_fields_area12',
+            'ancient_forest_area1'
+        ]
+    },
+    'open_fields_area14': {
+        'name': 'open_fields_area14',
+        'size_x': 576,
+        'size_y': 892,
+        'connections': [
+            'open_fields_area1',
+            'open_fields_area13'
+        ]
     },
     'yggdrasil': {
         'name': 'yggdrasil',
@@ -29,7 +188,7 @@ areas = {
         'name': 'acient_forest_area1',
         'size_x': 626,
         'size_y': 726,
-        'connections': ['open_fields', 'ancient_forest_village']
+        'connections': ['open_fields_area13', 'ancient_forest_village']
     },
     'ancient_forest_area2': {
         'name': 'acient_forest_area2',
