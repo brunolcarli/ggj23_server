@@ -32,14 +32,14 @@ def use_skill(skill_user, skill_name, target, class_type):
     skill_user.save()
     
     # broadcast skill using
-    print(f'{skill_user.name} used {skill["name"]}')
     payload = {
         'skill_user_id': skill_user.id,
         'skill_user_name': skill_user.name,
         'skill_name': skill["name"],
         'target_id': target.id,
         'target_name': target.name,
-        'target_class_type': class_type
+        'target_class_type': class_type,
+        'area': skill_user.area_location
     }
     OnCharacterEvent.char_event(params={
         'event_type': 'character_use_skill',
@@ -51,7 +51,6 @@ def use_skill(skill_user, skill_name, target, class_type):
     target.save()
     
     # broadcast damage
-    print(f'{target.name} has lost {damage} HP due to {skill["name"]}')
     payload = {
         'target_id': target.id,
         'target_name': target.name,
@@ -73,7 +72,6 @@ def use_skill(skill_user, skill_name, target, class_type):
         target.current_hp = 0
         target.is_ko = True
         # broadcast knock out
-        print(f'{target.name} was knockouted')
         payload = {
             'target_id': target.id,
             'target_name': target.name,
@@ -91,7 +89,6 @@ def use_skill(skill_user, skill_name, target, class_type):
         if target.is_ko:
             # Enemy mobs give exp points
             skill_user.exp += target.exp
-            print(f'{skill_user.name} has earned {target.exp} EXP')
             lv_up(skill_user)
             
             # broadcast exp gain
