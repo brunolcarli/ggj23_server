@@ -85,7 +85,7 @@ areas = {
         'connections': [
             'open_fields_area6',
             'open_fields_area4',
-            'citadel_east_area
+            'citadel_east_area'
         ]
     },
     'open_fields_area6': {
