@@ -33,6 +33,13 @@ class Message(  # type: ignore
     sender = graphene.String()
 
 
+class MapAreaType(graphene.ObjectType):
+    name = graphene.String()
+    size_x = graphene.Int()
+    size_y = graphene.Int()
+    connections = graphene.List(graphene.String)
+
+
 class QuestType(graphene.ObjectType):
     name = graphene.String()
     completed = graphene.Boolean()
@@ -76,11 +83,13 @@ class EquipmentType(graphene.ObjectType):
     accessory_1 = graphene.Field(ItemType)
     accessory_2 = graphene.Field(ItemType)
 
+
 class WalletType(graphene.ObjectType):
     copper_coins = graphene.Int()
     silver_coins = graphene.Int()
     gold_coins = graphene.Int()
-    
+
+
 class CharacterType(graphene.ObjectType):
     id = graphene.ID()
     name = graphene.String()
@@ -109,6 +118,10 @@ class CharacterType(graphene.ObjectType):
     aim = graphene.Int()
     wallet = graphene.Field(WalletType)
     ep = graphene.Int()
+    map_metadata = graphene.Field(MapAreaType)
+
+    def resolve_map_metadata(self, info, **kwargs):
+        return areas[self.area_location]
 
     def resolve_skills(self, info, **kwargs):
         return json.loads(self.skills.decode('utf-8')).values()
@@ -131,13 +144,6 @@ class CharacterType(graphene.ObjectType):
             'silver_coins': (self.wallet // 100) % 100,
             'gold_coins': self.wallet // 10000
         }
-
-
-class MapAreaType(graphene.ObjectType):
-    name = graphene.String()
-    size_x = graphene.Int()
-    size_y = graphene.Int()
-    connections = graphene.List(graphene.String)
 
 
 class EnemyType(graphene.ObjectType):
