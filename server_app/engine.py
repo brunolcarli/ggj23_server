@@ -124,8 +124,8 @@ def get_damage(skill_user, skill_power, target_resistance):
 
 def target_position_is_valid(target_position, map_area):
     x, y = target_position
-    min_edge = x < 28 or y < 28
-    max_edge = x > areas[map_area]['size_x']-48 or y > areas[map_area]['size_y']-48
+    min_edge = x < 14 or y < 14
+    max_edge = x > areas[map_area]['size_x']-14 or y > areas[map_area]['size_y']-14
 
     return not (min_edge or max_edge)
 
