@@ -34,7 +34,8 @@ class Character(models.Model):
     effects = models.BinaryField(null=True)
     aim = models.IntegerField(default=100)
     wallet = models.BigIntegerField(default=0)
-    
+    ep = models.IntegerField(default=0)  # Evolution Points
+
     def getItems(self):
         return json.loads(self.items.decode('utf-8'))
     
