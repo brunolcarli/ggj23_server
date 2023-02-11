@@ -7,6 +7,7 @@ skill_list = {
         'power': 10,
         'range': 1,
         'effect': None,
+        'ep_cost': 0,
         'classes': ['dps', 'supporter', 'tanker'],
         'description': 'Basic offensive attack',
     },
@@ -16,6 +17,7 @@ skill_list = {
         'power': 30,
         'range': 3,
         'effect': None,
+        'ep_cost': 3,
         'classes': ['dps'],
         'description': 'Shots a fireball against the enemy',
     },
@@ -25,6 +27,7 @@ skill_list = {
         'power': 50,
         'range': 5,
         'effect': None,
+        'ep_cost': 7,
         'classes': ['dps'],
         'description': 'Use power of nature to pump a flow of melted rocks from underground',
     },
@@ -34,6 +37,7 @@ skill_list = {
         'power': 60,
         'range': 3,
         'effect': None,
+        'ep_cost': 7,
         'classes': ['dps'],
         'description': 'Throw a frozen spear against an enemy',
     },
@@ -44,6 +48,7 @@ skill_list = {
         'range': 5,
         'effect': None,
         'classes': ['dps'],
+        'ep_cost': 10,
         'description': 'Cast an violent blizzard around the enemy',
     },
     'air_cutter': {
@@ -52,6 +57,7 @@ skill_list = {
         'power': 15,
         'range': 2,
         'effect': None,
+        'ep_cost': 5,
         'classes': ['dps', 'supporter'],
         'description': 'Shots an fast windblow towards the enemy',
     },
@@ -61,6 +67,7 @@ skill_list = {
         'power': 50,
         'range': 4,
         'effect': None,
+        'ep_cost': 8,
         'classes': ['dps', 'supporter'],
         'description': 'Summon a furious hurricane around the enemy',
     },
@@ -70,6 +77,7 @@ skill_list = {
         'power': 40,
         'range': 2,
         'effect': None,
+        'ep_cost': 7,
         'classes': ['dps', 'tanker'],
         'description': 'Shots a fierce rock blast towards an enemy',
     },
@@ -80,6 +88,7 @@ skill_list = {
         'range': 8,
         'effect': None,
         'classes': ['dps'],
+        'ep_cost': 50,
         'description': 'Summon a devastating meteor from the skies above an enemy',
     },
     'blind': {
@@ -87,6 +96,7 @@ skill_list = {
         'sp_cost': 10,
         'power': 0,
         'range': 10,
+        'ep_cost': 7,
         'effect': {
             'target_attributes': ['aim'],
             'duration': 2,
@@ -100,6 +110,7 @@ skill_list = {
         'sp_cost': 20,
         'power': 0,
         'range': 6,
+        'ep_cost': 6,
         'effect': {
             'target_attributes': ['hp'],
             'duration': 0,
@@ -113,6 +124,7 @@ skill_list = {
         'sp_cost': 50,
         'power': 0,
         'range': 6,
+        'ep_cost': 16,
         'effect': {
             'target_attributes': ['hp'],
             'duration': 0,
@@ -126,6 +138,7 @@ skill_list = {
         'sp_cost': 100,
         'power': 0,
         'range': 2,
+        'ep_cost': 22,
         'effect': {
             'target_attributes': ['hp'],
             'duration': 0,
@@ -140,6 +153,7 @@ skill_list = {
         'sp_cost': 25,
         'power': 0,
         'range': 0,
+        'ep_cost': 10,
         'effect': {
             'target_attributes': ['resistance'],
             'duration': 3,
@@ -153,6 +167,7 @@ skill_list = {
         'sp_cost': 30,
         'power': 0,
         'range': 5,
+        'ep_cost': 10,
         'effect': {
             'target_attributes': ['resistance'],
             'duration': 2,
@@ -166,6 +181,7 @@ skill_list = {
         'sp_cost': 60,
         'power': 0,
         'range': 6,
+        'ep_cost': 20,
         'effect': {
             'target_attributes': ['power', 'resistance'],
             'duration': 2,
@@ -179,6 +195,7 @@ skill_list = {
         'sp_cost': 20,
         'power': 0,
         'range': 5,
+        'ep_cost': 10,
         'effect': {
             'target_attributes': ['power', 'resistance'],
             'duration': 2,

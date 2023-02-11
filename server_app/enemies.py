@@ -237,7 +237,7 @@ class EnemySpawnController:
         self.max_enemies = settings.GAME_CONFIG['MAX_ENEMIES_PER_AREA']
 
     def _get_possible_pixel(self, area_max):
-        return choice([28*i for i in range(1, (area_max//28)+1)])
+        return choice([28*i for i in range(3, (area_max//48)+1)])
 
     def spawn(self):
         """
@@ -251,7 +251,7 @@ class EnemySpawnController:
         for area in areas:
             # Ignore spawning if area already reached max enemy count
             spawned_count = SpawnedEnemy.objects.filter(area_location=area).count()
-            if spawned_count == self.max_enemies:
+            if spawned_count >= self.max_enemies:
                 continue
 
             # Get possible enemy kinds that appear in the iterated area
@@ -318,7 +318,7 @@ class EnemySpawnController:
         """
         Move an enemy randomly
         """
-        directions = ['up', 'down', 'left', 'right', 'none']
+        directions = ['up', 'down', 'left', 'right']
         for mob in SpawnedEnemy.objects.all():
             move_to = choice(directions)
 

@@ -64,6 +64,7 @@ class SkillType(graphene.ObjectType):
     effect = graphene.Field(EffectType)
     description = graphene.String()
     classes = graphene.List(graphene.String)
+    ep_cost = graphene.Int()
 
 
 class EquipmentType(graphene.ObjectType):
@@ -107,6 +108,7 @@ class CharacterType(graphene.ObjectType):
     effects = graphene.List(EffectType)
     aim = graphene.Int()
     wallet = graphene.Field(WalletType)
+    ep = graphene.Int()
 
     def resolve_skills(self, info, **kwargs):
         return json.loads(self.skills.decode('utf-8')).values()
@@ -1017,6 +1019,41 @@ class CharacterRespawn(graphene.relay.ClientIDMutation):
         return CharacterRespawn(character)
 
 
+class LearnSkill(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        skill_name = graphene.String(required=True)
+        character_id = graphene.ID(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+        except Character.DoesNotExist:
+            raise Exception('Character not found')
+
+        if kwargs['skill_name'] not in skill_list:
+            raise Exception('Invalid skill')
+
+        skill = skill_list[kwargs['skill_name']]
+        char_skills = json.loads(character.skills)
+        if skill['name'] in char_skills:
+            raise Exception('Skill already learned')
+
+        if character.class_type not in skill['classes']:
+            raise Exception('Current class cannot learn this skill')
+
+        if character.ep < skill['ep_cost']:
+            raise Exception('Not enough EP')
+
+        character.ep -= skill['ep_cost']
+        char_skills[skill['name']] = skill
+        character.skills = json.dumps(char_skills).encode('utf-8')
+        character.save()
+
+        return LearnSkill(character)
+
+
 class Mutation:
     send_chat_message = SendChatMessage.Field()
     create_character = CreateCharacter.Field()
@@ -1034,6 +1071,7 @@ class Mutation:
     character_map_area_transfer = CharacterMapAreaTransfer.Field()
     notify_enemy_event = NotifyEnemyEvent.Field()
     character_respawn = CharacterRespawn.Field()
+    learn_skill = LearnSkill.Field()
 
 
 #################
