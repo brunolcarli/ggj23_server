@@ -24,7 +24,7 @@ class Character(models.Model):
     last_activity = models.DateTimeField(null=True)
     position_x = models.IntegerField(default=48, null=False)
     position_y = models.IntegerField(default=48, null=False)
-    area_location = models.CharField(max_length=25, null=False, blank=False, default='citadel')
+    area_location = models.CharField(max_length=25, null=False, blank=False, default='citadel_central_area')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     items = models.BinaryField(default=json.dumps(dict()).encode('utf-8'))
     equipment = models.BinaryField(null=True)
