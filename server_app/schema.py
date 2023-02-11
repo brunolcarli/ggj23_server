@@ -107,6 +107,7 @@ class CharacterType(graphene.ObjectType):
     effects = graphene.List(EffectType)
     aim = graphene.Int()
     wallet = graphene.Field(WalletType)
+    ep = graphene.Int()
 
     def resolve_skills(self, info, **kwargs):
         return json.loads(self.skills.decode('utf-8')).values()
