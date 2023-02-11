@@ -127,8 +127,8 @@ def get_damage(skill_user, skill_power, target_resistance):
 
 def target_position_is_valid(target_position, map_area):
     x, y = target_position
-    min_edge = x < 0 or y < 0
-    max_edge = x > areas[map_area]['size_x'] or y > areas[map_area]['size_y']
+    min_edge = x < 28 or y < 28
+    max_edge = x > areas[map_area]['size_x']-48 or y > areas[map_area]['size_y']-48
 
     return not (min_edge or max_edge)
 
@@ -167,9 +167,8 @@ def lv_up(character):
         character.current_sp = character.max_sp
         character.power += randint(0, 2)
         character.resistance += randint(0, 2)
-        
+
         # broadcast lv up
-        print(f'{character.name} has leveled up to lv: {character.lv}')
         payload = {
             'id': character.id,
             'lv': character.lv,
