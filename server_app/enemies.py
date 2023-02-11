@@ -251,7 +251,7 @@ class EnemySpawnController:
         for area in areas:
             # Ignore spawning if area already reached max enemy count
             spawned_count = SpawnedEnemy.objects.filter(area_location=area).count()
-            if spawned_count == self.max_enemies:
+            if spawned_count >= self.max_enemies:
                 continue
 
             # Get possible enemy kinds that appear in the iterated area
