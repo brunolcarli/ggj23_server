@@ -17,7 +17,7 @@ enemy_daemon:
 amqp_consume:
 	python manage.py queue_daemon
 
-target: enemy_daemon queue_daemon run
+target: enemy_daemon amqp_consume run
 
 pipe:
 	make install
