@@ -345,7 +345,7 @@ class EnemySpawnController:
 
             # Broadcast enemy movement
             payload = {
-                'eventType': 'enemy_movement',
+                'event_type': 'enemy_movement',
                 'enemy_id': mob.id,
                 'enemy_name': mob.name,
                 'position_x': mob.position_x,
