@@ -16,6 +16,7 @@ from server_app.engine import target_position_is_valid, use_skill
 from server_app.enemies import enemy_list
 from server_app.items import item_list, max_currency
 from server_app.events import OnCharacterEvent
+from server_app.amqp_producer import publish_message
 from ggj23.settings import GAME_CONFIG
 
 
@@ -429,15 +430,13 @@ class UpdatePosition(graphene.relay.ClientIDMutation):
         char.save()
 
         payload = {
+            'event_type': 'character_movement',
             'id': char.id,
             'x': char.position_x,
             'y': char.position_y,
             'map_area': char.area_location
         }
-        OnCharacterEvent.char_event(params={
-            'event_type': 'character_movement',
-            'data': payload
-        })
+        publish_message(payload)
 
         return UpdatePosition(char)
 
@@ -471,6 +470,7 @@ class CharacterLogIn(graphene.relay.ClientIDMutation):
 
         # Broadcast character login
         payload = {
+            'event_type': 'character_login',
             'id': char.id,
             'name': char.name,
             'x': char.position_x,
@@ -482,10 +482,7 @@ class CharacterLogIn(graphene.relay.ClientIDMutation):
             'is_ko': char.is_ko,
             'lv': char.lv
         }
-        OnCharacterEvent.char_event(params={
-            'event_type': 'character_login',
-            'data': payload
-        })
+        publish_message(payload)
 
         return CharacterLogIn(char)
 
@@ -519,16 +516,14 @@ class CharacterLogOut(graphene.relay.ClientIDMutation):
 
         # Broadcast character login
         payload = {
+            'event_type': 'character_logout',
             'id': char.id,
             'name': char.name,
             'x': char.position_x,
             'y': char.position_y,
             'map_area': char.area_location,
         }
-        OnCharacterEvent.char_event(params={
-            'event_type': 'character_logout',
-            'data': payload
-        })
+        publish_message(payload)
 
         return CharacterLogIn(True)
 
@@ -783,7 +778,7 @@ class CharacterBatchSellOffer(graphene.relay.ClientIDMutation):
             seller=character,
             price=price
         )
-        print(items)
+
         offer.setItems(items)
         character.setItems(char_items)
         character.save()
@@ -791,6 +786,7 @@ class CharacterBatchSellOffer(graphene.relay.ClientIDMutation):
         
         # Broadcast offer available
         payload = {
+            'event_type': 'offer_available',
             'id': offer.id,
             'seller_id': character.id,
             'price': {
@@ -803,10 +799,7 @@ class CharacterBatchSellOffer(graphene.relay.ClientIDMutation):
                 'count': item['count']
             } for item in offer.getItems()]
         }
-        OnCharacterEvent.char_event(params={
-            'event_type': 'offer_available',
-            'data': payload
-        })
+        publish_message(payload)
         
         return CharacterBatchSellOffer(offer)
     
@@ -850,6 +843,7 @@ class CharacterBatchBuyOffer(graphene.relay.ClientIDMutation):
         
         # Broadcast offer accepted
         payload = {
+            'event_type': 'offer_accepted',
             'buyer': {
                 'id': character.id,
                 'wallet': {
@@ -867,10 +861,7 @@ class CharacterBatchBuyOffer(graphene.relay.ClientIDMutation):
                 }
             }
         }
-        OnCharacterEvent.char_event(params={
-            'event_type': 'offer_accepted',
-            'data': payload
-        })
+        publish_message(payload)
 
         offer.delete()
         
@@ -942,6 +933,7 @@ class CharacterMapAreaTransfer(graphene.relay.ClientIDMutation):
 
         # Broadcast character area transfer
         payload = {
+            'event_type': 'area_transfer',
             'id': character.id,
             'name': character.name,
             'x': character.position_x,
@@ -953,10 +945,7 @@ class CharacterMapAreaTransfer(graphene.relay.ClientIDMutation):
             'current_hp': character.max_hp,
             'lv': character.lv
         }
-        OnCharacterEvent.char_event(params={
-            'event_type': 'area_transfer',
-            'data': payload
-        })
+        publish_message(payload)
 
         return CharacterMapAreaTransfer(character)
 
@@ -1006,6 +995,7 @@ class CharacterRespawn(graphene.relay.ClientIDMutation):
         # Broadcast the area transfer when respawn to re-render character sprite
         # TODO wrap broadcast payloads and broadcasts in a objet to avoid redundance
         payload = {
+            'event_type': 'character_login',
             'id': character.id,
             'name': character.name,
             'x': character.position_x,
@@ -1017,10 +1007,7 @@ class CharacterRespawn(graphene.relay.ClientIDMutation):
             'current_hp': character.max_hp,
             'lv': character.lv
         }
-        OnCharacterEvent.char_event(params={
-            'event_type': 'character_login',
-            'data': payload
-        })
+        publish_message(payload)
 
         return CharacterRespawn(character)
 
