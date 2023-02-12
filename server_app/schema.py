@@ -436,7 +436,7 @@ class UpdatePosition(graphene.relay.ClientIDMutation):
             'y': char.position_y,
             'map_area': char.area_location
         }
-        publish_message(payload))
+        publish_message(payload)
 
         return UpdatePosition(char)
 
