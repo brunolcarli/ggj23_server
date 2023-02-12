@@ -165,8 +165,7 @@ GRAPHENE = {
     'SCHEMA': 'ggj23.schema.schema',
 }
 
-REDIS_HOST = os.environ.get('REDIS_HOST')
-REDIS_PORT = os.environ.get('REDIS_PORT')
+
 GQL_URL = os.environ.get('GQL_URL')
 
 # GAME CONFIGS

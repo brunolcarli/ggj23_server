@@ -8,8 +8,6 @@ from server_app.skills import skill_list
 from server_app.map_areas import areas
 from server_app.engine import target_position_is_valid
 from server_app.models import Character, SpawnedEnemy
-from ggj23.settings import REDIS_HOST, REDIS_PORT
-from redis import Redis
 from server_app.serializer import Serializer
 from server_app.events import OnCharacterEvent
 
