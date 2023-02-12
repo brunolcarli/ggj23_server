@@ -44,8 +44,7 @@ django-utils-six==2.0
 
 graphene-django==2.2.0
 
-mysql-connector-python==8.0.23
-django-mysql==3.9.0
-
+mysql-connector-python==8.0.32
+django-mysql
 kombu==5.2.4
 msgpack==1.0.2
