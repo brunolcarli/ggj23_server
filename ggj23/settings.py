@@ -17,7 +17,7 @@ import sys
 import uuid
 
 
-VERSION = '0.0.28'
+VERSION = '0.0.29'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -96,13 +96,28 @@ WSGI_APPLICATION = 'ggj23.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+ENV_REF = os.environ.get('ENV_REF')
+if ENV_REF == 'production':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'mysql.connector.django',
+            'NAME': os.environ.get('MYSQL_DATABASE', ''),
+            'USER': os.environ.get('MYSQL_USER', ''),
+            'PASSWORD': os.environ.get('MYSQL_PASSWORD', ''),
+            'HOST': os.environ.get('MYSQL_HOST', ''),
+            'PORT': os.environ.get('MYSQL_PORT'),
+            'OPTIONS': {
+            'autocommit': True,
+            }
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 
 # Password validation
@@ -150,8 +165,7 @@ GRAPHENE = {
     'SCHEMA': 'ggj23.schema.schema',
 }
 
-REDIS_HOST = os.environ.get('REDIS_HOST')
-REDIS_PORT = os.environ.get('REDIS_PORT')
+
 GQL_URL = os.environ.get('GQL_URL')
 
 # GAME CONFIGS
