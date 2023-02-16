@@ -290,7 +290,7 @@ class EnemySpawnController:
 
             # Broadcast enemy spawning
             payload = {
-                'event_type': 'character_lv_up',
+                'event_type': 'enemy_spawn',
                 'enemy_id': enemy.id,
                 'enemy_name': enemy.name,
                 'position_x': enemy.position_x,
@@ -300,59 +300,59 @@ class EnemySpawnController:
                 'max_hp': enemy.max_hp,
                 'current_hp': enemy.current_hp,
             }
-            publish_message(payload)
-            # query = f'''
-            #     mutation{{
-            #         notifyEnemyEvent(input:{{
-            #             ç
-            #             data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
-            #         }}){{
-            #         result
-            #         }}
-            #     }}
-            # '''
-            # requests.post(
-            #     settings.GQL_URL,
-            #     json={'query': query}
-            # )
+            # publish_message(payload)
+            query = f'''
+                mutation{{
+                    notifyEnemyEvent(input:{{
+                        eventType: "enemy_spawn"
+                        data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
+                    }}){{
+                    result
+                    }}
+                }}
+            '''
+            requests.post(
+                settings.GQL_URL,
+                json={'query': query}
+            )
 
-    def move(self):
-        """
-        Move an enemy randomly
-        """
-        directions = ['up', 'down', 'left', 'right']
-        for mob in SpawnedEnemy.objects.all():
-            move_to = choice(directions)
+    # def move(self):
+    #     """
+    #     Move an enemy randomly
+    #     """
+    #     directions = ['up', 'down', 'left', 'right']
+    #     for mob in SpawnedEnemy.objects.all():
+    #         move_to = choice(directions)
 
-            current_x, current_y = mob.position_x, mob.position_y
-            if move_to == 'up':
-                mob.position_y -= 28
-            elif move_to == 'down':
-                mob.position_y += 28
-            elif move_to == 'right':
-                mob.position_x += 28
-            elif move_to == 'left':
-                mob.position_x -= 28
-            else:
-                continue
+    #         current_x, current_y = mob.position_x, mob.position_y
+    #         if move_to == 'up':
+    #             mob.position_y -= 28
+    #         elif move_to == 'down':
+    #             mob.position_y += 28
+    #         elif move_to == 'right':
+    #             mob.position_x += 28
+    #         elif move_to == 'left':
+    #             mob.position_x -= 28
+    #         else:
+    #             continue
 
-            if not target_position_is_valid([mob.position_x, mob.position_y], mob.area_location):
-                mob.position_x = current_x
-                mob.position_y = current_y
-                mob.save()
-                continue
-            mob.save()
+    #         if not target_position_is_valid([mob.position_x, mob.position_y], mob.area_location):
+    #             mob.position_x = current_x
+    #             mob.position_y = current_y
+    #             mob.save()
+    #             continue
+    #         mob.save()
 
-            # Broadcast enemy movement
-            payload = {
-                'event_type': 'enemy_movement',
-                'enemy_id': mob.id,
-                'enemy_name': mob.name,
-                'position_x': mob.position_x,
-                'position_y': mob.position_y,
-                'area': mob.area_location
-            }
-            publish_message(payload)
+    #         # Broadcast enemy movement
+    #         payload = {
+    #             'event_type': 'enemy_movement',
+    #             'enemy_id': mob.id,
+    #             'enemy_name': mob.name,
+    #             'position_x': mob.position_x,
+    #             'position_y': mob.position_y,
+    #             'area': mob.area_location
+    #         }
+    #         publish_message(payload)
             # query = f'''
             #     mutation{{
             #         notifyEnemyEvent(input:{{
