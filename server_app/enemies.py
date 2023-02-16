@@ -10,6 +10,8 @@ from server_app.engine import target_position_is_valid
 from server_app.models import Character, SpawnedEnemy
 from server_app.serializer import Serializer
 from server_app.events import OnCharacterEvent
+from server_app.amqp_producer import publish_message
+
 
 enemies_spots = {
     'citadel_central_area': [],
@@ -288,6 +290,7 @@ class EnemySpawnController:
 
             # Broadcast enemy spawning
             payload = {
+                'event_type': 'character_lv_up',
                 'enemy_id': enemy.id,
                 'enemy_name': enemy.name,
                 'position_x': enemy.position_x,
@@ -297,20 +300,21 @@ class EnemySpawnController:
                 'max_hp': enemy.max_hp,
                 'current_hp': enemy.current_hp,
             }
-            query = f'''
-                mutation{{
-                    notifyEnemyEvent(input:{{
-                        eventType: "enemy_spawn"
-                        data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
-                    }}){{
-                    result
-                    }}
-                }}
-            '''
-            requests.post(
-                settings.GQL_URL,
-                json={'query': query}
-            )
+            publish_message(payload)
+            # query = f'''
+            #     mutation{{
+            #         notifyEnemyEvent(input:{{
+            #             ç
+            #             data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
+            #         }}){{
+            #         result
+            #         }}
+            #     }}
+            # '''
+            # requests.post(
+            #     settings.GQL_URL,
+            #     json={'query': query}
+            # )
 
     def move(self):
         """
@@ -341,23 +345,25 @@ class EnemySpawnController:
 
             # Broadcast enemy movement
             payload = {
+                'event_type': 'enemy_movement',
                 'enemy_id': mob.id,
                 'enemy_name': mob.name,
                 'position_x': mob.position_x,
                 'position_y': mob.position_y,
                 'area': mob.area_location
             }
-            query = f'''
-                mutation{{
-                    notifyEnemyEvent(input:{{
-                        eventType: "enemy_movement"
-                        data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
-                    }}){{
-                    result
-                    }}
-                }}
-            '''
-            requests.post(
-                settings.GQL_URL,
-                json={'query': query}
-            )
+            publish_message(payload)
+            # query = f'''
+            #     mutation{{
+            #         notifyEnemyEvent(input:{{
+            #             eventType: "enemy_movement"
+            #             data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
+            #         }}){{
+            #         result
+            #         }}
+            #     }}
+            # '''
+            # requests.post(
+            #     settings.GQL_URL,
+            #     json={'query': query}
+            # )

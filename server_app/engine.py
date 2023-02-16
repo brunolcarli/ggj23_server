@@ -6,7 +6,8 @@ from random import randint
 from django.conf import settings
 from server_app.map_areas import areas
 from server_app.models import Character
-from server_app.events import OnCharacterEvent
+# from server_app.events import OnCharacterEvent
+from server_app.amqp_producer import publish_message
 
 
 def use_skill(skill_user, skill_name, target, class_type):
@@ -33,18 +34,18 @@ def use_skill(skill_user, skill_name, target, class_type):
     
     # broadcast skill using
     payload = {
+        'event_type': 'character_use_skill',
         'skill_user_id': skill_user.id,
         'skill_user_name': skill_user.name,
         'skill_name': skill["name"],
         'target_id': target.id,
         'target_name': target.name,
+        'target_x': target.position_x,
+        'target_y':target.position_y,
         'target_class_type': class_type,
         'area': skill_user.area_location
     }
-    OnCharacterEvent.char_event(params={
-        'event_type': 'character_use_skill',
-        'data': payload
-    })
+    publish_message(payload)
 
     damage = get_damage(skill_user, skill['power'], target.resistance)
     target.current_hp -= damage
@@ -52,6 +53,7 @@ def use_skill(skill_user, skill_name, target, class_type):
     
     # broadcast damage
     payload = {
+        'event_type': 'target_damaged',
         'target_id': target.id,
         'target_name': target.name,
         'target_hp': target.current_hp,
@@ -62,10 +64,7 @@ def use_skill(skill_user, skill_name, target, class_type):
         'area': skill_user.area_location,
         'classType': class_type
     }
-    OnCharacterEvent.char_event(params={
-        'event_type': 'target_damaged',
-        'data': payload
-    })
+    publish_message(payload)
 
     # Check if enemy is knockouted
     if target.current_hp <= 0:
@@ -73,6 +72,7 @@ def use_skill(skill_user, skill_name, target, class_type):
         target.is_ko = True
         # broadcast knock out
         payload = {
+            'event_type': 'target_knockout',
             'target_id': target.id,
             'target_name': target.name,
             'target_is_ko': target.is_ko,
@@ -80,10 +80,7 @@ def use_skill(skill_user, skill_name, target, class_type):
             'area': target.area_location,
             'classType': class_type
         }
-        OnCharacterEvent.char_event(params={
-            'event_type': 'target_knockout',
-            'data': payload
-        })
+        publish_message(payload)
 
     if target.class_type == "enemy":
         if target.is_ko:
@@ -93,16 +90,14 @@ def use_skill(skill_user, skill_name, target, class_type):
             
             # broadcast exp gain
             payload = {
+                'event_type': 'character_exp_gain',
                 'skill_user_id': skill_user.id,
                 'exp': target.exp,
                 'lv': skill_user.lv,
                 'area': skill_user.area_location,
                 'classType': class_type
             }
-            OnCharacterEvent.char_event(params={
-                'event_type': 'character_exp_gain',
-                'data': payload
-            })
+            publish_message(payload)
             target.delete()
             
     else:
@@ -151,7 +146,7 @@ def next_lv(level):
 
 def lv_up(character):
     """
-    Levels up a character, if possible.
+    Level up a character, if possible.
     """
     config = settings.GAME_CONFIG
     while character.exp >= character.next_lv and character.lv < config['MAX_LV']:
@@ -168,6 +163,7 @@ def lv_up(character):
 
         # broadcast lv up
         payload = {
+            'event_type': 'character_lv_up',
             'id': character.id,
             'lv': character.lv,
             'area': character.area_location,
@@ -177,20 +173,21 @@ def lv_up(character):
             'current_sp': character.max_sp,
             'classType': character.class_type
         }
-        query = f'''
-                mutation{{
-                    notifyEnemyEvent(input:{{
-                        eventType: "character_lv_up"
-                        data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
-                    }}){{
-                    result
-                    }}
-                }}
-            '''
-        requests.post(
-            settings.GQL_URL,
-            json={'query': query}
-        )
+        publish_message(payload)
+        # query = f'''
+        #         mutation{{
+        #             notifyEnemyEvent(input:{{
+        #                 eventType: "character_lv_up"
+        #                 data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
+        #             }}){{
+        #             result
+        #             }}
+        #         }}
+        #     '''
+        # requests.post(
+        #     settings.GQL_URL,
+        #     json={'query': query}
+        # )
 
     character.save()
     return character
