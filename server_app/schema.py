@@ -444,7 +444,7 @@ class UpdatePosition(graphene.relay.ClientIDMutation):
 
 
 class UpdateEnemyPosition(graphene.relay.ClientIDMutation):
-    enemy = graphene.Field(SpawnedEnemy)
+    enemy = graphene.Field(EnemiesSpawnedType)
 
     class Input:
         id = graphene.ID(required=True)
