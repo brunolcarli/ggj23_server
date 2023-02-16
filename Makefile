@@ -17,9 +17,9 @@ enemy_daemon:
 amqp_consume:
 	python manage.py queue_daemon
 
-target: enemy_daemon amqp_consume run
+target: enemy_daemon run
 
 pipe:
 	make install
 	make migrate
-	make -j3 target
+	make -j2 target
