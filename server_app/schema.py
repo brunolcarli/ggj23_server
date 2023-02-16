@@ -430,6 +430,7 @@ class UpdatePosition(graphene.relay.ClientIDMutation):
 
         payload = {
             'id': char.id,
+            'name': char.name,
             'x': char.position_x,
             'y': char.position_y,
             'map_area': char.area_location
