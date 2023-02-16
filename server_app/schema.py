@@ -443,6 +443,45 @@ class UpdatePosition(graphene.relay.ClientIDMutation):
         return UpdatePosition(char)
 
 
+class UpdateEnemyPosition(graphene.relay.ClientIDMutation):
+    enemy = graphene.Field(SpawnedEnemy)
+
+    class Input:
+        id = graphene.ID(required=True)
+        location = graphene.Argument(LocationInput, required=True)
+
+    # @access_required
+    def mutate_and_get_payload(self, info, **kwargs):
+        location = kwargs.get('location')
+        x = location.get('x', 48)
+        y = location.get('y', 48)
+        enemy_id = kwargs.get('id')
+
+        enemy = SpawnedEnemy.objects.get(
+            # user=kwargs.get('user'),
+            id=enemy_id
+        )
+        if not target_position_is_valid([x, y], enemy.area_location):
+            raise Exception('Invalid location')
+        enemy.position_x = x
+        enemy.position_y = y
+        enemy.save()
+
+        payload = {
+            'id': enemy.id,
+            'name': enemy.name,
+            'x': enemy.position_x,
+            'y': enemy.position_y,
+            'map_area': enemy.area_location
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'enemy_movement',
+            'data': payload
+        })
+
+        return UpdateEnemyPosition(enemy)
+
+
 class CharacterLogIn(graphene.relay.ClientIDMutation):
     """Enters the game with a selected character"""
     
@@ -1079,6 +1118,7 @@ class Mutation:
     notify_enemy_event = NotifyEnemyEvent.Field()
     character_respawn = CharacterRespawn.Field()
     learn_skill = LearnSkill.Field()
+    update_enemy_position = UpdateEnemyPosition.Field()
 
 
 #################
