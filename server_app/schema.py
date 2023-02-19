@@ -1155,6 +1155,7 @@ class UpdateEnemyVitalStats(graphene.relay.ClientIDMutation):
         except SpawnedEnemy.DoesNotExist:
             raise Exception('Invalid enemy')
 
+        enemy_id = enemy.id  # store enemy ID in case of KO
         enemy.current_hp = kwargs['hp'] if kwargs['hp'] < enemy.max_hp else enemy.max_hp
         enemy.current_sp = kwargs['sp'] if kwargs['sp'] < enemy.max_sp else enemy.max_sp
 
@@ -1165,7 +1166,7 @@ class UpdateEnemyVitalStats(graphene.relay.ClientIDMutation):
 
         # Broadcast enemy health
         payload = {
-            'id': enemy.id,
+            'id': enemy_id,
             'name': enemy.name,
             'x': enemy.position_x,
             'y': enemy.position_y,
