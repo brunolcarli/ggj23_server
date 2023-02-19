@@ -1160,6 +1160,7 @@ class UpdateEnemyVitalStats(graphene.relay.ClientIDMutation):
         enemy.current_sp = kwargs['sp'] if kwargs['sp'] < enemy.max_sp else enemy.max_sp
 
         if enemy.current_hp <= 0:
+            enemy.is_ko = True
             enemy.delete()
         else:
             enemy.save()
