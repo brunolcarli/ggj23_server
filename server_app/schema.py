@@ -1100,6 +1100,88 @@ class LearnSkill(graphene.relay.ClientIDMutation):
         return LearnSkill(character)
 
 
+class UpdateCharacterVitalStats(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        id = graphene.ID(required=True)
+        hp = graphene.Int(required=True)
+        sp = graphene.Int(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['id'])
+        except Character.DoesNotExist:
+            raise Exception('Invalid character')
+
+        character.current_hp = kwargs['hp'] if kwargs['hp'] < character.max_hp else character.max_hp
+        character.current_sp = kwargs['sp'] if kwargs['sp'] < character.max_sp else character.max_sp
+
+        if character.current_hp <= 0:
+            character.is_ko = True
+
+        character.save()
+
+        payload = {
+            'id': character.id,
+            'name': character.name,
+            'x': character.position_x,
+            'y': character.position_y,
+            'map_area': character.area_location,
+            'classType': character.class_type,
+            'hp': character.current_hp,
+            'sp': character.current_sp,
+            'is_ko': character.is_ko
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'character_health',
+            'data': payload
+        })
+
+        return UpdateCharacterVitalStats(character)
+
+
+class UpdateEnemyVitalStats(graphene.relay.ClientIDMutation):
+    enemy = graphene.Field(EnemiesSpawnedType)
+
+    class Input:
+        id = graphene.ID(required=True)
+        hp = graphene.Int(required=True)
+        sp = graphene.Int(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            enemy = SpawnedEnemy.objects.get(id=kwargs['id'])
+        except SpawnedEnemy.DoesNotExist:
+            raise Exception('Invalid enemy')
+
+        enemy.current_hp = kwargs['hp'] if kwargs['hp'] < enemy.max_hp else enemy.max_hp
+        enemy.current_sp = kwargs['sp'] if kwargs['sp'] < enemy.max_sp else enemy.max_sp
+
+        if enemy.current_hp <= 0:
+            enemy.delete()
+        else:
+            enemy.save()
+
+        # Broadcast enemy health
+        payload = {
+            'id': enemy.id,
+            'name': enemy.name,
+            'x': enemy.position_x,
+            'y': enemy.position_y,
+            'map_area': enemy.area_location,
+            'classType': 'enemy',
+            'hp': enemy.current_hp,
+            'is_ko': enemy.is_ko
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'enemy_health',
+            'data': payload
+        })
+
+        return UpdateEnemyVitalStats(enemy)
+
+
 class Mutation:
     send_chat_message = SendChatMessage.Field()
     create_character = CreateCharacter.Field()
@@ -1119,6 +1201,8 @@ class Mutation:
     character_respawn = CharacterRespawn.Field()
     learn_skill = LearnSkill.Field()
     update_enemy_position = UpdateEnemyPosition.Field()
+    update_character_vital_stats = UpdateCharacterVitalStats.Field()
+    update_enemy_vital_stats = UpdateEnemyVitalStats.Field()
 
 
 #################
