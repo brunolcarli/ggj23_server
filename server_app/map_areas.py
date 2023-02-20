@@ -186,8 +186,8 @@ areas = {
     },
     'ancient_forest_area1': {
         'name': 'acient_forest_area1',
-        'size_x': 626,
-        'size_y': 726,
+        'size_x': 40,
+        'size_y': 40,
         'connections': ['open_fields_area13', 'ancient_forest_village']
     },
     'ancient_forest_area2': {
