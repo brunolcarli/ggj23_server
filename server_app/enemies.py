@@ -263,10 +263,10 @@ class EnemySpawnController:
             #     continue
 
             # randomly select an possible enemy to spawn
-            enemy_type = choice(list(possible_enemies))
+            enemy_type = enemy_list[choice(list(possible_enemies))]
 
             # randomly select a spawn position that this enemy allow
-            spot = choice(possible_enemies[enemy_type])
+            spot = choice(possible_enemies[enemy_type['name']])
 
             # Creates a new atabase record for spawned enemy
             enemy = SpawnedEnemy(
