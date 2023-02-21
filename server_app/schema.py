@@ -422,8 +422,8 @@ class UpdatePosition(graphene.relay.ClientIDMutation):
             # user=kwargs.get('user'),
             id=character_id
         )
-        if not target_position_is_valid([x, y], char.area_location):
-            raise Exception('Invalid location')
+        # if not target_position_is_valid([x, y], char.area_location):
+        #     raise Exception('Invalid location')
         char.position_x = x
         char.position_y = y
         char.save()
@@ -461,8 +461,8 @@ class UpdateEnemyPosition(graphene.relay.ClientIDMutation):
             # user=kwargs.get('user'),
             id=enemy_id
         )
-        if not target_position_is_valid([x, y], enemy.area_location):
-            raise Exception('Invalid location')
+        # if not target_position_is_valid([x, y], enemy.area_location):
+        #     raise Exception('Invalid location')
         enemy.position_x = x
         enemy.position_y = y
         enemy.save()
