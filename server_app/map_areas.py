@@ -43,8 +43,8 @@ areas = {
     },
     'open_fields_area1': {
         'name': 'open_fields_area1',
-        'size_x': 578,
-        'size_y': 916,
+        'size_x': 50,
+        'size_y': 50,
         'connections': [
             'citadel_south_area',
             'open_fields_area2',
@@ -155,8 +155,8 @@ areas = {
     },
     'open_fields_area13': {
         'name': 'open_fields_area13',
-        'size_x': 620,
-        'size_y': 910,
+        'size_x': 25,
+        'size_y': 35,
         'connections': [
             'open_fields_area14',
             'open_fields_area12',
@@ -165,8 +165,8 @@ areas = {
     },
     'open_fields_area14': {
         'name': 'open_fields_area14',
-        'size_x': 576,
-        'size_y': 892,
+        'size_x': 30,
+        'size_y': 50,
         'connections': [
             'open_fields_area1',
             'open_fields_area13'
@@ -322,7 +322,7 @@ area_transfer_coord_map = {
     },
     'citadel_south_area': {
         'citadel_central_area': (20, 38),
-        'open_fields_area1': (300, 48)
+        'open_fields_area1': (22, 2)
     },
     'citadel_east_area': {
         'citadel_central_area': (720, 460),
@@ -333,9 +333,9 @@ area_transfer_coord_map = {
         'open_fields_area11': (565, 400)
     },
     'open_fields_area1': {
-        'citadel_south_area': (300, 900),
+        'citadel_south_area': (7, 16),
         'open_fields_area2': (48, 450),
-        'open_fields_area14': (580, 400)
+        'open_fields_area14': (28, 19)
     },
     'open_fields_area2': {
         'open_fields_area1': (580, 400),
@@ -385,13 +385,13 @@ area_transfer_coord_map = {
         'open_fields_area11': (300, 900)
     },
     'open_fields_area13': {
-        'open_fields_area14': (48, 400),
+        'open_fields_area14': (1, 19),
         'open_fields_area12': (300, 900),
-        'ancient_forest_area1': (590, 335)
+        'ancient_forest_area1': (38, 20)
     },
     'open_fields_area14': {
-        'open_fields_area1': (48, 400),
-        'open_fields_area13': (300, 900)
+        'open_fields_area1': (1, 19),
+        'open_fields_area13': (23, 19)
     },
     'yggdrasil': {
         'citadel_north_area': (100, 100)
@@ -400,7 +400,7 @@ area_transfer_coord_map = {
         'citadel_north_area': (100, 100)
     },
     'ancient_forest_area1': {
-        'open_fields_area13': (48, 455),
+        'open_fields_area13': (1, 21),
         'ancient_forest_village': (620, 401)
     },
     'ancient_forest_area2': {
