@@ -3,8 +3,8 @@
 areas = {
     'citadel_central_area': {
         'name': 'citadel_central_area',
-        'size_x': 760,
-        'size_y': 962,
+        'size_x': 40,
+        'size_y': 40,
         'connections': [
             'citadel_north_area',
             'citadel_south_area',
@@ -25,8 +25,8 @@ areas = {
     },
     'citadel_south_area': {
         'name': 'citadel_south_area',
-        'size_x': 760,
-        'size_y': 962,
+        'size_x': 15,
+        'size_y': 18,
         'connections': ['citadel_central_area', 'open_fields_area1']
     },
     'citadel_east_area': {
@@ -310,7 +310,7 @@ areas = {
 area_transfer_coord_map = {
     'citadel_central_area': {
         'citadel_north_area': (300, 900),
-        'citadel_south_area': (300, 48),
+        'citadel_south_area': (7, 1),
         'citadel_east_area': (48, 475),
         'citadel_west_area': (720, 475)
     },
@@ -321,7 +321,7 @@ area_transfer_coord_map = {
         'citadel_central_area': (380, 48)
     },
     'citadel_south_area': {
-        'citadel_central_area': (380, 900),
+        'citadel_central_area': (20, 38),
         'open_fields_area1': (300, 48)
     },
     'citadel_east_area': {
