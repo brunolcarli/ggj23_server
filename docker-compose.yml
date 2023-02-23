@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+
+  yggdrasil_server:
+    build:
+        context: "."
+    image: yggdrasil_server:devel
+    restart: on-failure
+    container_name: yggdrasil_server_container
+    # command: gunicorn -w 3 ggjj23.asgi:application -b :1100
+    command: python3 manage.py runserver 0.0.0.0:11000
+    env_file: ggj23/environment/server.env
+    volumes:
+      - .:/app
+      - static_data:/app/static
+    ports:
+      - 11000:11000
+
+  # proxy:
+  #   build:
+  #     context: ./nginx
+  #   restart: always
+  #   depends_on:
+  #     - lisa
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - certbot-web:/vol/www
+  #     - proxy-dhparams:/vol/proxy
+  #     - certbot-certs:/etc/letsencrypt
+
+  # certbot:
+  #   build:
+  #     context: ./certbot
+  #   command: echo "Skipping..."
+  #   environment:
+  #     - EMAIL=brunolcarli@gmail.com
+  #   volumes:
+  #     - certbot-web:/vol/www
+  #     - certbot-certs:/etc/letsencrypt/
+  #   depends_on:
+  #     - proxy
+
+volumes:
+  static_data:
+  # certbot-web:
+  # proxy-dhparams:
+  # certbot-certs:
