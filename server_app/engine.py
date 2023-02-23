@@ -7,7 +7,7 @@ from django.conf import settings
 from server_app.map_areas import areas
 from server_app.models import Character
 # from server_app.events import OnCharacterEvent
-from server_app.amqp_producer import publish_message
+
 
 
 def use_skill(skill_user, skill_name, target, class_type):
@@ -45,7 +45,7 @@ def use_skill(skill_user, skill_name, target, class_type):
         'target_class_type': class_type,
         'area': skill_user.area_location
     }
-    publish_message(payload)
+    # publish_message(payload)
 
     damage = get_damage(skill_user, skill['power'], target.resistance)
     target.current_hp -= damage
@@ -64,7 +64,7 @@ def use_skill(skill_user, skill_name, target, class_type):
         'area': skill_user.area_location,
         'classType': class_type
     }
-    publish_message(payload)
+    # publish_message(payload)
 
     # Check if enemy is knockouted
     if target.current_hp <= 0:
@@ -80,7 +80,7 @@ def use_skill(skill_user, skill_name, target, class_type):
             'area': target.area_location,
             'classType': class_type
         }
-        publish_message(payload)
+        # publish_message(payload)
 
     if target.class_type == "enemy":
         if target.is_ko:
@@ -97,7 +97,7 @@ def use_skill(skill_user, skill_name, target, class_type):
                 'area': skill_user.area_location,
                 'classType': class_type
             }
-            publish_message(payload)
+            # publish_message(payload)
             target.delete()
             
     else:
@@ -173,7 +173,7 @@ def lv_up(character):
             'current_sp': character.max_sp,
             'classType': character.class_type
         }
-        publish_message(payload)
+        # publish_message(payload)
         # query = f'''
         #         mutation{{
         #             notifyEnemyEvent(input:{{
