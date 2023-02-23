@@ -1,9 +1,0 @@
-export AMQP_VHOST=yggdrasilMMO
-export AMQP_USER=dev_server
-export AMQP_HOST="104.237.1.145"
-export AMQP_PASSWORD=yggDr451lMM0
-export ROUTING_KEY=game_event
-export QUEUE=DEV_SERVER
-export EXCHANGE_NAME=MMO_EVENTS
-export EXCHANGE_TYPE=fanout
-
