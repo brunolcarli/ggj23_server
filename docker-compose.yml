@@ -17,34 +17,34 @@ services:
     ports:
       - 11000:11000
 
-  # proxy:
-  #   build:
-  #     context: ./nginx
-  #   restart: always
-  #   depends_on:
-  #     - lisa
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   volumes:
-  #     - certbot-web:/vol/www
-  #     - proxy-dhparams:/vol/proxy
-  #     - certbot-certs:/etc/letsencrypt
+  proxy:
+    build:
+      context: ./nginx
+    restart: always
+    depends_on:
+      - yggdrasil_server
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - certbot-web:/vol/www
+      - proxy-dhparams:/vol/proxy
+      - certbot-certs:/etc/letsencrypt
 
-  # certbot:
-  #   build:
-  #     context: ./certbot
-  #   command: echo "Skipping..."
-  #   environment:
-  #     - EMAIL=brunolcarli@gmail.com
-  #   volumes:
-  #     - certbot-web:/vol/www
-  #     - certbot-certs:/etc/letsencrypt/
-  #   depends_on:
-  #     - proxy
+  certbot:
+    build:
+      context: ./certbot
+    command: echo "Skipping..."
+    environment:
+      - EMAIL=brunolcarli@gmail.com
+    volumes:
+      - certbot-web:/vol/www
+      - certbot-certs:/etc/letsencrypt/
+    depends_on:
+      - proxy
 
 volumes:
   static_data:
-  # certbot-web:
-  # proxy-dhparams:
-  # certbot-certs:
+  certbot-web:
+  proxy-dhparams:
+  certbot-certs:
