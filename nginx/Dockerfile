@@ -3,7 +3,7 @@ FROM nginx:1.23.0-alpine
 COPY ./* /etc/nginx/
 COPY ./run.sh /run.sh
 
-ENV APP_HOST=yggdrasil_server
+ENV APP_HOST=ggj23_server
 ENV APP_PORT=11000
 
 USER root

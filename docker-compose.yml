@@ -2,12 +2,12 @@ version: '3'
 
 services:
 
-  yggdrasil_server:
+  ggj23_server:
     build:
         context: "."
-    image: yggdrasil_server:devel
+    image: ggj23_server:devel
     restart: on-failure
-    container_name: yggdrasil_server_container
+    container_name: ggj23_server_container
     # command: gunicorn -w 3 ggjj23.asgi:application -b :1100
     command: python3 manage.py runserver 0.0.0.0:11000
     env_file: ggj23/environment/server.env
@@ -22,7 +22,7 @@ services:
       context: ./nginx
     restart: always
     depends_on:
-      - yggdrasil_server
+      - ggj23_server
     ports:
       - 80:80
       - 443:443

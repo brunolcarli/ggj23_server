@@ -27,7 +27,7 @@
 # RUN python manage.py makemigrations
 # RUN	python manage.py migrate
 
-# ENV NAME yggdrasil_server
+# ENV NAME ggj23_server
 
 FROM ubuntu:18.04
 
@@ -59,4 +59,4 @@ RUN	python3 manage.py migrate
 
 ENV LANG C.UTF-8
 ENV PYTHONUNBUFFERED=1
-ENV NAME yggdrasil_server
+ENV NAME ggj23_server

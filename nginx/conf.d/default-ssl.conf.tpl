@@ -29,6 +29,6 @@ server {
     }
 
     location / {
-        proxy_pass        http://yggdrasil_server:11000;
+        proxy_pass        http://ggj23_server:11000;
     }
 }
