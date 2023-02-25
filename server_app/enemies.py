@@ -20,7 +20,11 @@ enemies_spots = {
     # 'citadel_east_area': [],
     # 'citadel_west_area': [],
     # 'open_fields_area1': {},
-    # 'open_fields_area2': ['spider', 'goblin', 'wolf'],
+    'open_fields_area2': {
+        'spider': [(4, 21), (15, 29), (20, 27), (20, 11), (8, 9), (18, 46)],
+        'goblin': [(15, 14), (19, 17), (14, 24), (15, 30), (21, 6), (35, 44)],
+        'wolf': [(15, 19), (6, 9), (15, 12), (20, 25), (30, 17), (29, 42)]
+    },
     # 'open_fields_area3': ['spider', 'goblin', 'wolf'],
     # 'open_fields_area4': ['spider', 'goblin', 'wolf'],
     # 'open_fields_area5': ['spider', 'goblin', 'wolf'],
@@ -31,8 +35,16 @@ enemies_spots = {
     # 'open_fields_area10': ['spider', 'goblin', 'wolf'],
     # 'open_fields_area11': ['spider', 'goblin', 'wolf'],
     # 'open_fields_area12': ['spider', 'goblin', 'wolf'],
-    # 'open_fields_area13': ['spider', 'goblin', 'wolf'],
-    # 'open_fields_area14': ['spider', 'goblin', 'wolf'],
+    'open_fields_area13': {
+        'spider': [(4, 21), (15, 29), (20, 27), (20, 11), (8, 9)],
+        'goblin': [(15, 14), (19, 17), (14, 24), (15, 30), (21, 6)],
+        'wolf': [(15, 19), (6, 9), (15, 12), (20, 25)]
+    },
+    'open_fields_area14': {
+        'spider': [(4, 21), (15, 29), (20, 27), (20, 11), (8, 9)],
+        'goblin': [(15, 14), (19, 17), (14, 24), (15, 30), (20, 5)],
+        'wolf': [(15, 19), (6, 9), (15, 12), (20, 25)]
+    },
     # 'yggdrasil': ['orc', 'ent', 'poison_snake', 'spirit', 'bear', 'killer_fungus',  'golem'],
     # 'combat_zone': [],
     'ancient_forest_area1': {
