@@ -8,8 +8,6 @@ services:
     image: ggj23_server:devel
     restart: on-failure
     container_name: ggj23_server_container
-    # command: gunicorn -w 3 ggjj23.asgi:application -b :1100
-    #command: python3 manage.py runserver 0.0.0.0:11000
     command: daphne -b 0.0.0.0 -p 11000 ggj23.asgi:application
     env_file: ggj23/environment/server.env
     volumes:
@@ -43,6 +41,13 @@ services:
       - certbot-certs:/etc/letsencrypt/
     depends_on:
       - proxy
+
+  enemy_daemon:
+    build: .
+    image: ggj23_server:devel
+    restart: on-failure
+    command: python3 manage.py enemy_daemon
+    env_file: ggj23/environment/server.env
 
 volumes:
   static_data:
