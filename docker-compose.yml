@@ -9,7 +9,8 @@ services:
     restart: on-failure
     container_name: ggj23_server_container
     # command: gunicorn -w 3 ggjj23.asgi:application -b :1100
-    command: python3 manage.py runserver 0.0.0.0:11000
+    #command: python3 manage.py runserver 0.0.0.0:11000
+    command: daphne -b 0.0.0.0 -p 11000 ggj23.asgi:application
     env_file: ggj23/environment/server.env
     volumes:
       - .:/app

@@ -46,10 +46,10 @@
         <script>
             // Setup subscription client.
             const GRAPHQL_ENDPOINT =
-                (location.protocol === "https" ? "wss" : "ws") +
+                (location.protocol === "https" ? "wss" : "wss") +
                 "://" +
                 location.host +
-                "/subscriptions/"
+                ""
             let subClient = new window.SubscriptionsTransportWs.SubscriptionClient(
                 GRAPHQL_ENDPOINT,
                 {reconnect: true},

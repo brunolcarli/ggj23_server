@@ -1,5 +1,5 @@
 server {
-    listen 80;
+    listen 80 default_server;
     server_name  yggdrasil.beelzeware.dev;
 
     location /.well-known/acme-challenge/ {
