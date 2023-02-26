@@ -10,7 +10,7 @@ from server_app.engine import target_position_is_valid
 from server_app.models import Character, SpawnedEnemy
 from server_app.serializer import Serializer
 from server_app.events import OnCharacterEvent
-from server_app.amqp_producer import publish_message
+
 
 
 
