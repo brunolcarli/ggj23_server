@@ -22,4 +22,4 @@ target: enemy_daemon run
 pipe:
 	make install
 	make migrate
-	make -j2 target
+	make -j3 target

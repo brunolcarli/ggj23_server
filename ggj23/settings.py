@@ -179,3 +179,15 @@ GAME_CONFIG = {
     'SPAWN_RATE': .4,
     'MAX_ENEMIES_PER_AREA': 10
 }
+
+AMQP = {
+    'hostname': os.environ.get('AMQP_HOST', ''),
+    'userid': os.environ.get('AMQP_USER', ''),
+    'password': os.environ.get('AMQP_PASSWORD', ''),
+    'heartbeat': 4,
+    'virtual_host': os.environ.get('AMQP_VHOST', '')
+}
+ROUTING_KEY = os.environ.get('ROUTING_KEY')
+EXCHANGE_NAME = os.environ.get('EXCHANGE_NAME')
+EXCHANGE_TYPE = os.environ.get('EXCHANGE_TYPE')
+QUEUE = os.environ.get('QUEUE')

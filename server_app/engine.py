@@ -9,7 +9,6 @@ from server_app.models import Character
 # from server_app.events import OnCharacterEvent
 
 
-
 def use_skill(skill_user, skill_name, target, class_type):
     """
     Targeted enemy based skill usage mechanic. 
