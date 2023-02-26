@@ -1,35 +1,4 @@
-# FROM python:3.9-alpine
-
-# RUN mkdir /app
-# WORKDIR /app
-
-# RUN apk add --no-cache \
-#             --virtual \
-#             .build-deps \
-#             python3-dev \
-#             build-base \
-#             linux-headers \
-#             gcc \
-#             musl-dev \
-#             libffi-dev \
-#             openssl-dev \
-#             cargo
-
-# RUN python -m pip install --upgrade pip
-# RUN python -m pip install --upgrade cython
-# RUN python -m pip install --no-use-pep517 cryptography
-
-# COPY requirements.txt .
-# RUN pip install -r requirements.txt
-
-# COPY . .
-
-# RUN python manage.py makemigrations
-# RUN	python manage.py migrate
-
-# ENV NAME ggj23_server
-
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y gcc && \
