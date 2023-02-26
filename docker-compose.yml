@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+
+  ggj23_server:
+    build:
+        context: "."
+    image: ggj23_server:devel
+    restart: on-failure
+    container_name: ggj23_server_container
+    command: daphne -b 0.0.0.0 -p 11000 ggj23.asgi:application
+    env_file: ggj23/environment/server.env
+    volumes:
+      - .:/app
+      - static_data:/app/static
+    ports:
+      - 11000:11000
+
+  proxy:
+    build:
+      context: ./nginx
+    restart: always
+    depends_on:
+      - ggj23_server
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - certbot-web:/vol/www
+      - proxy-dhparams:/vol/proxy
+      - certbot-certs:/etc/letsencrypt
+
+  certbot:
+    build:
+      context: ./certbot
+    command: echo "Skipping..."
+    environment:
+      - EMAIL=brunolcarli@gmail.com
+    volumes:
+      - certbot-web:/vol/www
+      - certbot-certs:/etc/letsencrypt/
+    depends_on:
+      - proxy
+
+  enemy_daemon:
+    build: .
+    image: ggj23_server:devel
+    restart: on-failure
+    command: python3 manage.py enemy_daemon
+    env_file: ggj23/environment/server.env
+
+volumes:
+  static_data:
+  certbot-web:
+  proxy-dhparams:
+  certbot-certs:

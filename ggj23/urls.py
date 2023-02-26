@@ -38,6 +38,6 @@ def subscriptions(request):
 
 urlpatterns = [
     path('graphql/', csrf_exempt(GraphQLView.as_view(graphiql=True, backend=GraphQLCustomCoreBackend()))),
-    django.urls.path("", subscriptions),
+    django.urls.path("subscriptions/", subscriptions),
     # django.urls.path("admin", django.contrib.admin.site.urls),
 ]

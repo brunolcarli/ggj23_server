@@ -1,6 +1,11 @@
+
+
 import channels
 import channels.auth
 import django
+
+django.setup()
+
 import django.core.asgi
 from ggj23.schema import MyGraphqlWsConsumer
 

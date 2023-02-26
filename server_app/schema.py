@@ -16,7 +16,6 @@ from server_app.engine import target_position_is_valid, use_skill
 from server_app.enemies import enemy_list
 from server_app.items import item_list, max_currency
 from server_app.events import OnCharacterEvent
-from server_app.amqp_producer import publish_message
 from ggj23.settings import GAME_CONFIG
 
 
@@ -423,22 +422,64 @@ class UpdatePosition(graphene.relay.ClientIDMutation):
             # user=kwargs.get('user'),
             id=character_id
         )
-        if not target_position_is_valid([x, y], char.area_location):
-            raise Exception('Invalid location')
+        # if not target_position_is_valid([x, y], char.area_location):
+        #     raise Exception('Invalid location')
         char.position_x = x
         char.position_y = y
         char.save()
 
         payload = {
-            'event_type': 'character_movement',
             'id': char.id,
+            'name': char.name,
             'x': char.position_x,
             'y': char.position_y,
             'map_area': char.area_location
         }
-        publish_message(payload)
+        OnCharacterEvent.char_event(params={
+            'event_type': 'character_movement',
+            'data': payload
+        })
 
         return UpdatePosition(char)
+
+
+class UpdateEnemyPosition(graphene.relay.ClientIDMutation):
+    enemy = graphene.Field(EnemiesSpawnedType)
+
+    class Input:
+        id = graphene.ID(required=True)
+        location = graphene.Argument(LocationInput, required=True)
+
+    # @access_required
+    def mutate_and_get_payload(self, info, **kwargs):
+        location = kwargs.get('location')
+        x = location.get('x', 48)
+        y = location.get('y', 48)
+        enemy_id = kwargs.get('id')
+
+        enemy = SpawnedEnemy.objects.get(
+            # user=kwargs.get('user'),
+            id=enemy_id
+        )
+        # if not target_position_is_valid([x, y], enemy.area_location):
+        #     raise Exception('Invalid location')
+        enemy.position_x = x
+        enemy.position_y = y
+        enemy.save()
+
+        payload = {
+            'id': enemy.id,
+            'name': enemy.name,
+            'x': enemy.position_x,
+            'y': enemy.position_y,
+            'map_area': enemy.area_location
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'enemy_movement',
+            'data': payload
+        })
+
+        return UpdateEnemyPosition(enemy)
 
 
 class CharacterLogIn(graphene.relay.ClientIDMutation):
@@ -470,7 +511,6 @@ class CharacterLogIn(graphene.relay.ClientIDMutation):
 
         # Broadcast character login
         payload = {
-            'event_type': 'character_login',
             'id': char.id,
             'name': char.name,
             'x': char.position_x,
@@ -482,7 +522,10 @@ class CharacterLogIn(graphene.relay.ClientIDMutation):
             'is_ko': char.is_ko,
             'lv': char.lv
         }
-        publish_message(payload)
+        OnCharacterEvent.char_event(params={
+            'event_type': 'character_login',
+            'data': payload
+        })
 
         return CharacterLogIn(char)
 
@@ -516,14 +559,16 @@ class CharacterLogOut(graphene.relay.ClientIDMutation):
 
         # Broadcast character login
         payload = {
-            'event_type': 'character_logout',
             'id': char.id,
             'name': char.name,
             'x': char.position_x,
             'y': char.position_y,
             'map_area': char.area_location,
         }
-        publish_message(payload)
+        OnCharacterEvent.char_event(params={
+            'event_type': 'character_logout',
+            'data': payload
+        })
 
         return CharacterLogIn(True)
 
@@ -778,7 +823,7 @@ class CharacterBatchSellOffer(graphene.relay.ClientIDMutation):
             seller=character,
             price=price
         )
-
+        print(items)
         offer.setItems(items)
         character.setItems(char_items)
         character.save()
@@ -786,7 +831,6 @@ class CharacterBatchSellOffer(graphene.relay.ClientIDMutation):
         
         # Broadcast offer available
         payload = {
-            'event_type': 'offer_available',
             'id': offer.id,
             'seller_id': character.id,
             'price': {
@@ -799,7 +843,10 @@ class CharacterBatchSellOffer(graphene.relay.ClientIDMutation):
                 'count': item['count']
             } for item in offer.getItems()]
         }
-        publish_message(payload)
+        OnCharacterEvent.char_event(params={
+            'event_type': 'offer_available',
+            'data': payload
+        })
         
         return CharacterBatchSellOffer(offer)
     
@@ -843,7 +890,6 @@ class CharacterBatchBuyOffer(graphene.relay.ClientIDMutation):
         
         # Broadcast offer accepted
         payload = {
-            'event_type': 'offer_accepted',
             'buyer': {
                 'id': character.id,
                 'wallet': {
@@ -861,7 +907,10 @@ class CharacterBatchBuyOffer(graphene.relay.ClientIDMutation):
                 }
             }
         }
-        publish_message(payload)
+        OnCharacterEvent.char_event(params={
+            'event_type': 'offer_accepted',
+            'data': payload
+        })
 
         offer.delete()
         
@@ -933,7 +982,6 @@ class CharacterMapAreaTransfer(graphene.relay.ClientIDMutation):
 
         # Broadcast character area transfer
         payload = {
-            'event_type': 'area_transfer',
             'id': character.id,
             'name': character.name,
             'x': character.position_x,
@@ -945,7 +993,10 @@ class CharacterMapAreaTransfer(graphene.relay.ClientIDMutation):
             'current_hp': character.max_hp,
             'lv': character.lv
         }
-        publish_message(payload)
+        OnCharacterEvent.char_event(params={
+            'event_type': 'area_transfer',
+            'data': payload
+        })
 
         return CharacterMapAreaTransfer(character)
 
@@ -995,7 +1046,6 @@ class CharacterRespawn(graphene.relay.ClientIDMutation):
         # Broadcast the area transfer when respawn to re-render character sprite
         # TODO wrap broadcast payloads and broadcasts in a objet to avoid redundance
         payload = {
-            'event_type': 'character_login',
             'id': character.id,
             'name': character.name,
             'x': character.position_x,
@@ -1007,7 +1057,10 @@ class CharacterRespawn(graphene.relay.ClientIDMutation):
             'current_hp': character.max_hp,
             'lv': character.lv
         }
-        publish_message(payload)
+        OnCharacterEvent.char_event(params={
+            'event_type': 'character_login',
+            'data': payload
+        })
 
         return CharacterRespawn(character)
 
@@ -1047,6 +1100,90 @@ class LearnSkill(graphene.relay.ClientIDMutation):
         return LearnSkill(character)
 
 
+class UpdateCharacterVitalStats(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        id = graphene.ID(required=True)
+        hp = graphene.Int(required=True)
+        sp = graphene.Int(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['id'])
+        except Character.DoesNotExist:
+            raise Exception('Invalid character')
+
+        character.current_hp = kwargs['hp'] if kwargs['hp'] < character.max_hp else character.max_hp
+        character.current_sp = kwargs['sp'] if kwargs['sp'] < character.max_sp else character.max_sp
+
+        if character.current_hp <= 0:
+            character.is_ko = True
+
+        character.save()
+
+        payload = {
+            'id': character.id,
+            'name': character.name,
+            'x': character.position_x,
+            'y': character.position_y,
+            'map_area': character.area_location,
+            'classType': character.class_type,
+            'hp': character.current_hp,
+            'sp': character.current_sp,
+            'is_ko': character.is_ko
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'character_health',
+            'data': payload
+        })
+
+        return UpdateCharacterVitalStats(character)
+
+
+class UpdateEnemyVitalStats(graphene.relay.ClientIDMutation):
+    enemy = graphene.Field(EnemiesSpawnedType)
+
+    class Input:
+        id = graphene.ID(required=True)
+        hp = graphene.Int(required=True)
+        sp = graphene.Int(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            enemy = SpawnedEnemy.objects.get(id=kwargs['id'])
+        except SpawnedEnemy.DoesNotExist:
+            raise Exception('Invalid enemy')
+
+        enemy_id = enemy.id  # store enemy ID in case of KO
+        enemy.current_hp = kwargs['hp'] if kwargs['hp'] < enemy.max_hp else enemy.max_hp
+        enemy.current_sp = kwargs['sp'] if kwargs['sp'] < enemy.max_sp else enemy.max_sp
+
+        if enemy.current_hp <= 0:
+            enemy.is_ko = True
+            enemy.delete()
+        else:
+            enemy.save()
+
+        # Broadcast enemy health
+        payload = {
+            'id': enemy_id,
+            'name': enemy.name,
+            'x': enemy.position_x,
+            'y': enemy.position_y,
+            'map_area': enemy.area_location,
+            'classType': 'enemy',
+            'hp': enemy.current_hp,
+            'is_ko': enemy.is_ko
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'enemy_health',
+            'data': payload
+        })
+
+        return UpdateEnemyVitalStats(enemy)
+
+
 class Mutation:
     send_chat_message = SendChatMessage.Field()
     create_character = CreateCharacter.Field()
@@ -1065,6 +1202,9 @@ class Mutation:
     notify_enemy_event = NotifyEnemyEvent.Field()
     character_respawn = CharacterRespawn.Field()
     learn_skill = LearnSkill.Field()
+    update_enemy_position = UpdateEnemyPosition.Field()
+    update_character_vital_stats = UpdateCharacterVitalStats.Field()
+    update_enemy_vital_stats = UpdateEnemyVitalStats.Field()
 
 
 #################

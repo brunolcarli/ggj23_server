@@ -10,51 +10,73 @@ from server_app.engine import target_position_is_valid
 from server_app.models import Character, SpawnedEnemy
 from server_app.serializer import Serializer
 from server_app.events import OnCharacterEvent
-from server_app.amqp_producer import publish_message
+
+
+
 
 
 enemies_spots = {
-    'citadel_central_area': [],
-    'citadel_north_area': [],
-    'citadel_south_area': [],
-    'citadel_east_area': [],
-    'citadel_west_area': [],
-    'open_fields_area1': ['spider', 'goblin', 'wolf'],
-    'open_fields_area2': ['spider', 'goblin', 'wolf'],
-    'open_fields_area3': ['spider', 'goblin', 'wolf'],
-    'open_fields_area4': ['spider', 'goblin', 'wolf'],
-    'open_fields_area5': ['spider', 'goblin', 'wolf'],
-    'open_fields_area6': ['spider', 'goblin', 'wolf'],
-    'open_fields_area7': ['spider', 'goblin', 'wolf'],
-    'open_fields_area8': ['spider', 'goblin', 'wolf'],
-    'open_fields_area9': ['spider', 'goblin', 'wolf'],
-    'open_fields_area10': ['spider', 'goblin', 'wolf'],
-    'open_fields_area11': ['spider', 'goblin', 'wolf'],
-    'open_fields_area12': ['spider', 'goblin', 'wolf'],
-    'open_fields_area13': ['spider', 'goblin', 'wolf'],
-    'open_fields_area14': ['spider', 'goblin', 'wolf'],
-    'yggdrasil': ['orc', 'ent', 'poison_snake', 'spirit', 'bear', 'killer_fungus',  'golem'],
-    'combat_zone': [],
-    'ancient_forest_area1': ['spider', 'goblin'],
-    'ancient_forest_area2': ['spider', 'killer_fungus'],
-    'ancient_forest_area3': ['ent', 'poison_snake', 'killer_fungus'],
-    'ancient_forest_elder_cave': ['spider', 'goblin', 'wolf', 'ent'],
-    'ancient_forest_village': [],
-    'vulcanic_zone_area1': ['spider', 'goblin'],
-    'vulcanic_zone_area2': ['goblin', 'wolf'],
-    'vulcanic_zone_area3': ['goblin', 'wolf', 'poison_snake'],
-    'vulcanic_zone_elder_cave': ['goblin', 'wolf', 'orc', 'poison_snake'],
-    'vulcanic_zone_village': [],
-    'snowfields_area1': ['goblin', 'wolf'],
-    'snowfields_area2': ['wolf', 'bear'],
-    'snowfields_area3': ['wolf', 'orc'],
-    'snowfields_elder_cave': ['wolf', 'orc', 'spirit', 'bear'],
-    'snowfields_village': [],
-    'chrono_mountains_area1': ['spider', 'goblin', 'wolf'],
-    'chrono_mountains_area2': ['goblin', 'wolf', 'bear'],
-    'chrono_mountains_area3': ['goblin', 'wolf', 'orc'],
-    'chrono_mountains_elder_cave': ['goblin', 'wolf', 'orc', 'poison_snake'],
-    'chrono_mountains_village': []
+    # 'citadel_central_area': [],
+    # 'citadel_north_area': [],
+    # 'citadel_south_area': [],
+    # 'citadel_east_area': [],
+    # 'citadel_west_area': [],
+    'open_fields_area1': {
+        'spider': [(4, 21), (15, 29), (20, 27), (20, 11), (8, 9), (18, 46)],
+        'goblin': [(15, 14), (19, 17), (14, 24), (15, 30), (21, 6), (35, 44)],
+        'wolf': [(15, 19), (6, 9), (15, 12), (20, 25), (30, 17), (29, 42)]
+    },
+    # 'open_fields_area2': {
+    #     'spider': [(4, 21), (15, 29), (20, 27), (20, 11), (8, 9), (18, 46)],
+    #     'goblin': [(15, 14), (19, 17), (14, 24), (15, 30), (21, 6), (35, 44)],
+    #     'wolf': [(15, 19), (6, 9), (15, 12), (20, 25), (30, 17), (29, 42)]
+    # },
+    # 'open_fields_area3': ['spider', 'goblin', 'wolf'],
+    # 'open_fields_area4': ['spider', 'goblin', 'wolf'],
+    # 'open_fields_area5': ['spider', 'goblin', 'wolf'],
+    # 'open_fields_area6': ['spider', 'goblin', 'wolf'],
+    # 'open_fields_area7': ['spider', 'goblin', 'wolf'],
+    # 'open_fields_area8': ['spider', 'goblin', 'wolf'],
+    # 'open_fields_area9': ['spider', 'goblin', 'wolf'],
+    # 'open_fields_area10': ['spider', 'goblin', 'wolf'],
+    # 'open_fields_area11': ['spider', 'goblin', 'wolf'],
+    # 'open_fields_area12': ['spider', 'goblin', 'wolf'],
+    'open_fields_area13': {
+        'spider': [(4, 21), (15, 29), (20, 27), (20, 11), (8, 9)],
+        'goblin': [(15, 14), (19, 17), (14, 24), (15, 30), (21, 6)],
+        'wolf': [(15, 19), (6, 9), (15, 12), (20, 25)]
+    },
+    'open_fields_area14': {
+        'spider': [(4, 21), (15, 29), (20, 27), (20, 11), (8, 9)],
+        'goblin': [(15, 14), (19, 17), (14, 24), (15, 30), (20, 5)],
+        'wolf': [(15, 19), (6, 9), (15, 12), (20, 25)]
+    },
+    # 'yggdrasil': ['orc', 'ent', 'poison_snake', 'spirit', 'bear', 'killer_fungus',  'golem'],
+    # 'combat_zone': [],
+    'ancient_forest_area1': {
+        'spider': [(35, 9), (24, 14), (18, 7), (10, 28), (7, 10), (19, 25), (15, 35)],
+        'goblin': [(37, 25), (28, 37), (5, 6), (32, 8), (3, 11), (17, 19)],
+        'wolf': [(28, 11), (10, 30), (3, 29)]
+    },
+    # 'ancient_forest_area2': ['spider', 'killer_fungus'],
+    # 'ancient_forest_area3': ['ent', 'poison_snake', 'killer_fungus'],
+    # 'ancient_forest_elder_cave': ['spider', 'goblin', 'wolf', 'ent'],
+    # 'ancient_forest_village': [],
+    # 'vulcanic_zone_area1': ['spider', 'goblin'],
+    # 'vulcanic_zone_area2': ['goblin', 'wolf'],
+    # 'vulcanic_zone_area3': ['goblin', 'wolf', 'poison_snake'],
+    # 'vulcanic_zone_elder_cave': ['goblin', 'wolf', 'orc', 'poison_snake'],
+    # 'vulcanic_zone_village': [],
+    # 'snowfields_area1': ['goblin', 'wolf'],
+    # 'snowfields_area2': ['wolf', 'bear'],
+    # 'snowfields_area3': ['wolf', 'orc'],
+    # 'snowfields_elder_cave': ['wolf', 'orc', 'spirit', 'bear'],
+    # 'snowfields_village': [],
+    # 'chrono_mountains_area1': ['spider', 'goblin', 'wolf'],
+    # 'chrono_mountains_area2': ['goblin', 'wolf', 'bear'],
+    # 'chrono_mountains_area3': ['goblin', 'wolf', 'orc'],
+    # 'chrono_mountains_elder_cave': ['goblin', 'wolf', 'orc', 'poison_snake'],
+    # 'chrono_mountains_village': []
 }
 
 
@@ -62,10 +84,10 @@ enemy_list = {
     'spider': {
         'lv': 1,
         'name': 'spider',
-        'hp': 50,
-        'power': 10,
-        'resistance': 5,
-        'agility': 1,
+        'hp': 200,
+        'power': 13,
+        'resistance': 12,
+        'agility': 8,
         'aim': 80,
         'class_type': 'enemy',
         'exp': 3,
@@ -75,10 +97,10 @@ enemy_list = {
     'goblin': {
         'lv': 1,
         'name': 'goblin',
-        'hp': 80,
-        'power': 13,
-        'resistance': 5,
-        'agility': 1,
+        'hp': 250,
+        'power': 20,
+        'resistance': 15,
+        'agility': 4,
         'aim': 70,
         'class_type': 'enemy',
         'exp': 5,
@@ -91,13 +113,13 @@ enemy_list = {
     'wolf': {
         'lv': 1,
         'name': 'wolf',
-        'hp': 70,
-        'power': 15,
-        'resistance': 6,
-        'agility': 1,
+        'hp': 300,
+        'power': 20,
+        'resistance': 20,
+        'agility': 8,
         'aim': 80,
         'class_type': 'enemy',
-        'exp': 6,
+        'exp': 10,
         'drops': [],
         'skills': [
             skill_list['base_attack'],
@@ -236,9 +258,6 @@ class EnemySpawnController:
         self.spawn_rate = settings.GAME_CONFIG['SPAWN_RATE']
         self.max_enemies = settings.GAME_CONFIG['MAX_ENEMIES_PER_AREA']
 
-    def _get_possible_pixel(self, area_max):
-        return choice([28*i for i in range(3, (area_max//48)+1)])
-
     def spawn(self):
         """
         Main spawn controller runner.
@@ -248,7 +267,7 @@ class EnemySpawnController:
         to all connected clients.
         """
         # Handle spawnin in each game area
-        for area in areas:
+        for area in enemies_spots:
             # Ignore spawning if area already reached max enemy count
             spawned_count = SpawnedEnemy.objects.filter(area_location=area).count()
             if spawned_count >= self.max_enemies:
@@ -257,16 +276,15 @@ class EnemySpawnController:
             # Get possible enemy kinds that appear in the iterated area
             possible_enemies = enemies_spots[area]
 
-            # Ignore spawning if area ont have enemies (like cities and villages)
-            if not possible_enemies:
-                continue
-
-            # Calculate chance of enemy spawn
-            if random() > self.spawn_rate:
-                continue
+            # # Calculate chance of enemy spawn
+            # if random() > self.spawn_rate:
+            #     continue
 
             # randomly select an possible enemy to spawn
-            enemy_type = enemy_list[choice(possible_enemies)]
+            enemy_type = enemy_list[choice(list(possible_enemies))]
+
+            # randomly select a spawn position that this enemy allow
+            spot = choice(possible_enemies[enemy_type['name']])
 
             # Creates a new atabase record for spawned enemy
             enemy = SpawnedEnemy(
@@ -283,14 +301,14 @@ class EnemySpawnController:
                 skills=json.dumps(enemy_type['skills']).encode('utf-8'),
                 area_location=area,
                 effects=b'[]',
-                position_x = self._get_possible_pixel(areas[area]['size_x']),
-                position_y = self._get_possible_pixel(areas[area]['size_y'])
+                position_x = spot[0],
+                position_y = spot[1]
             )
             enemy.save()
 
             # Broadcast enemy spawning
             payload = {
-                'event_type': 'character_lv_up',
+                'event_type': 'enemy_spawn',
                 'enemy_id': enemy.id,
                 'enemy_name': enemy.name,
                 'position_x': enemy.position_x,
@@ -299,60 +317,61 @@ class EnemySpawnController:
                 'lv': enemy.lv,
                 'max_hp': enemy.max_hp,
                 'current_hp': enemy.current_hp,
+                'classType': 'enemy'
             }
-            publish_message(payload)
-            # query = f'''
-            #     mutation{{
-            #         notifyEnemyEvent(input:{{
-            #             ç
-            #             data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
-            #         }}){{
-            #         result
-            #         }}
-            #     }}
-            # '''
-            # requests.post(
-            #     settings.GQL_URL,
-            #     json={'query': query}
-            # )
+            # publish_message(payload)
+            query = f'''
+                mutation{{
+                    notifyEnemyEvent(input:{{
+                        eventType: "enemy_spawn"
+                        data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
+                    }}){{
+                    result
+                    }}
+                }}
+            '''
+            requests.post(
+                settings.GQL_URL,
+                json={'query': query}
+            )
 
-    def move(self):
-        """
-        Move an enemy randomly
-        """
-        directions = ['up', 'down', 'left', 'right']
-        for mob in SpawnedEnemy.objects.all():
-            move_to = choice(directions)
+    # def move(self):
+    #     """
+    #     Move an enemy randomly
+    #     """
+    #     directions = ['up', 'down', 'left', 'right']
+    #     for mob in SpawnedEnemy.objects.all():
+    #         move_to = choice(directions)
 
-            current_x, current_y = mob.position_x, mob.position_y
-            if move_to == 'up':
-                mob.position_y -= 28
-            elif move_to == 'down':
-                mob.position_y += 28
-            elif move_to == 'right':
-                mob.position_x += 28
-            elif move_to == 'left':
-                mob.position_x -= 28
-            else:
-                continue
+    #         current_x, current_y = mob.position_x, mob.position_y
+    #         if move_to == 'up':
+    #             mob.position_y -= 28
+    #         elif move_to == 'down':
+    #             mob.position_y += 28
+    #         elif move_to == 'right':
+    #             mob.position_x += 28
+    #         elif move_to == 'left':
+    #             mob.position_x -= 28
+    #         else:
+    #             continue
 
-            if not target_position_is_valid([mob.position_x, mob.position_y], mob.area_location):
-                mob.position_x = current_x
-                mob.position_y = current_y
-                mob.save()
-                continue
-            mob.save()
+    #         if not target_position_is_valid([mob.position_x, mob.position_y], mob.area_location):
+    #             mob.position_x = current_x
+    #             mob.position_y = current_y
+    #             mob.save()
+    #             continue
+    #         mob.save()
 
-            # Broadcast enemy movement
-            payload = {
-                'event_type': 'enemy_movement',
-                'enemy_id': mob.id,
-                'enemy_name': mob.name,
-                'position_x': mob.position_x,
-                'position_y': mob.position_y,
-                'area': mob.area_location
-            }
-            publish_message(payload)
+    #         # Broadcast enemy movement
+    #         payload = {
+    #             'event_type': 'enemy_movement',
+    #             'enemy_id': mob.id,
+    #             'enemy_name': mob.name,
+    #             'position_x': mob.position_x,
+    #             'position_y': mob.position_y,
+    #             'area': mob.area_location
+    #         }
+    #         publish_message(payload)
             # query = f'''
             #     mutation{{
             #         notifyEnemyEvent(input:{{
