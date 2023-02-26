@@ -17,7 +17,7 @@ import sys
 import uuid
 
 
-VERSION = '0.1.1'
+VERSION = '0.0.45'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -71,6 +71,8 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:8000',
     'http://localhost:8080',
     'http://localhost:11000',
+    'http://localhost:80',
+    'http://localhost:443'
 ]
 
 ROOT_URLCONF = 'ggj23.urls'
