@@ -52,9 +52,7 @@ def demo_middleware(next_middleware, root, info, *args, **kwds):
         info.operation.name is not None
         and info.operation.name.value != "IntrospectionQuery"
     ):
-        print("Demo middleware report")
-        print("    operation :", info.operation.operation)
-        print("    name      :", info.operation.name.value)
+        pass
 
     # Invoke next middleware.
     return next_middleware(root, info, *args, **kwds)
