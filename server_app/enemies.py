@@ -19,12 +19,16 @@ enemies_spots = {
     # 'citadel_south_area': [],
     # 'citadel_east_area': [],
     # 'citadel_west_area': [],
-    # 'open_fields_area1': {},
-    'open_fields_area2': {
+    'open_fields_area1': {
         'spider': [(4, 21), (15, 29), (20, 27), (20, 11), (8, 9), (18, 46)],
         'goblin': [(15, 14), (19, 17), (14, 24), (15, 30), (21, 6), (35, 44)],
         'wolf': [(15, 19), (6, 9), (15, 12), (20, 25), (30, 17), (29, 42)]
     },
+    # 'open_fields_area2': {
+    #     'spider': [(4, 21), (15, 29), (20, 27), (20, 11), (8, 9), (18, 46)],
+    #     'goblin': [(15, 14), (19, 17), (14, 24), (15, 30), (21, 6), (35, 44)],
+    #     'wolf': [(15, 19), (6, 9), (15, 12), (20, 25), (30, 17), (29, 42)]
+    # },
     # 'open_fields_area3': ['spider', 'goblin', 'wolf'],
     # 'open_fields_area4': ['spider', 'goblin', 'wolf'],
     # 'open_fields_area5': ['spider', 'goblin', 'wolf'],
