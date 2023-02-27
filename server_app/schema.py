@@ -415,8 +415,8 @@ class UpdatePosition(graphene.relay.ClientIDMutation):
     # @access_required
     def mutate_and_get_payload(self, info, **kwargs):
         location = kwargs.get('location')
-        x = location.get('x', 48)
-        y = location.get('y', 48)
+        x = location.get('x')
+        y = location.get('y')
         character_id = kwargs.get('id')
 
         char = Character.objects.get(
@@ -454,8 +454,8 @@ class UpdateEnemyPosition(graphene.relay.ClientIDMutation):
     # @access_required
     def mutate_and_get_payload(self, info, **kwargs):
         location = kwargs.get('location')
-        x = location.get('x', 48)
-        y = location.get('y', 48)
+        x = location.get('x')
+        y = location.get('y')
         enemy_id = kwargs.get('id')
 
         enemy = SpawnedEnemy.objects.get(
