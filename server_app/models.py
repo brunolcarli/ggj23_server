@@ -22,8 +22,8 @@ class Character(models.Model):
     is_ko = models.BooleanField(default=False)
     is_logged = models.BooleanField(default=False)
     last_activity = models.DateTimeField(null=True)
-    position_x = models.IntegerField(default=48, null=False)
-    position_y = models.IntegerField(default=48, null=False)
+    position_x = models.IntegerField(default=20, null=False)
+    position_y = models.IntegerField(default=20, null=False)
     area_location = models.CharField(max_length=55, null=False, blank=False, default='citadel_central_area')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     items = models.BinaryField(default=json.dumps(dict()).encode('utf-8'))
@@ -35,6 +35,7 @@ class Character(models.Model):
     aim = models.IntegerField(default=100)
     wallet = models.BigIntegerField(default=0)
     ep = models.IntegerField(default=0)  # Evolution Points
+    respawn_spot = models.CharField(max_length=55, null=False, blank=False, default='citadel_central_area')
 
     def getItems(self):
         return json.loads(self.items.decode('utf-8'))

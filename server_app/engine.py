@@ -9,6 +9,16 @@ from server_app.models import Character
 # from server_app.events import OnCharacterEvent
 
 
+class RespawnSpots:
+    spots = {
+        'citadel_central_area': [
+            (33, 29), (33, 30), (33, 31), (33, 32), (33, 33),
+            (34, 33), (35, 33), (36, 33), (37, 33), (37, 32),
+            (37, 31), (37, 30), (37, 29), (36, 29), (35, 29), (34, 29),
+        ]
+    }
+
+
 def use_skill(skill_user, skill_name, target, class_type):
     """
     Targeted enemy based skill usage mechanic. 

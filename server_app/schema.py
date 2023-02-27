@@ -1,5 +1,6 @@
 import json
 from base64 import b64decode
+from random import choice
 from collections import defaultdict
 import channels_graphql_ws
 from ast import literal_eval
@@ -12,7 +13,7 @@ from server_app.models import Character, ItemOffer, SpawnedEnemy
 from server_app.skills import skill_list
 from server_app.map_areas import areas, area_transfer_coord_map
 from server_app.character_classes import classes, ChracterClass
-from server_app.engine import target_position_is_valid, use_skill
+from server_app.engine import target_position_is_valid, use_skill, RespawnSpots
 from server_app.enemies import enemy_list
 from server_app.items import item_list, max_currency
 from server_app.events import OnCharacterEvent
@@ -414,8 +415,8 @@ class UpdatePosition(graphene.relay.ClientIDMutation):
     # @access_required
     def mutate_and_get_payload(self, info, **kwargs):
         location = kwargs.get('location')
-        x = location.get('x', 48)
-        y = location.get('y', 48)
+        x = location.get('x')
+        y = location.get('y')
         character_id = kwargs.get('id')
 
         char = Character.objects.get(
@@ -453,8 +454,8 @@ class UpdateEnemyPosition(graphene.relay.ClientIDMutation):
     # @access_required
     def mutate_and_get_payload(self, info, **kwargs):
         location = kwargs.get('location')
-        x = location.get('x', 48)
-        y = location.get('y', 48)
+        x = location.get('x')
+        y = location.get('y')
         enemy_id = kwargs.get('id')
 
         enemy = SpawnedEnemy.objects.get(
@@ -1019,12 +1020,12 @@ class NotifyEnemyEvent(graphene.relay.ClientIDMutation):
         return NotifyEnemyEvent(True)
 
 
-class CharacterRespawn(graphene.relay.ClientIDMutation):
+class SetCharactertRespawnSpot(graphene.relay.ClientIDMutation):
     character = graphene.Field(CharacterType)
 
     class Input:
         id = graphene.ID(required=True)
-        area_location = graphene.String(required=True)
+        spot = graphene.String(requred=True)
 
     def mutate_and_get_payload(self, info, **kwargs):
         try:
@@ -1032,15 +1033,37 @@ class CharacterRespawn(graphene.relay.ClientIDMutation):
         except Character.DoesNotExist:
             raise Exception('Invalid character')
 
-        if kwargs['area_location'] not in areas:
-            raise Exception('Invalid area')
+        if kwargs['spot'] not in RespawnSpots.spots:
+            raise Exception('Invalid spot')
+
+        character.respawn_spot = kwargs['spot']
+        character.save()
+
+        return SetCharactertRespawnSpot(character)
+
+
+class CharacterRespawn(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        id = graphene.ID(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['id'])
+        except Character.DoesNotExist:
+            raise Exception('Invalid character')
+
+        x, y =  choice(RespawnSpots.spots[character.respawn_spot])
+
+        character.position_x = x
+        character.position_y = y
 
         current_area = character.area_location
-
         character.is_ko = False
         character.current_hp = character.max_hp
         character.current_sp = character.max_sp
-        character.area_location = kwargs['area_location']
+        character.area_location = character.respawn_spot
         character.save()
 
         # Broadcast the area transfer when respawn to re-render character sprite
@@ -1058,7 +1081,7 @@ class CharacterRespawn(graphene.relay.ClientIDMutation):
             'lv': character.lv
         }
         OnCharacterEvent.char_event(params={
-            'event_type': 'character_login',
+            'event_type': 'area_transfer',
             'data': payload
         })
 
@@ -1205,6 +1228,7 @@ class Mutation:
     update_enemy_position = UpdateEnemyPosition.Field()
     update_character_vital_stats = UpdateCharacterVitalStats.Field()
     update_enemy_vital_stats = UpdateEnemyVitalStats.Field()
+    set_character_respawn_spot = SetCharactertRespawnSpot.Field()
 
 
 #################
