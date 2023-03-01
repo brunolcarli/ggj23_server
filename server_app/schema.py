@@ -1206,6 +1206,7 @@ class GainExp(graphene.relay.ClientIDMutation):
             character.power = kwargs['power']
             character.resistance = kwargs['resistance']
             character.agility = kwargs['agility']
+            character.ep += 3
         character.save()
 
         return GainExp(character)
