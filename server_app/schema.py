@@ -579,28 +579,40 @@ class CharacterUseSkill(graphene.relay.ClientIDMutation):
 
     class Input:
         skill_user_id = graphene.ID(required=True)
-        target_id = graphene.ID(required=True)
-        skill_name = graphene.String(required=True)
+        skill_id = graphene.ID(required=True)
+        direction = graphene.Int(required=True)
         class_type = graphene.String(required=True)
-
+ 
     def mutate_and_get_payload(self, info, **kwargs):
         if kwargs['class_type'] == 'enemy':
             try:
                 skill_user = Character.objects.get(id=kwargs['skill_user_id'])
-                target = SpawnedEnemy.objects.get(id=kwargs['target_id'])
-            except (Character.DoesNotExist, SpawnedEnemy.DoesNotExist):
+            except (SpawnedEnemy.DoesNotExist):
                 raise Exception('Invalid character')
 
         elif kwargs['class_type'] == 'player':
             try:
                 skill_user = Character.objects.get(id=kwargs['skill_user_id'])
-                target = Character.objects.get(id=kwargs['target_id'])
             except Character.DoesNotExist:
                 raise Exception('Invalid character')
         else:
             raise Exception('Invalid class type')
 
-        return CharacterUseSkill(use_skill(skill_user, kwargs['skill_name'], target, kwargs['class_type']))
+        payload = {
+            'event_type': 'use_skill',
+            'id': skill_user.id,
+            'name': skill_user.name,
+            'skill_id': kwargs['skill_id'],
+            'direction': kwargs['direction'],
+            'classType': kwargs['class_type'],
+            'map_area': skill_user.area_location
+        }
+        OnCharacterEvent.char_event(params={
+            'event_type': 'use_skill',
+            'data': payload
+        })
+
+        return CharacterUseSkill(True)
 
    
 class CharacterUpdateItem(graphene.relay.ClientIDMutation):
