@@ -118,7 +118,7 @@ class CharacterType(graphene.ObjectType):
     class_type = graphene.String()
     effects = graphene.List(EffectType)
     aim = graphene.Int()
-    wallet = graphene.Field(WalletType)
+    wallet = graphene.Int()
     ep = graphene.Int()
     map_metadata = graphene.Field(MapAreaType)
 
