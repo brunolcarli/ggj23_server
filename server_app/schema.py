@@ -1178,6 +1178,39 @@ class UpdateEnemyVitalStats(graphene.relay.ClientIDMutation):
         return UpdateEnemyVitalStats(enemy)
 
 
+class GainExp(graphene.relay.ClintIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        id = graphene.ID(required=True)
+        exp = graphene.Int(required=True)
+        is_lv_up = graphene.Boolean(required=True)
+        lv = graphene.Int(required=True)
+        max_hp = graphene.Int(required=True)
+        max_sp = graphene.Int(required=True)
+        power = graphene.Int(required=True)
+        resistance = graphene.Int(required=True)
+        agility = graphene.Int(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['id'])
+        except Character.DoesNotExist:
+            raise Exception('Character not found')
+
+        character.exp += kwargs['exp']
+        if kwargs['is_lv_up']:
+            character.lv = kwargs['lv']
+            character.max_hp = kwargs['max_hp']
+            character.max_sp = kwargs['max_sp']
+            character.power = kwargs['power']
+            character.resistance = kwargs['resistance']
+            character.agility = kwargs['agility']
+        character.save()
+
+        return GainExp(character)
+
+
 class Mutation:
     send_chat_message = SendChatMessage.Field()
     create_character = CreateCharacter.Field()
@@ -1200,6 +1233,7 @@ class Mutation:
     update_character_vital_stats = UpdateCharacterVitalStats.Field()
     update_enemy_vital_stats = UpdateEnemyVitalStats.Field()
     set_character_respawn_spot = SetCharactertRespawnSpot.Field()
+    gain_exp = GainExp.Field()
 
 
 #################
