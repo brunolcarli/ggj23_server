@@ -8,8 +8,6 @@ class CharacterPublishPayload:
             'event_type': event_type,
             'id': player.id,
             'lv': player.lv,
-            'next_lv': player.next_lv,
-            'exp': player.exp,
             'max_hp': player.max_hp,
             'max_sp': player.max_sp,
             'current_hp': player.current_hp,
