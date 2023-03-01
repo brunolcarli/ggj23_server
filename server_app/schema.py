@@ -1178,7 +1178,7 @@ class UpdateEnemyVitalStats(graphene.relay.ClientIDMutation):
         return UpdateEnemyVitalStats(enemy)
 
 
-class GainExp(graphene.relay.ClintIDMutation):
+class GainExp(graphene.relay.ClientIDMutation):
     character = graphene.Field(CharacterType)
 
     class Input:
