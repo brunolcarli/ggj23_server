@@ -17,6 +17,7 @@ from server_app.engine import target_position_is_valid, use_skill, RespawnSpots
 from server_app.enemies import enemy_list
 from server_app.items import item_list, max_currency
 from server_app.events import OnCharacterEvent
+from server_app.utils import CharacterPublishPayload
 from ggj23.settings import GAME_CONFIG
 
 
@@ -511,21 +512,12 @@ class CharacterLogIn(graphene.relay.ClientIDMutation):
         char.save()
 
         # Broadcast character login
-        payload = {
-            'id': char.id,
-            'name': char.name,
-            'x': char.position_x,
-            'y': char.position_y,
-            'map_area': char.area_location,
-            'classType': char.class_type,
-            'max_hp': char.max_hp,
-            'current_hp': char.max_hp,
-            'is_ko': char.is_ko,
-            'lv': char.lv
-        }
         OnCharacterEvent.char_event(params={
             'event_type': 'character_login',
-            'data': payload
+            'data': CharacterPublishPayload.get_player_payload(
+                'character_login',
+                char
+            )
         })
 
         return CharacterLogIn(char)
@@ -558,17 +550,13 @@ class CharacterLogOut(graphene.relay.ClientIDMutation):
         char.is_logged = False
         char.save()
 
-        # Broadcast character login
-        payload = {
-            'id': char.id,
-            'name': char.name,
-            'x': char.position_x,
-            'y': char.position_y,
-            'map_area': char.area_location,
-        }
+        # Broadcast character logout
         OnCharacterEvent.char_event(params={
             'event_type': 'character_logout',
-            'data': payload
+            'data': CharacterPublishPayload.get_player_payload(
+                'character_logout',
+                char
+            )
         })
 
         return CharacterLogIn(True)
@@ -590,26 +578,20 @@ class CharacterUseSkill(graphene.relay.ClientIDMutation):
             except (SpawnedEnemy.DoesNotExist):
                 raise Exception('Invalid character')
 
-        elif kwargs['class_type'] == 'player':
+        else:
             try:
                 skill_user = Character.objects.get(id=kwargs['skill_user_id'])
             except Character.DoesNotExist:
                 raise Exception('Invalid character')
-        else:
-            raise Exception('Invalid class type')
 
-        payload = {
-            'event_type': 'use_skill',
-            'id': skill_user.id,
-            'name': skill_user.name,
-            'skill_id': kwargs['skill_id'],
-            'direction': kwargs['direction'],
-            'classType': kwargs['class_type'],
-            'map_area': skill_user.area_location
-        }
         OnCharacterEvent.char_event(params={
             'event_type': 'use_skill',
-            'data': payload
+            'data': CharacterPublishPayload.get_player_payload(
+                'use_skill',
+                skill_user,
+                skill_id=kwargs['skill_id'],
+                direction=kwargs['direction']
+            )
         })
 
         return CharacterUseSkill(True)
@@ -994,21 +976,14 @@ class CharacterMapAreaTransfer(graphene.relay.ClientIDMutation):
         character.save()
 
         # Broadcast character area transfer
-        payload = {
-            'id': character.id,
-            'name': character.name,
-            'x': character.position_x,
-            'y': character.position_y,
-            'from_map': current_area,
-            'to_area': character.area_location,
-            'classType': character.class_type,
-            'max_hp': character.max_hp,
-            'current_hp': character.max_hp,
-            'lv': character.lv
-        }
         OnCharacterEvent.char_event(params={
             'event_type': 'area_transfer',
-            'data': payload
+            'data': CharacterPublishPayload.get_player_payload(
+                'area_transfer',
+                character,
+                from_map=current_area,
+                to_area=character.area_location
+            )
         })
 
         return CharacterMapAreaTransfer(character)
@@ -1079,22 +1054,14 @@ class CharacterRespawn(graphene.relay.ClientIDMutation):
         character.save()
 
         # Broadcast the area transfer when respawn to re-render character sprite
-        # TODO wrap broadcast payloads and broadcasts in a objet to avoid redundance
-        payload = {
-            'id': character.id,
-            'name': character.name,
-            'x': character.position_x,
-            'y': character.position_y,
-            'from_map': current_area,
-            'to_area': character.area_location,
-            'classType': character.class_type,
-            'max_hp': character.max_hp,
-            'current_hp': character.max_hp,
-            'lv': character.lv
-        }
         OnCharacterEvent.char_event(params={
             'event_type': 'area_transfer',
-            'data': payload
+            'data': CharacterPublishPayload.get_player_payload(
+                'area_transfer',
+                character,
+                from_map=current_area,
+                to_area=character.area_location
+            )
         })
 
         return CharacterRespawn(character)
@@ -1157,20 +1124,12 @@ class UpdateCharacterVitalStats(graphene.relay.ClientIDMutation):
 
         character.save()
 
-        payload = {
-            'id': character.id,
-            'name': character.name,
-            'x': character.position_x,
-            'y': character.position_y,
-            'map_area': character.area_location,
-            'classType': character.class_type,
-            'hp': character.current_hp,
-            'sp': character.current_sp,
-            'is_ko': character.is_ko
-        }
         OnCharacterEvent.char_event(params={
             'event_type': 'character_health',
-            'data': payload
+            'data': CharacterPublishPayload.get_player_payload(
+                'character_health',
+                character
+            )
         })
 
         return UpdateCharacterVitalStats(character)
