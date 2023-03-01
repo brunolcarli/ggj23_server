@@ -12,9 +12,6 @@ from server_app.serializer import Serializer
 from server_app.events import OnCharacterEvent
 
 
-
-
-
 enemies_spots = {
     # 'citadel_central_area': [],
     # 'citadel_north_area': [],
@@ -58,9 +55,20 @@ enemies_spots = {
         'goblin': [(37, 25), (28, 37), (5, 6), (32, 8), (3, 11), (17, 19)],
         'wolf': [(28, 11), (10, 30), (3, 29)]
     },
-    # 'ancient_forest_area2': ['spider', 'killer_fungus'],
-    # 'ancient_forest_area3': ['ent', 'poison_snake', 'killer_fungus'],
-    # 'ancient_forest_elder_cave': ['spider', 'goblin', 'wolf', 'ent'],
+    'ancient_forest_area2': {
+        'spider': [(31, 32), (7, 32), (7, 22), (22, 19), (28, 12), (20, 7), (12, 12), (6, 9)],
+        'killer_fungus': [(2, 7), (18, 6), (21, 20), (29, 11), (4, 34), (16, 21)]
+    },
+    'ancient_forest_area3': {
+        'ent': [(3, 30), (7, 35), (7, 27), (16, 30), (35, 6)],
+        'poison_snake': [(9, 10), (27, 6), (29, 27), (17, 17)],
+        'killer_fungus': [(14, 12), (22, 23), (32, 27), (29, 16), (12, 8)]
+    },
+    'ancient_forest_dungeon': {
+        'poison_snake': [(117, 63), (131, 6), (117, 50), (103, 71), (95, 62), (87, 68), (81, 51), (105, 87), (95, 94), (92, 119), (92, 101), (92, 134), (102, 138), (112, 131), (131, 121), (128, 130), (134, 141), (73, 116), (57, 122), (23, 123)],
+        'killer_fungus': [(38, 110), (21, 123), (10, 117), (46, 122), (72, 122), (72, 99), (95, 90), (109, 87), (105, 63), (80, 64), (134, 78), (94, 135), (51, 122)],
+        'ent': [(72, 67), (82, 51), (37, 103), (42, 123), (12, 121), (37, 94), (37, 76), (31, 71), (27, 59), (83, 90), (116, 119)]
+    },
     # 'ancient_forest_village': [],
     # 'vulcanic_zone_area1': ['spider', 'goblin'],
     # 'vulcanic_zone_area2': ['goblin', 'wolf'],
@@ -78,7 +86,6 @@ enemies_spots = {
     # 'chrono_mountains_elder_cave': ['goblin', 'wolf', 'orc', 'poison_snake'],
     # 'chrono_mountains_village': []
 }
-
 
 enemy_list = {
     'spider': {
@@ -249,6 +256,28 @@ enemy_list = {
     },
 }
 
+boss_list = {
+    'great_fairy': {
+        'lv': 25,
+        'name': 'great_fairy',
+        'hp': 5000,
+        'power': 100,
+        'resistance': 80,
+        'agility': 20,
+        'aim': 98,
+        'class_type': 'boss',
+        'exp': 500,
+        'drops': [],
+        'skills': [skill_list['base_attack']]
+    },
+}
+
+boss_spots = {
+    'ancient_forest_dungeon': {
+        'great_fairy': (42, 33)
+    }
+}
+
 
 class EnemySpawnController:
     """
@@ -266,19 +295,15 @@ class EnemySpawnController:
         When a new enemy spawns, the controller broadcasts the event
         to all connected clients.
         """
-        # Handle spawnin in each game area
+        # Handle common enemy spawning in each game area
         for area in enemies_spots:
             # Ignore spawning if area already reached max enemy count
-            spawned_count = SpawnedEnemy.objects.filter(area_location=area).count()
+            spawned_count = SpawnedEnemy.objects.filter(area_location=area, class_type='enemy').count()
             if spawned_count >= self.max_enemies:
                 continue
 
             # Get possible enemy kinds that appear in the iterated area
             possible_enemies = enemies_spots[area]
-
-            # # Calculate chance of enemy spawn
-            # if random() > self.spawn_rate:
-            #     continue
 
             # randomly select an possible enemy to spawn
             enemy_type = enemy_list[choice(list(possible_enemies))]
@@ -287,7 +312,7 @@ class EnemySpawnController:
             spot = choice(possible_enemies[enemy_type['name']])
 
             # Creates a new atabase record for spawned enemy
-            enemy = SpawnedEnemy(
+            enemy = SpawnedEnemy.objects.create(
                 lv=enemy_type['lv'],
                 name=enemy_type['name'],
                 max_hp=enemy_type['hp'],
@@ -335,54 +360,60 @@ class EnemySpawnController:
                 json={'query': query}
             )
 
-    # def move(self):
-    #     """
-    #     Move an enemy randomly
-    #     """
-    #     directions = ['up', 'down', 'left', 'right']
-    #     for mob in SpawnedEnemy.objects.all():
-    #         move_to = choice(directions)
+        # Handle boss spawning in each boss spots
+        for area in boss_spots:
+            for possible_boss, spot in boss_spots[area].items():
+                spawned_count = SpawnedEnemy.objects.filter(area_location=area, name=possible_boss).count()
+                if spawned_count > 0:
+                    continue
 
-    #         current_x, current_y = mob.position_x, mob.position_y
-    #         if move_to == 'up':
-    #             mob.position_y -= 28
-    #         elif move_to == 'down':
-    #             mob.position_y += 28
-    #         elif move_to == 'right':
-    #             mob.position_x += 28
-    #         elif move_to == 'left':
-    #             mob.position_x -= 28
-    #         else:
-    #             continue
+                x, y = spot
+                enemy_type = boss_list[possible_boss]
+                boss = SpawnedEnemy.objects.create(
+                    lv=enemy_type['lv'],
+                    name=enemy_type['name'],
+                    max_hp=enemy_type['hp'],
+                    current_hp=enemy_type['hp'],
+                    power=enemy_type['power'],
+                    resistance=enemy_type['resistance'],
+                    agility=enemy_type['agility'],
+                    aim=enemy_type['aim'],
+                    exp=enemy_type['exp'],
+                    class_type='boss',
+                    drops=json.dumps(enemy_type['drops']).encode('utf-8'),
+                    skills=json.dumps(enemy_type['skills']).encode('utf-8'),
+                    area_location=area,
+                    effects=b'[]',
+                    position_x = x,
+                    position_y = y
+                )
+                boss.save()
 
-    #         if not target_position_is_valid([mob.position_x, mob.position_y], mob.area_location):
-    #             mob.position_x = current_x
-    #             mob.position_y = current_y
-    #             mob.save()
-    #             continue
-    #         mob.save()
-
-    #         # Broadcast enemy movement
-    #         payload = {
-    #             'event_type': 'enemy_movement',
-    #             'enemy_id': mob.id,
-    #             'enemy_name': mob.name,
-    #             'position_x': mob.position_x,
-    #             'position_y': mob.position_y,
-    #             'area': mob.area_location
-    #         }
-    #         publish_message(payload)
-            # query = f'''
-            #     mutation{{
-            #         notifyEnemyEvent(input:{{
-            #             eventType: "enemy_movement"
-            #             data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
-            #         }}){{
-            #         result
-            #         }}
-            #     }}
-            # '''
-            # requests.post(
-            #     settings.GQL_URL,
-            #     json={'query': query}
-            # )
+                # Broadcast enemy spawning
+                payload = {
+                    'event_type': 'enemy_spawn',
+                    'enemy_id': boss.id,
+                    'enemy_name': boss.name,
+                    'position_x': boss.position_x,
+                    'position_y': boss.position_y,
+                    'area': area,
+                    'lv': boss.lv,
+                    'max_hp': boss.max_hp,
+                    'current_hp': boss.current_hp,
+                    'classType': 'boss'
+                }
+                # publish_message(payload)
+                query = f'''
+                    mutation{{
+                        notifyEnemyEvent(input:{{
+                            eventType: "enemy_spawn"
+                            data: "{b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8')}"
+                        }}){{
+                        result
+                        }}
+                    }}
+                '''
+                requests.post(
+                    settings.GQL_URL,
+                    json={'query': query}
+                )

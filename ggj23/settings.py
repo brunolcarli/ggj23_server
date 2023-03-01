@@ -17,7 +17,7 @@ import sys
 import uuid
 
 
-VERSION = '0.1.5'
+VERSION = '0.1.6'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -177,7 +177,7 @@ GAME_CONFIG = {
     'MAX_SILVER_COINS': 100,
     'MAX_GOLD_COINS': 1000000,
     'SPAWN_RATE': .4,
-    'MAX_ENEMIES_PER_AREA': 10
+    'MAX_ENEMIES_PER_AREA': 16
 }
 
 AMQP = {

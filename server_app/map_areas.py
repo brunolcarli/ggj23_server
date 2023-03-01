@@ -192,26 +192,26 @@ areas = {
     },
     'ancient_forest_area2': {
         'name': 'acient_forest_area2',
-        'size_x': 674,
-        'size_y': 1006,
-        'connections': ['ancient_forest_village', 'ancient_forest_area3', 'ancient_forest_elder_cave']
+        'size_x': 40,
+        'size_y': 40,
+        'connections': ['ancient_forest_village', 'ancient_forest_area3', 'ancient_forest_dungeon']
     },
     'ancient_forest_area3': {
         'name': 'acient_forest_area3',
-        'size_x': 672,
-        'size_y': 960,
-        'connections': ['ancient_forest_village', 'ancient_forest_area2', 'ancient_forest_elder_cave']
+        'size_x': 40,
+        'size_y': 40,
+        'connections': ['ancient_forest_village', 'ancient_forest_area2', 'ancient_forest_dungeon']
     },
-    'ancient_forest_elder_cave': {
-        'name': 'acient_forest_elder_cave',
-        'size_x': 760,
-        'size_y': 760,
+    'ancient_forest_dungeon': {
+        'name': 'ancient_forest_dungeon',
+        'size_x': 150,
+        'size_y': 150,
         'connections': ['ancient_forest_area3', 'ancient_forest_area2']
     },
     'ancient_forest_village': {
         'name': 'acient_forest_village',
-        'size_x': 656,
-        'size_y': 704,
+        'size_x': 28,
+        'size_y': 28,
         'connections': ['ancient_forest_area1', 'ancient_forest_area3', 'ancient_forest_area2']
     },
     'vulcanic_zone_area1': {
@@ -401,28 +401,26 @@ area_transfer_coord_map = {
     },
     'ancient_forest_area1': {
         'open_fields_area13': (1, 21),
-        'ancient_forest_village': (620, 401)
+        'ancient_forest_village': (26, 15)
     },
     'ancient_forest_area2': {
-        'ancient_forest_village': (48, 165),
-        'ancient_forest_area3': (234, 48),
-        'ancient_forest_elder_cave': (100, 100)
+        'ancient_forest_village': (1, 4),
+        'ancient_forest_area3': (7, 1),
+        'ancient_forest_dungeon': (148, 57)
     },
     'ancient_forest_area3': {
-        'ancient_forest_village': (48, 600),
-        'ancient_forest_area2': (244, 980),
-        'ancient_forest_elder_cave': (100, 100)
+        'ancient_forest_village': (1, 24),
+        'ancient_forest_area2': (8, 38),
+        'ancient_forest_dungeon': (148, 142)
     },
-    # 'ancient_forest_elder_cave': {
-    #     'name': 'acient_forest_elder_cave',
-    #     'size_x': 760,
-    #     'size_y': 760,
-    #     'connections': ['ancient_forest_area3', 'ancient_forest_area2']
-    # },
+    'ancient_forest_dungeon': {
+        'ancient_forest_area3': (1, 30),
+        'ancient_forest_area2': (1, 5)
+    },
     'ancient_forest_village': {
-        'ancient_forest_area1': (10, 420),
-        'ancient_forest_area3': (634, 210),
-        'ancient_forest_area2': (628, 740)
+        'ancient_forest_area1': (1, 11),
+        'ancient_forest_area3': (38, 27),
+        'ancient_forest_area2': (38, 32)
     },
     # 'vulcanic_zone_area1': {
     #     'name': 'vulcanic_zone_area1',
