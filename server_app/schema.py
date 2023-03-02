@@ -18,6 +18,7 @@ from server_app.enemies import enemy_list
 from server_app.items import item_list, max_currency
 from server_app.events import OnCharacterEvent
 from server_app.utils import CharacterPublishPayload
+from server_app.types import DynamicScalar
 from ggj23.settings import GAME_CONFIG
 
 
@@ -111,7 +112,7 @@ class CharacterType(graphene.ObjectType):
     position_x = graphene.Int()
     position_y = graphene.Int()
     area_location = graphene.String()
-    items = graphene.List(ItemType)
+    items = DynamicScalar()
     equipment = graphene.Field(EquipmentType)
     skills = graphene.List(SkillType)
     quests = graphene.List(QuestType)
@@ -129,7 +130,7 @@ class CharacterType(graphene.ObjectType):
         return json.loads(self.skills.decode('utf-8')).values()
 
     def resolve_items(self, info, **kwargs):
-        return json.loads(self.items.decode('utf-8')).values()
+        return self.getItems()
 
     def resolve_effects(self, info, **kwargs):
         return json.loads(self.effects.decode('utf-8'))
@@ -595,7 +596,7 @@ class CharacterUpdateItem(graphene.relay.ClientIDMutation):
     
     class Input:
         character_id = graphene.ID(required=True)
-        item_name = graphene.String(required=True)
+        item_data = graphene.String(required=True)
         count = graphene.Int(required=True)
         
     def mutate_and_get_payload(self, info, **kwargs):
@@ -604,30 +605,32 @@ class CharacterUpdateItem(graphene.relay.ClientIDMutation):
         except Character.DoesNotExist:
             raise Exception('Invalid character')
         
-        item_name = kwargs['item_name']
+        try:
+            item_data = json.loads(
+                b64decode(kwargs['item_data'].encode('utf-8')).decode('utf-8')
+            )
+        except:
+            raise Exception('Invalid item data')
+
         count = kwargs['count']
-        
-        if item_name not in item_list:
-            raise Exception('Invalid item')
+        if count == 0:
+            raise Exception('Invalid amount')
+
+        # if item_name not in item_list:
+        #     raise Exception('Invalid item')
         
         char_items = character.getItems()
-        
-        if item_name in char_items.keys():
-            item = char_items[item_name]
-            item['count'] += count
+
+        if item_data.get('name') in char_items:
+            char_items[item_data.get('name')]['count'] += count
         else:
-            item = item_list[item_name].copy()
-            item['count'] = count
-            char_items[item_name] = item
+            char_items[item_data.get('name')] = {
+                'data': item_data,
+                'count': count
+            }
             
-        if item['kind'] == 'currency':
-            item['count'] = 0
-            character.wallet += item['value'] * count
-            character.wallet = min(character.wallet, max_currency())
-            character.wallet = max(character.wallet, 0)
-            
-        if item['count'] <= 0:
-            char_items.pop(item_name)
+        if char_items[item_data.get('name')]['count'] <= 0:
+            char_items.pop(item_data.get('name'))
             
         character.setItems(char_items)
         character.save()
