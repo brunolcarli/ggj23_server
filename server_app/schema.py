@@ -113,7 +113,7 @@ class CharacterType(graphene.ObjectType):
     position_y = graphene.Int()
     area_location = graphene.String()
     items = DynamicScalar()
-    equipment = graphene.Field(EquipmentType)
+    equipment = graphene.List(DynamicScalar)
     skills = graphene.List(SkillType)
     quests = graphene.List(QuestType)
     class_type = graphene.String()
@@ -1230,6 +1230,32 @@ class GainGold(graphene.relay.ClientIDMutation):
         return GainGold(character)
 
 
+class UpdateEquipment(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        character_id = graphene.ID(required=True)
+        equipment_data = graphene.String(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+        except Character.DoesNotExist:
+            raise Exception('Character not found')
+
+        try:
+            equipment = json.loads(
+                b64decode(kwargs['equipment_data'].encode('utf-8')).decode('utf-8')
+            )
+        except:
+            raise Exception('Invalid quipment data')
+
+        character.equipment = json.dumps(equipment).encode('utf-8')
+        character.save()
+
+        return UpdateEquipment(character)
+
+
 class Mutation:
     send_chat_message = SendChatMessage.Field()
     create_character = CreateCharacter.Field()
@@ -1254,6 +1280,7 @@ class Mutation:
     set_character_respawn_spot = SetCharactertRespawnSpot.Field()
     gain_exp = GainExp.Field()
     gain_gold = GainGold.Field()
+    update_equipment = UpdateEquipment.Field()
 
 
 #################
