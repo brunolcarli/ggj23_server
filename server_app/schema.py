@@ -139,13 +139,6 @@ class CharacterType(graphene.ObjectType):
 
     def resolve_quests(self, info, **kwargs):
         return json.loads(self.quests.decode('utf-8'))
-    
-    def resolve_wallet(self, info, **kwargs):
-        return {
-            'copper_coins': self.wallet % 100,
-            'silver_coins': (self.wallet // 100) % 100,
-            'gold_coins': self.wallet // 10000
-        }
 
 
 class EnemyType(graphene.ObjectType):
