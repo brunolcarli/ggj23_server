@@ -283,9 +283,6 @@ class EnemySpawnController:
     """
     Handle enemy monster spawning.
     """
-    def __init__(self):
-        self.spawn_rate = settings.GAME_CONFIG['SPAWN_RATE']
-        self.max_enemies = settings.GAME_CONFIG['MAX_ENEMIES_PER_AREA']
 
     def spawn(self):
         """
@@ -299,7 +296,7 @@ class EnemySpawnController:
         for area in enemies_spots:
             # Ignore spawning if area already reached max enemy count
             spawned_count = SpawnedEnemy.objects.filter(area_location=area, class_type='enemy').count()
-            if spawned_count >= self.max_enemies:
+            if spawned_count >= areas[area]['max_enemies']:
                 continue
 
             # Get possible enemy kinds that appear in the iterated area

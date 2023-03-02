@@ -5,6 +5,7 @@ areas = {
         'name': 'citadel_central_area',
         'size_x': 40,
         'size_y': 40,
+        'max_enemies': 0,
         'connections': [
             'citadel_north_area',
             'citadel_south_area',
@@ -16,6 +17,7 @@ areas = {
         'name': 'citadel_north_area',
         'size_x': 760,
         'size_y': 962,
+        'max_enemies': 0,
         'connections': [
             'yggdrasil',
             'combat_zone',
@@ -27,24 +29,28 @@ areas = {
         'name': 'citadel_south_area',
         'size_x': 15,
         'size_y': 18,
+        'max_enemies': 0,
         'connections': ['citadel_central_area', 'open_fields_area1']
     },
     'citadel_east_area': {
         'name': 'citadel_east_area',
         'size_x': 760,
         'size_y': 962,
+        'max_enemies': 0,
         'connections': ['citadel_central_area', 'open_fields_area5']
     },
     'citadel_west_area': {
         'name': 'citadel_west_area',
         'size_x': 760,
         'size_y': 962,
+        'max_enemies': 0,
         'connections': ['citadel_central_area', 'open_fields_area11']
     },
     'open_fields_area1': {
         'name': 'open_fields_area1',
         'size_x': 50,
         'size_y': 50,
+        'max_enemies': 16,
         'connections': [
             'citadel_south_area',
             'open_fields_area2',
@@ -157,6 +163,7 @@ areas = {
         'name': 'open_fields_area13',
         'size_x': 25,
         'size_y': 35,
+        'max_enemies': 16,
         'connections': [
             'open_fields_area14',
             'open_fields_area12',
@@ -167,6 +174,7 @@ areas = {
         'name': 'open_fields_area14',
         'size_x': 30,
         'size_y': 50,
+        'max_enemies': 16,
         'connections': [
             'open_fields_area1',
             'open_fields_area13'
@@ -188,30 +196,35 @@ areas = {
         'name': 'acient_forest_area1',
         'size_x': 40,
         'size_y': 40,
+        'max_enemies': 16,
         'connections': ['open_fields_area13', 'ancient_forest_village']
     },
     'ancient_forest_area2': {
         'name': 'acient_forest_area2',
         'size_x': 40,
         'size_y': 40,
+        'max_enemies': 16,
         'connections': ['ancient_forest_village', 'ancient_forest_area3', 'ancient_forest_dungeon']
     },
     'ancient_forest_area3': {
         'name': 'acient_forest_area3',
         'size_x': 40,
         'size_y': 40,
+        'max_enemies': 16,
         'connections': ['ancient_forest_village', 'ancient_forest_area2', 'ancient_forest_dungeon']
     },
     'ancient_forest_dungeon': {
         'name': 'ancient_forest_dungeon',
         'size_x': 150,
         'size_y': 150,
+        'max_enemies': 40,
         'connections': ['ancient_forest_area3', 'ancient_forest_area2']
     },
     'ancient_forest_village': {
         'name': 'acient_forest_village',
         'size_x': 28,
         'size_y': 28,
+        'max_enemies': 0,
         'connections': ['ancient_forest_area1', 'ancient_forest_area3', 'ancient_forest_area2']
     },
     'vulcanic_zone_area1': {
@@ -304,7 +317,6 @@ areas = {
         'size_y': 760,
         'connections': ['chrono_mountains_area1', 'chrono_mountains_area3', 'chrono_mountains_area2']
     },
-    # TODO add opne_fields subquests caves
 }
 
 area_transfer_coord_map = {
