@@ -118,7 +118,7 @@ class CharacterType(graphene.ObjectType):
     class_type = graphene.String()
     effects = graphene.List(EffectType)
     aim = graphene.Int()
-    wallet = graphene.Field(WalletType)
+    wallet = graphene.Int()
     ep = graphene.Int()
     map_metadata = graphene.Field(MapAreaType)
 
@@ -1206,9 +1206,32 @@ class GainExp(graphene.relay.ClientIDMutation):
             character.power = kwargs['power']
             character.resistance = kwargs['resistance']
             character.agility = kwargs['agility']
+            character.ep += 3
         character.save()
 
         return GainExp(character)
+
+
+class GainGold(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        id = graphene.ID(required=True)
+        amount = graphene.Int(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['id'])
+        except Character.DoesNotExist:
+            raise Exception('Character not found')
+
+        if (kwargs['amount'] + character.wallet) < 0:
+            raise Exception('Not enought gold!')
+
+        character.wallet += kwargs['amount']
+        character.save()
+
+        return GainGold(character)
 
 
 class Mutation:
@@ -1234,6 +1257,7 @@ class Mutation:
     update_enemy_vital_stats = UpdateEnemyVitalStats.Field()
     set_character_respawn_spot = SetCharactertRespawnSpot.Field()
     gain_exp = GainExp.Field()
+    gain_gold = GainGold.Field()
 
 
 #################

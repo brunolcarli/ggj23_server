@@ -153,13 +153,13 @@ enemy_list = {
     'poison_snake': {
         'lv': 2,
         'name': 'poison_snake',
-        'hp': 80,
-        'power': 16,
-        'resistance': 7,
-        'agility': 1,
+        'hp': 800,
+        'power': 44,
+        'resistance': 26,
+        'agility': 10,
         'aim': 80,
         'class_type': 'enemy',
-        'exp': 9,
+        'exp': 50,
         'drops': [],
         'skills': [
             skill_list['base_attack'],
@@ -169,13 +169,13 @@ enemy_list = {
     'ent': {
         'lv': 3,
         'name': 'ent',
-        'hp': 150,
-        'power': 23,
-        'resistance': 25,
-        'agility': 1,
+        'hp': 1100,
+        'power': 50,
+        'resistance': 40,
+        'agility': 10,
         'aim': 80,
         'class_type': 'enemy',
-        'exp': 16,
+        'exp': 70,
         'drops': [],
         'skills': [
             skill_list['base_attack'],
@@ -222,13 +222,13 @@ enemy_list = {
     'killer_fungus': {
         'lv': 4,
         'name': 'killer_fungus',
-        'hp': 250,
-        'power': 19,
-        'resistance': 25,
-        'agility': 1,
+        'hp': 500,
+        'power': 48,
+        'resistance': 26,
+        'agility': 10,
         'aim': 80,
         'class_type': 'enemy',
-        'exp': 26,
+        'exp': 56,
         'drops': [],
         'skills': [
             skill_list['base_attack'],
@@ -283,9 +283,6 @@ class EnemySpawnController:
     """
     Handle enemy monster spawning.
     """
-    def __init__(self):
-        self.spawn_rate = settings.GAME_CONFIG['SPAWN_RATE']
-        self.max_enemies = settings.GAME_CONFIG['MAX_ENEMIES_PER_AREA']
 
     def spawn(self):
         """
@@ -299,7 +296,7 @@ class EnemySpawnController:
         for area in enemies_spots:
             # Ignore spawning if area already reached max enemy count
             spawned_count = SpawnedEnemy.objects.filter(area_location=area, class_type='enemy').count()
-            if spawned_count >= self.max_enemies:
+            if spawned_count >= areas[area]['max_enemies']:
                 continue
 
             # Get possible enemy kinds that appear in the iterated area
