@@ -356,22 +356,19 @@ class CreateCharacter(graphene.relay.ClientIDMutation):
             raise Exception('Failed to create the character')
 
         # set base skills
-        base_skills = {'base_attack': skill_list['base_attack']}
-        character.skills = json.dumps(base_skills).encode('utf-8')
+        character.skills = json.dumps([]).encode('utf-8')
 
         # Set item bag
         character.items = json.dumps({}).encode('utf-8')
 
         # Set equipments
-        equipment = {
-            'head': None,
-            'torso': None,
-            'legs': None,
-            'weapon': None,
-            'shield': None,
-            'accessory_1': None,
-            'accessory_2': None
-        }
+        equipment = [
+            {'_dataClass': 'weapon', '_itemId': 0},
+            {'_dataClass': '', '_itemId': 0},
+            {'_dataClass': 'armor', '_itemId': 0},
+            {'_dataClass': 'armor', '_itemId': 0},
+            {'_dataClass': '', '_itemId': 0},
+        ]
         character.equipment = json.dumps(equipment).encode('utf-8')
 
         # Set quests
