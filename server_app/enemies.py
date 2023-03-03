@@ -99,7 +99,6 @@ enemy_list = {
         'class_type': 'enemy',
         'exp': 15,
         'drops': [],
-        'skills': [skill_list['base_attack']]
     },
     'goblin': {
         'lv': 1,
@@ -112,10 +111,6 @@ enemy_list = {
         'class_type': 'enemy',
         'exp': 25,
         'drops': [],
-        'skills': [
-            skill_list['base_attack'],
-            skill_list['fireball']
-        ],
     },
     'wolf': {
         'lv': 1,
@@ -128,10 +123,6 @@ enemy_list = {
         'class_type': 'enemy',
         'exp': 35,
         'drops': [],
-        'skills': [
-            skill_list['base_attack'],
-            skill_list['fireball']
-        ],
     },
     'orc': {
         'lv': 2,
@@ -144,11 +135,6 @@ enemy_list = {
         'class_type': 'enemy',
         'exp': 50,
         'drops': [],
-        'skills': [
-            skill_list['base_attack'],
-            skill_list['ice_lance'],
-            skill_list['air_cutter']
-        ],
     },
     'poison_snake': {
         'lv': 2,
@@ -161,10 +147,6 @@ enemy_list = {
         'class_type': 'enemy',
         'exp': 50,
         'drops': [],
-        'skills': [
-            skill_list['base_attack'],
-            skill_list['eruption']
-        ],
     },
     'ent': {
         'lv': 3,
@@ -177,11 +159,6 @@ enemy_list = {
         'class_type': 'enemy',
         'exp': 70,
         'drops': [],
-        'skills': [
-            skill_list['base_attack'],
-            skill_list['air_cutter'],
-            skill_list['windstorm']
-        ],
     },
     'spirit': {
         'lv': 3,
@@ -194,13 +171,6 @@ enemy_list = {
         'class_type': 'enemy',
         'exp': 70,
         'drops': [],
-        'skills': [
-            skill_list['base_attack'],
-            skill_list['fireball'],
-            skill_list['eruption'],
-            skill_list['windstorm'],
-            skill_list['air_cutter']
-        ],
     },
     'bear': {
         'lv': 4,
@@ -213,11 +183,6 @@ enemy_list = {
         'class_type': 'enemy',
         'exp': 83,
         'drops': [],
-        'skills': [
-            skill_list['base_attack'],
-            skill_list['eruption'],
-            skill_list['air_cutter']
-        ],
     },
     'killer_fungus': {
         'lv': 4,
@@ -230,12 +195,6 @@ enemy_list = {
         'class_type': 'enemy',
         'exp': 56,
         'drops': [],
-        'skills': [
-            skill_list['base_attack'],
-            skill_list['windstorm'],
-            skill_list['blind'],
-            skill_list['enemy_down']
-        ],
     },
     'golem': {
         'lv': 5,
@@ -248,11 +207,6 @@ enemy_list = {
         'class_type': 'enemy',
         'exp': 100,
         'drops': [],
-        'skills': [
-            skill_list['base_attack'],
-            skill_list['rock_throw'],
-            skill_list['eruption']
-        ],
     },
 }
 
@@ -268,7 +222,6 @@ boss_list = {
         'class_type': 'boss',
         'exp': 500,
         'drops': [],
-        'skills': [skill_list['base_attack']]
     },
 }
 
