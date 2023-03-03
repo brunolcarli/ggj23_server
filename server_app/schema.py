@@ -114,7 +114,7 @@ class CharacterType(graphene.ObjectType):
     area_location = graphene.String()
     items = DynamicScalar()
     equipment = graphene.List(DynamicScalar)
-    skills = graphene.List(SkillType)
+    skills = graphene.List(graphene.Int)
     quests = graphene.List(QuestType)
     class_type = graphene.String()
     effects = graphene.List(EffectType)
