@@ -127,7 +127,7 @@ class CharacterType(graphene.ObjectType):
         return areas[self.area_location]
 
     def resolve_skills(self, info, **kwargs):
-        return json.loads(self.skills.decode('utf-8')).values()
+        return json.loads(self.skills.decode('utf-8'))
 
     def resolve_items(self, info, **kwargs):
         return self.getItems()
