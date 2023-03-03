@@ -289,8 +289,8 @@ areas = {
     },
     'chrono_mountains_area1': {
         'name': 'chrono_mountains_area1',
-        'size_x': 760,
-        'size_y': 760,
+        'size_x': 58,
+        'size_y': 80,
         'connections': ['open_fields', 'chrono_mountains_village']
     },
     'chrono_mountains_area2': {
