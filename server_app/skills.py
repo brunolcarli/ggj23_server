@@ -1,38 +1,31 @@
 
 
 skill_list = {
-    'base_attack': {
-        'name': 'base_attack',
-        'sp_cost': 0,
-        'power': 10,
-        'range': 1,
-        'effect': None,
-        'ep_cost': 0,
-        'classes': ['dps', 'supporter', 'tanker'],
-        'description': 'Basic offensive attack',
-    },
     'fireball': {
-        'name': 'fireball',
+        'skill_id': 54,
+        'name': 'FireBall',
         'sp_cost':10,
         'power': 30,
         'range': 3,
         'effect': None,
         'ep_cost': 3,
         'classes': ['dps'],
-        'description': 'Shots a fireball against the enemy',
+        'description': 'Shoots a fireball against the enemy',
     },
     'eruption': {
-        'name': 'eruption',
+        'skill_id': 70,
+        'name': 'Eruption',
         'sp_cost': 18,
         'power': 50,
         'range': 5,
         'effect': None,
         'ep_cost': 7,
         'classes': ['dps'],
-        'description': 'Use power of nature to pump a flow of melted rocks from underground',
+        'description': 'Use power of nature to pump a flow of melted rocks\nfrom underground',
     },
     'ice_lance': {
-        'name': 'ice_lance',
+        'skill_id': 72,
+        'name': 'Ice lance',
         'sp_cost': 20,
         'power': 60,
         'range': 3,
@@ -42,7 +35,8 @@ skill_list = {
         'description': 'Throw a frozen spear against an enemy',
     },
     'glacial': {
-        'name': 'glacial',
+        'skill_id': 73,
+        'name': 'Glacial',
         'sp_cost': 26,
         'power': 80,
         'range': 5,
@@ -52,7 +46,8 @@ skill_list = {
         'description': 'Cast an violent blizzard around the enemy',
     },
     'air_cutter': {
-        'name': 'air_cutter',
+        'skill_id': 74,
+        'name': 'Air cutter',
         'sp_cost': 10,
         'power': 15,
         'range': 2,
@@ -62,7 +57,8 @@ skill_list = {
         'description': 'Shots an fast windblow towards the enemy',
     },
     'windstorm': {
-        'name': 'windstorm',
+        'skill_id': 75,
+        'name': 'Windstorm',
         'sp_cost': 10,
         'power': 50,
         'range': 4,
@@ -71,42 +67,45 @@ skill_list = {
         'classes': ['dps', 'supporter'],
         'description': 'Summon a furious hurricane around the enemy',
     },
-    'rock_throw': {
-        'name': 'rock_throw',
+    'rock_tower': {
+        'skill_id': 76,
+        'name': 'Rock Tower',
         'sp_cost': 15,
         'power': 40,
         'range': 2,
         'effect': None,
         'ep_cost': 7,
         'classes': ['dps', 'tanker'],
-        'description': 'Shots a fierce rock blast towards an enemy',
+        'description': 'Smash the ground creating a rock blast around the area',
     },
     'meteor': {
-        'name': 'meteor',
+        'skill_id': 71,
+        'name': 'Meteor',
         'sp_cost': 80,
         'power': 150,
         'range': 8,
         'effect': None,
         'classes': ['dps'],
         'ep_cost': 50,
-        'description': 'Summon a devastating meteor from the skies above an enemy',
+        'description': 'Summon a devastating meteor from the skies above\nan enemy',
     },
-    'blind': {
-        'name': 'blind',
-        'sp_cost': 10,
-        'power': 0,
-        'range': 10,
-        'ep_cost': 7,
-        'effect': {
-            'target_attributes': ['aim'],
-            'duration': 2,
-            'value': .25
-        },
-        'classes': ['supporter'],
-        'description': 'Reduce the enemy aim in 25% for 2 minutes',
-    },
+    # 'blind': {
+    #     'name': 'blind',
+    #     'sp_cost': 10,
+    #     'power': 0,
+    #     'range': 10,
+    #     'ep_cost': 7,
+    #     'effect': {
+    #         'target_attributes': ['aim'],
+    #         'duration': 2,
+    #         'value': .25
+    #     },
+    #     'classes': ['supporter'],
+    #     'description': 'Reduce the enemy aim in 25% for 2 minutes',
+    # },
     'cure': {
-        'name': 'cure',
+        'skill_id': 67,
+        'name': 'Cure',
         'sp_cost': 20,
         'power': 0,
         'range': 6,
@@ -117,91 +116,91 @@ skill_list = {
             'value': .30
         },
     'classes': ['supporter', 'tanker'],
-    'description': 'Restore up to 30% from target max HP',
+    'description': 'Restore up HP',
     },
-    'super_cure': {
-        'name': 'super_cure',
-        'sp_cost': 50,
-        'power': 0,
-        'range': 6,
-        'ep_cost': 16,
-        'effect': {
-            'target_attributes': ['hp'],
-            'duration': 0,
-            'value': .60
-        },
-        'classes':['supporter'],
-        'description': 'Restore up to 60% from target max HP',
-    },
-    'revive': {
-        'name': 'revive',
-        'sp_cost': 100,
-        'power': 0,
-        'range': 2,
-        'ep_cost': 22,
-        'effect': {
-            'target_attributes': ['hp'],
-            'duration': 0,
-            'value': .50,
-            'condition': 'is_ko'
-        },
-        'classes': ['supporter', 'tanker'],
-        'description': 'Revives a fallen target with up to 50% max HP',
-    },
-    'mana_barrier': {
-        'name': 'mana_barrier',
-        'sp_cost': 25,
-        'power': 0,
-        'range': 0,
-        'ep_cost': 10,
-        'effect': {
-            'target_attributes': ['resistance'],
-            'duration': 3,
-            'value': .35
-        },
-        'classes': ['tanker'],
-        'description': 'Increases self resistance in 35% for 3 minutes',
-    },
-    'elemental_barrier': {
-        'name': 'elemental_barrier',
-        'sp_cost': 30,
-        'power': 0,
-        'range': 5,
-        'ep_cost': 10,
-        'effect': {
-            'target_attributes': ['resistance'],
-            'duration': 2,
-            'value': .20
-        },
-        'classes': ['supporter', 'tanker'],
-        'description': 'Increases a target player resistance in 20% for 2 minutes',
-    },
-    'status_up': {
-        'name': 'status_up',
-        'sp_cost': 60,
-        'power': 0,
-        'range': 6,
-        'ep_cost': 20,
-        'effect': {
-            'target_attributes': ['power', 'resistance'],
-            'duration': 2,
-            'value': .10
-        },
-        'classes': ['supporter'],
-        'description': 'Increase a target player power and resistance in 10% for 2 minutes',
-    },
-    'enemy_down': {
-        'name': 'enemy_down',
-        'sp_cost': 20,
-        'power': 0,
-        'range': 5,
-        'ep_cost': 10,
-        'effect': {
-            'target_attributes': ['power', 'resistance'],
-            'duration': 2,
-            'value': -.10
-        },
-        'classes': ['supporter'],
-        'description': 'Reduce an enemy power and resistance in 10% for 2 minutes',
-    },
+    # 'super_cure': {
+    #     'name': 'super_cure',
+    #     'sp_cost': 50,
+    #     'power': 0,
+    #     'range': 6,
+    #     'ep_cost': 16,
+    #     'effect': {
+    #         'target_attributes': ['hp'],
+    #         'duration': 0,
+    #         'value': .60
+    #     },
+    #     'classes':['supporter'],
+    #     'description': 'Restore up to 60% from target max HP',
+    # },
+    # 'revive': {
+    #     'name': 'revive',
+    #     'sp_cost': 100,
+    #     'power': 0,
+    #     'range': 2,
+    #     'ep_cost': 22,
+    #     'effect': {
+    #         'target_attributes': ['hp'],
+    #         'duration': 0,
+    #         'value': .50,
+    #         'condition': 'is_ko'
+    #     },
+    #     'classes': ['supporter', 'tanker'],
+    #     'description': 'Revives a fallen target with up to 50% max HP',
+    # },
+    # 'mana_barrier': {
+    #     'name': 'mana_barrier',
+    #     'sp_cost': 25,
+    #     'power': 0,
+    #     'range': 0,
+    #     'ep_cost': 10,
+    #     'effect': {
+    #         'target_attributes': ['resistance'],
+    #         'duration': 3,
+    #         'value': .35
+    #     },
+    #     'classes': ['tanker'],
+    #     'description': 'Increases self resistance in 35% for 3 minutes',
+    # },
+    # 'elemental_barrier': {
+    #     'name': 'elemental_barrier',
+    #     'sp_cost': 30,
+    #     'power': 0,
+    #     'range': 5,
+    #     'ep_cost': 10,
+    #     'effect': {
+    #         'target_attributes': ['resistance'],
+    #         'duration': 2,
+    #         'value': .20
+    #     },
+    #     'classes': ['supporter', 'tanker'],
+    #     'description': 'Increases a target player resistance in 20% for 2 minutes',
+    # },
+    # 'status_up': {
+    #     'name': 'status_up',
+    #     'sp_cost': 60,
+    #     'power': 0,
+    #     'range': 6,
+    #     'ep_cost': 20,
+    #     'effect': {
+    #         'target_attributes': ['power', 'resistance'],
+    #         'duration': 2,
+    #         'value': .10
+    #     },
+    #     'classes': ['supporter'],
+    #     'description': 'Increase a target player power and resistance in 10% for 2 minutes',
+    # },
+    # 'enemy_down': {
+    #     'name': 'enemy_down',
+    #     'sp_cost': 20,
+    #     'power': 0,
+    #     'range': 5,
+    #     'ep_cost': 10,
+    #     'effect': {
+    #         'target_attributes': ['power', 'resistance'],
+    #         'duration': 2,
+    #         'value': -.10
+    #     },
+    #     'classes': ['supporter'],
+    #     'description': 'Reduce an enemy power and resistance in 10% for 2 minutes',
+    # },
 }

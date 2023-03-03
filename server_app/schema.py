@@ -67,11 +67,11 @@ class ItemType(graphene.ObjectType):
 
 
 class SkillType(graphene.ObjectType):
+    skill_id = graphene.Int()
     name = graphene.String()
     sp_cost = graphene.Int()
     power = graphene.Int()
     range = graphene.Int()
-    effect = graphene.Field(EffectType)
     description = graphene.String()
     classes = graphene.List(graphene.String)
     ep_cost = graphene.Int()
@@ -114,7 +114,7 @@ class CharacterType(graphene.ObjectType):
     area_location = graphene.String()
     items = DynamicScalar()
     equipment = graphene.List(DynamicScalar)
-    skills = graphene.List(SkillType)
+    skills = graphene.List(graphene.Int)
     quests = graphene.List(QuestType)
     class_type = graphene.String()
     effects = graphene.List(EffectType)
@@ -127,7 +127,7 @@ class CharacterType(graphene.ObjectType):
         return areas[self.area_location]
 
     def resolve_skills(self, info, **kwargs):
-        return json.loads(self.skills.decode('utf-8')).values()
+        return json.loads(self.skills.decode('utf-8'))
 
     def resolve_items(self, info, **kwargs):
         return self.getItems()
@@ -356,22 +356,19 @@ class CreateCharacter(graphene.relay.ClientIDMutation):
             raise Exception('Failed to create the character')
 
         # set base skills
-        base_skills = {'base_attack': skill_list['base_attack']}
-        character.skills = json.dumps(base_skills).encode('utf-8')
+        character.skills = json.dumps([]).encode('utf-8')
 
         # Set item bag
         character.items = json.dumps({}).encode('utf-8')
 
         # Set equipments
-        equipment = {
-            'head': None,
-            'torso': None,
-            'legs': None,
-            'weapon': None,
-            'shield': None,
-            'accessory_1': None,
-            'accessory_2': None
-        }
+        equipment = [
+            {'_dataClass': 'weapon', '_itemId': 0},
+            {'_dataClass': '', '_itemId': 0},
+            {'_dataClass': 'armor', '_itemId': 0},
+            {'_dataClass': 'armor', '_itemId': 0},
+            {'_dataClass': '', '_itemId': 0},
+        ]
         character.equipment = json.dumps(equipment).encode('utf-8')
 
         # Set quests
@@ -1067,7 +1064,7 @@ class LearnSkill(graphene.relay.ClientIDMutation):
     character = graphene.Field(CharacterType)
 
     class Input:
-        skill_name = graphene.String(required=True)
+        skill_id = graphene.Int(required=True)
         character_id = graphene.ID(required=True)
 
     def mutate_and_get_payload(self, info, **kwargs):
@@ -1076,22 +1073,29 @@ class LearnSkill(graphene.relay.ClientIDMutation):
         except Character.DoesNotExist:
             raise Exception('Character not found')
 
-        if kwargs['skill_name'] not in skill_list:
+        char_skills = json.loads(character.skills.decode('utf-8'))
+
+        if kwargs['skill_id'] in char_skills:
+            raise Exception('Skill aready learned by this character')
+
+        skill = None
+        for skill_data in skill_list.values():
+            if kwargs['skill_id'] == skill_data['skill_id']:
+                skill = skill_data
+                break
+
+        if not skill:
             raise Exception('Invalid skill')
 
-        skill = skill_list[kwargs['skill_name']]
-        char_skills = json.loads(character.skills)
-        if skill['name'] in char_skills:
-            raise Exception('Skill already learned')
-
         if character.class_type not in skill['classes']:
-            raise Exception('Current class cannot learn this skill')
+            raise Exception('Cannot learn this skill')
 
-        if character.ep < skill['ep_cost']:
-            raise Exception('Not enough EP')
+        if skill['ep_cost'] > character.ep:
+            raise Exception('Not enough Evolution Points')
 
+        # All checked, learn the skill
         character.ep -= skill['ep_cost']
-        char_skills[skill['name']] = skill
+        char_skills.append(skill['skill_id'])
         character.skills = json.dumps(char_skills).encode('utf-8')
         character.save()
 
