@@ -59,8 +59,8 @@ areas = {
     },
     'open_fields_area2': {
         'name': 'open_fields_area2',
-        'size_x': 628,
-        'size_y': 906,
+        'size_x': 70,
+        'size_y': 70,
         'connections': [
             'open_fields_area1',
             'open_fields_area3'
@@ -68,8 +68,8 @@ areas = {
     },
     'open_fields_area3': {
         'name': 'open_fields_area3',
-        'size_x': 576,
-        'size_y': 916,
+        'size_x': 70,
+        'size_y': 70,
         'connections': [
             'open_fields_area2',
             'open_fields_area4'
@@ -77,8 +77,8 @@ areas = {
     },
     'open_fields_area4': {
         'name': 'open_fields_area4',
-        'size_x': 546,
-        'size_y': 912,
+        'size_x': 60,
+        'size_y': 60,
         'connections': [
             'open_fields_area5',
             'open_fields_area3'
@@ -86,8 +86,8 @@ areas = {
     },
     'open_fields_area5': {
         'name': 'open_fields_area5',
-        'size_x': 558,
-        'size_y': 914,
+        'size_x': 60,
+        'size_y': 65,
         'connections': [
             'open_fields_area6',
             'open_fields_area4',
@@ -96,8 +96,8 @@ areas = {
     },
     'open_fields_area6': {
         'name': 'open_fields_area6',
-        'size_x': 578,
-        'size_y': 908,
+        'size_x': 70,
+        'size_y': 70,
         'connections': [
             'open_fields_area7',
             'open_fields_area5'
@@ -105,8 +105,8 @@ areas = {
     },
     'open_fields_area7': {
         'name': 'open_fields_area7',
-        'size_x': 626,
-        'size_y': 908,
+        'size_x': 70,
+        'size_y': 70,
         'connections': [
             'open_fields_area8',
             'open_fields_area6'
@@ -114,8 +114,8 @@ areas = {
     },
     'open_fields_area8': {
         'name': 'open_fields_area8',
-        'size_x': 576,
-        'size_y': 888,
+        'size_x': 70,
+        'size_y': 70,
         'connections': [
             'open_fields_area7',
             'open_fields_area9',
@@ -124,8 +124,8 @@ areas = {
     },
     'open_fields_area9': {
         'name': 'open_fields_area9',
-        'size_x': 576,
-        'size_y': 890,
+        'size_x': 70,
+        'size_y': 58,
         'connections': [
             'open_fields_area8',
             'open_fields_area10'
@@ -133,8 +133,8 @@ areas = {
     },
     'open_fields_area10': {
         'name': 'open_fields_area10',
-        'size_x': 626,
-        'size_y': 912,
+        'size_x': 60,
+        'size_y': 80,
         'connections': [
             'open_fields_area9',
             'open_fields_area11'
@@ -142,8 +142,8 @@ areas = {
     },
     'open_fields_area11': {
         'name': 'open_fields_area11',
-        'size_x': 600,
-        'size_y': 910,
+        'size_x': 50,
+        'size_y': 68,
         'connections': [
             'open_fields_area12',
             'open_fields_area10',
@@ -152,8 +152,8 @@ areas = {
     },
     'open_fields_area12': {
         'name': 'open_fields_area12',
-        'size_x': 600,
-        'size_y': 912,
+        'size_x': 60,
+        'size_y': 80,
         'connections': [
             'open_fields_area13',
             'open_fields_area11'
