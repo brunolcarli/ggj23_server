@@ -67,11 +67,11 @@ class ItemType(graphene.ObjectType):
 
 
 class SkillType(graphene.ObjectType):
+    skill_id = graphene.Int()
     name = graphene.String()
     sp_cost = graphene.Int()
     power = graphene.Int()
     range = graphene.Int()
-    effect = graphene.Field(EffectType)
     description = graphene.String()
     classes = graphene.List(graphene.String)
     ep_cost = graphene.Int()
@@ -1064,7 +1064,7 @@ class LearnSkill(graphene.relay.ClientIDMutation):
     character = graphene.Field(CharacterType)
 
     class Input:
-        skill_id = graphene.ID(required=True)
+        skill_id = graphene.Int(required=True)
         character_id = graphene.ID(required=True)
 
     def mutate_and_get_payload(self, info, **kwargs):
