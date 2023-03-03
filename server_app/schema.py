@@ -1064,7 +1064,7 @@ class LearnSkill(graphene.relay.ClientIDMutation):
     character = graphene.Field(CharacterType)
 
     class Input:
-        skill_name = graphene.String(required=True)
+        skill_id = graphene.ID(required=True)
         character_id = graphene.ID(required=True)
 
     def mutate_and_get_payload(self, info, **kwargs):
@@ -1073,22 +1073,29 @@ class LearnSkill(graphene.relay.ClientIDMutation):
         except Character.DoesNotExist:
             raise Exception('Character not found')
 
-        if kwargs['skill_name'] not in skill_list:
+        char_skills = json.loads(character.skills.decode('utf-8'))
+
+        if kwargs['skill_id'] in char_skills:
+            raise Exception('Skill aready learned by this character')
+
+        skill = None
+        for skill_data in skill_list.values():
+            if kwargs['skill_id'] == skill_data['skill_id']:
+                skill = skill_data
+                break
+
+        if not skill:
             raise Exception('Invalid skill')
 
-        skill = skill_list[kwargs['skill_name']]
-        char_skills = json.loads(character.skills)
-        if skill['name'] in char_skills:
-            raise Exception('Skill already learned')
-
         if character.class_type not in skill['classes']:
-            raise Exception('Current class cannot learn this skill')
+            raise Exception('Cannot learn this skill')
 
-        if character.ep < skill['ep_cost']:
-            raise Exception('Not enough EP')
+        if skill['ep_cost'] > character.ep:
+            raise Exception('Not enough Evolution Points')
 
+        # All checked, learn the skill
         character.ep -= skill['ep_cost']
-        char_skills[skill['name']] = skill
+        char_skills.append(skill['skill_id'])
         character.skills = json.dumps(char_skills).encode('utf-8')
         character.save()
 
