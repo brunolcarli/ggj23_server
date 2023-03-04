@@ -121,6 +121,8 @@ class CharacterType(graphene.ObjectType):
     aim = graphene.Int()
     wallet = graphene.Int()
     ep = graphene.Int()
+    equipped_skill = graphene.Int()
+    equipped_item = graphene.Int()
     map_metadata = graphene.Field(MapAreaType)
 
     def resolve_map_metadata(self, info, **kwargs):
@@ -1260,6 +1262,51 @@ class UpdateEquipment(graphene.relay.ClientIDMutation):
         return UpdateEquipment(character)
 
 
+class EquipSkill(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        character_id = graphene.ID(required=True)
+        skill_id = graphene.Int(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+        except Character.DoesNotExist:
+            raise Exception('Character not found')
+
+        char_skills = json.loads(character.skills.encode('utf-8'))
+        if kwargs['skill_id'] not in char_skills:
+            raise Exception('Cannot equip unlearned or invalid skill')
+
+        character.equipped_skill = kwargs['skill_id']
+        character.save()
+        return EquipSkill(character)
+
+
+class EquipItem(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        character_id = graphene.ID(required=True)
+        item_id = graphene.Int(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+        except Character.DoesNotExist:
+            raise Exception('Character not found')
+
+        # TODO validate if player has the requested item
+        # char_skills = json.loads(character.skills.encode('utf-8'))
+        # if kwargs['skill_id'] not in char_skills:
+        #     raise Exception('Cannot equip unlearned or invalid skill')
+
+        character.equipped_item = kwargs['item_id']
+        character.save()
+        return EquipItem(character)
+
+
 class Mutation:
     send_chat_message = SendChatMessage.Field()
     create_character = CreateCharacter.Field()
@@ -1285,6 +1332,8 @@ class Mutation:
     gain_exp = GainExp.Field()
     gain_gold = GainGold.Field()
     update_equipment = UpdateEquipment.Field()
+    equip_skill = EquipSkill.Field()
+    equip_item = EquipItem.Field()
 
 
 #################
