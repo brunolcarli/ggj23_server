@@ -36,6 +36,8 @@ class Character(models.Model):
     wallet = models.BigIntegerField(default=0)
     ep = models.IntegerField(default=0)  # Evolution Points
     respawn_spot = models.CharField(max_length=55, null=False, blank=False, default='citadel_central_area')
+    equipped_skill = models.IntegerField(null=True)
+
 
     def getItems(self):
         return json.loads(self.items.decode('utf-8'))
