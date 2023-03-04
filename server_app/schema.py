@@ -1277,9 +1277,32 @@ class EquipSkill(graphene.relay.ClientIDMutation):
         if kwargs['skill_id'] not in char_skills:
             raise Exception('Cannot equip unlearned or invalid skill')
 
-        character.equiped_skill = kwargs['skill_id']
+        character.equipped_skill = kwargs['skill_id']
         character.save()
         return EquipSkill(character)
+
+
+class EquipItem(graphene.relay.ClientIDMutation):
+    character = graphene.Field(CharacterType)
+
+    class Input:
+        character_id = graphene.ID(required=True)
+        item_id = graphene.Int(required=True)
+
+    def mutate_and_get_payload(self, info, **kwargs):
+        try:
+            character = Character.objects.get(id=kwargs['character_id'])
+        except Character.DoesNotExist:
+            raise Exception('Character not found')
+
+        # TODO validate if player has the requested item
+        # char_skills = json.loads(character.skills.encode('utf-8'))
+        # if kwargs['skill_id'] not in char_skills:
+        #     raise Exception('Cannot equip unlearned or invalid skill')
+
+        character.equipped_item = kwargs['item_id']
+        character.save()
+        return EquipItem(character)
 
 
 class Mutation:
@@ -1308,6 +1331,7 @@ class Mutation:
     gain_gold = GainGold.Field()
     update_equipment = UpdateEquipment.Field()
     equip_skill = EquipSkill.Field()
+    equip_item = EquipItem.Field()
 
 
 #################
