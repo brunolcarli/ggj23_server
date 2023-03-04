@@ -1275,7 +1275,7 @@ class EquipSkill(graphene.relay.ClientIDMutation):
         except Character.DoesNotExist:
             raise Exception('Character not found')
 
-        char_skills = json.loads(character.skills.encode('utf-8'))
+        char_skills = json.loads(character.skills.decode('utf-8'))
         if kwargs['skill_id'] not in char_skills:
             raise Exception('Cannot equip unlearned or invalid skill')
 
