@@ -121,6 +121,8 @@ class CharacterType(graphene.ObjectType):
     aim = graphene.Int()
     wallet = graphene.Int()
     ep = graphene.Int()
+    equipped_skill = graphene.Int()
+    equipped_item = graphene.Int()
     map_metadata = graphene.Field(MapAreaType)
 
     def resolve_map_metadata(self, info, **kwargs):
