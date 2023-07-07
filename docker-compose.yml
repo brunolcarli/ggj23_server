@@ -33,7 +33,8 @@ services:
   certbot:
     build:
       context: ./certbot
-    command: echo "Skipping..."
+    command: echo "skipping"
+    # command: certbot --nginx -d yggdrasil.beelzeware.dev
     environment:
       - EMAIL=brunolcarli@gmail.com
     volumes:
