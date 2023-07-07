@@ -154,6 +154,7 @@ areas = {
         'name': 'open_fields_area12',
         'size_x': 60,
         'size_y': 80,
+        'max_enemies': 50,
         'connections': [
             'open_fields_area13',
             'open_fields_area11'
@@ -393,12 +394,12 @@ area_transfer_coord_map = {
         'citadel_west_area': (48, 470)
     },
     'open_fields_area12': {
-        'open_fields_area13': (300, 48),
+        'open_fields_area13': (10, 4),
         'open_fields_area11': (300, 900)
     },
     'open_fields_area13': {
         'open_fields_area14': (1, 19),
-        'open_fields_area12': (300, 900),
+        'open_fields_area12': (53, 75),
         'ancient_forest_area1': (38, 20)
     },
     'open_fields_area14': {
