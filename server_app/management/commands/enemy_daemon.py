@@ -13,4 +13,4 @@ class Command(BaseCommand):
         print('Enemy management daemon started')
         while True:
             controller.spawn()
-            sleep(60*3)
+            sleep(60)
