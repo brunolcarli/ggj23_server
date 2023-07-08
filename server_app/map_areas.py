@@ -50,7 +50,7 @@ areas = {
         'name': 'open_fields_area1',
         'size_x': 50,
         'size_y': 50,
-        'max_enemies': 16,
+        'max_enemies': 20,
         'connections': [
             'citadel_south_area',
             'open_fields_area2',
@@ -61,6 +61,7 @@ areas = {
         'name': 'open_fields_area2',
         'size_x': 70,
         'size_y': 70,
+        'max_enemies': 20,
         'connections': [
             'open_fields_area1',
             'open_fields_area3'
@@ -70,6 +71,7 @@ areas = {
         'name': 'open_fields_area3',
         'size_x': 70,
         'size_y': 70,
+        'max_enemies': 16,
         'connections': [
             'open_fields_area2',
             'open_fields_area4'
@@ -79,6 +81,7 @@ areas = {
         'name': 'open_fields_area4',
         'size_x': 60,
         'size_y': 60,
+        'max_enemies': 16,
         'connections': [
             'open_fields_area5',
             'open_fields_area3'
@@ -88,6 +91,7 @@ areas = {
         'name': 'open_fields_area5',
         'size_x': 60,
         'size_y': 65,
+        'max_enemies': 16,
         'connections': [
             'open_fields_area6',
             'open_fields_area4',
@@ -98,6 +102,7 @@ areas = {
         'name': 'open_fields_area6',
         'size_x': 70,
         'size_y': 70,
+        'max_enemies': 16,
         'connections': [
             'open_fields_area7',
             'open_fields_area5'
@@ -107,6 +112,7 @@ areas = {
         'name': 'open_fields_area7',
         'size_x': 70,
         'size_y': 70,
+        'max_enemies': 16,
         'connections': [
             'open_fields_area8',
             'open_fields_area6'
@@ -116,6 +122,7 @@ areas = {
         'name': 'open_fields_area8',
         'size_x': 70,
         'size_y': 70,
+        'max_enemies': 16,
         'connections': [
             'open_fields_area7',
             'open_fields_area9',
@@ -126,6 +133,7 @@ areas = {
         'name': 'open_fields_area9',
         'size_x': 70,
         'size_y': 58,
+        'max_enemies': 16,
         'connections': [
             'open_fields_area8',
             'open_fields_area10'
@@ -135,6 +143,7 @@ areas = {
         'name': 'open_fields_area10',
         'size_x': 60,
         'size_y': 80,
+        'max_enemies': 16,
         'connections': [
             'open_fields_area9',
             'open_fields_area11'
@@ -144,9 +153,11 @@ areas = {
         'name': 'open_fields_area11',
         'size_x': 50,
         'size_y': 68,
+        'max_enemies': 30,
         'connections': [
             'open_fields_area12',
             'open_fields_area10',
+            'open_fields_area14',
             'citadel_west_area'
         ]
     },
@@ -154,7 +165,7 @@ areas = {
         'name': 'open_fields_area12',
         'size_x': 60,
         'size_y': 80,
-        'max_enemies': 50,
+        'max_enemies': 60,
         'connections': [
             'open_fields_area13',
             'open_fields_area11'
@@ -164,7 +175,7 @@ areas = {
         'name': 'open_fields_area13',
         'size_x': 25,
         'size_y': 35,
-        'max_enemies': 16,
+        'max_enemies': 22,
         'connections': [
             'open_fields_area14',
             'open_fields_area12',
@@ -175,10 +186,11 @@ areas = {
         'name': 'open_fields_area14',
         'size_x': 30,
         'size_y': 50,
-        'max_enemies': 16,
+        'max_enemies': 22,
         'connections': [
             'open_fields_area1',
             'open_fields_area13'
+            'open_fields_area11',
         ]
     },
     'yggdrasil': {
@@ -218,7 +230,7 @@ areas = {
         'name': 'ancient_forest_dungeon',
         'size_x': 150,
         'size_y': 150,
-        'max_enemies': 40,
+        'max_enemies': 80,
         'connections': ['ancient_forest_area3', 'ancient_forest_area2']
     },
     'ancient_forest_village': {
@@ -389,13 +401,14 @@ area_transfer_coord_map = {
         'open_fields_area11': (300, 48)
     },
     'open_fields_area11': {
-        'open_fields_area12': (300, 48),
-        'open_fields_area10': (305, 900),
+        'open_fields_area12': (58, 13),
+        'open_fields_area10': (44, 78),
+        'open_fields_area14': (22, 1),
         'citadel_west_area': (48, 470)
     },
     'open_fields_area12': {
         'open_fields_area13': (10, 4),
-        'open_fields_area11': (300, 900)
+        'open_fields_area11': (1, 12)
     },
     'open_fields_area13': {
         'open_fields_area14': (1, 19),
@@ -404,7 +417,8 @@ area_transfer_coord_map = {
     },
     'open_fields_area14': {
         'open_fields_area1': (1, 19),
-        'open_fields_area13': (23, 19)
+        'open_fields_area13': (23, 19),
+        'open_fields_area11': (41, 66)
     },
     'yggdrasil': {
         'citadel_north_area': (100, 100)
