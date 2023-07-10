@@ -189,7 +189,7 @@ areas = {
         'max_enemies': 22,
         'connections': [
             'open_fields_area1',
-            'open_fields_area13'
+            'open_fields_area13',
             'open_fields_area11',
         ]
     },
