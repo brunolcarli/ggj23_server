@@ -515,22 +515,12 @@ area_transfer_coord_map = {
     #     'connections': ['snowfields_area1', 'snowfields_area3', 'snowfields_area2']
     # },
     'chrono_mountains_area1': {
-        'name': 'chrono_mountains_area1',
-        'size_x': 60,
-        'size_y': 60,
-        'connections': {
-            'open_fields_area12': (7, 15),
-            'chrono_mountains_area2': (9, 78),
-        },
+        'open_fields_area12': (7, 15),
+        'chrono_mountains_area2': (9, 78),
     },
     'chrono_mountains_area2': {
-        'name': 'chrono_mountains_area2',
-        'size_x': 58,
-        'size_y': 80,
-        'connections': {
-            'chrono_mountains_area1': (52, 37),
-            'chrono_mountains_village': (16, 38),
-        },
+        'chrono_mountains_area1': (52, 37),
+        'chrono_mountains_village': (16, 38),
     },
     # 'chrono_mountains_area3': {
     #     'name': 'chrono_mountains_area3',
@@ -545,12 +535,7 @@ area_transfer_coord_map = {
     #     'connections': ['chrono_mountains_area3', 'chrono_mountains_area2']
     # },
     'chrono_mountains_village': {
-        'name': 'chrono_mountains_village',
-        'size_x': 40,
-        'size_y': 40,
-        'connections': {
-            'chrono_mountains_area2': (11, 2),
-            'chrono_mountains_area3': (16, 38),
-        },
+        'chrono_mountains_area2': (11, 2),
+        'chrono_mountains_area3': (16, 38),
     },
 }
