@@ -168,7 +168,8 @@ areas = {
         'max_enemies': 60,
         'connections': [
             'open_fields_area13',
-            'open_fields_area11'
+            'open_fields_area11',
+            'chrono_mountains_area1',
         ]
     },
     'open_fields_area13': {
@@ -302,15 +303,17 @@ areas = {
     },
     'chrono_mountains_area1': {
         'name': 'chrono_mountains_area1',
-        'size_x': 58,
-        'size_y': 80,
-        'connections': ['open_fields', 'chrono_mountains_village']
+        'size_x': 60,
+        'size_y': 60,
+        'max_enemies': 16,
+        'connections': ['open_fields_area12', 'chrono_mountains_area2']
     },
     'chrono_mountains_area2': {
         'name': 'chrono_mountains_area2',
-        'size_x': 760,
-        'size_y': 760,
-        'connections': ['chrono_mountains_village', 'chrono_mountains_area3', 'chrono_mountains_elder_cave']
+        'size_x': 58,
+        'size_y': 80,
+        'max_enemies': 50,
+        'connections': ['chrono_mountains_village', 'chrono_mountains_area1']
     },
     'chrono_mountains_area3': {
         'name': 'chrono_mountains_area3',
@@ -326,9 +329,10 @@ areas = {
     },
     'chrono_mountains_village': {
         'name': 'chrono_mountains_village',
-        'size_x': 760,
-        'size_y': 760,
-        'connections': ['chrono_mountains_area1', 'chrono_mountains_area3', 'chrono_mountains_area2']
+        'size_x': 40,
+        'size_y': 40,
+        'max_enemies': 0,
+        'connections': ['chrono_mountains_area2', 'chrono_mountains_area3']
     },
 }
 
@@ -408,7 +412,8 @@ area_transfer_coord_map = {
     },
     'open_fields_area12': {
         'open_fields_area13': (10, 4),
-        'open_fields_area11': (1, 12)
+        'open_fields_area11': (1, 12),
+        'chrono_mountains_area1': (6, 55),
     },
     'open_fields_area13': {
         'open_fields_area14': (1, 19),
@@ -509,18 +514,24 @@ area_transfer_coord_map = {
     #     'size_y': 760,
     #     'connections': ['snowfields_area1', 'snowfields_area3', 'snowfields_area2']
     # },
-    # 'chrono_mountains_area1': {
-    #     'name': 'chrono_mountains_area1',
-    #     'size_x': 760,
-    #     'size_y': 760,
-    #     'connections': ['open_fields', 'chrono_mountains_village']
-    # },
-    # 'chrono_mountains_area2': {
-    #     'name': 'chrono_mountains_area2',
-    #     'size_x': 760,
-    #     'size_y': 760,
-    #     'connections': ['chrono_mountains_village', 'chrono_mountains_area3', 'chrono_mountains_elder_cave']
-    # },
+    'chrono_mountains_area1': {
+        'name': 'chrono_mountains_area1',
+        'size_x': 60,
+        'size_y': 60,
+        'connections': {
+            'open_fields_area12': (7, 15),
+            'chrono_mountains_area2': (15, 62),
+        },
+    },
+    'chrono_mountains_area2': {
+        'name': 'chrono_mountains_area2',
+        'size_x': 58,
+        'size_y': 80,
+        'connections': {
+            'chrono_mountains_area1': (52, 37),
+            'chrono_mountains_village': (16, 38),
+        },
+    },
     # 'chrono_mountains_area3': {
     #     'name': 'chrono_mountains_area3',
     #     'size_x': 760,
@@ -533,10 +544,13 @@ area_transfer_coord_map = {
     #     'size_y': 760,
     #     'connections': ['chrono_mountains_area3', 'chrono_mountains_area2']
     # },
-    # 'chrono_mountains_village': {
-    #     'name': 'chrono_mountains_village',
-    #     'size_x': 760,
-    #     'size_y': 760,
-    #     'connections': ['chrono_mountains_area1', 'chrono_mountains_area3', 'chrono_mountains_area2']
-    # },
+    'chrono_mountains_village': {
+        'name': 'chrono_mountains_village',
+        'size_x': 40,
+        'size_y': 40,
+        'connections': {
+            'chrono_mountains_area2': (11, 2),
+            'chrono_mountains_area3': (16, 38),
+        },
+    },
 }

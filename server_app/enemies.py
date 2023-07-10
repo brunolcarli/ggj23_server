@@ -90,8 +90,16 @@ enemies_spots = {
     # 'snowfields_area3': ['wolf', 'orc'],
     # 'snowfields_elder_cave': ['wolf', 'orc', 'spirit', 'bear'],
     # 'snowfields_village': [],
-    # 'chrono_mountains_area1': ['spider', 'goblin', 'wolf'],
-    # 'chrono_mountains_area2': ['goblin', 'wolf', 'bear'],
+    'chrono_mountains_area1': {
+        'orc': [(6, 51), (14, 43), (20, 52), (12, 26), (20, 7), (30, 28), (50, 43), (52, 49)],
+        'goblin': [(14, 52), (13, 43), (24, 53), (7, 25), (14, 14), (30, 41), (40, 47)],
+    },
+    'chrono_mountains_area2': {
+        'orc': [(10, 75), (15, 70), (24, 69), (35, 72), (50, 72), (50, 60), (51, 48), (49, 31), (26, 23), (40, 13), (9, 21), (23, 9), (37, 7), (43, 10), (40, 15), (45, 14)],
+        'goblin': [(4, 75), (18, 66), (36, 60), (41, 59), (52, 49), (17, 32), (26, 14), (21, 5)],
+        'golem': [(13, 58), (16, 62), (16, 55), (33, 68), (42, 75), (44, 48), (49, 48), (47, 32), (52, 17), (51, 71), (12, 40), (19, 40), (19, 46), (11, 6), (11, 10)],
+        'spirit': [(11, 33), (13, 36), (18, 35), (26, 20), (25, 70), (37, 65), (16, 9), (7, 14)],
+    },
     # 'chrono_mountains_area3': ['goblin', 'wolf', 'orc'],
     # 'chrono_mountains_elder_cave': ['goblin', 'wolf', 'orc', 'poison_snake'],
     # 'chrono_mountains_village': []
@@ -171,15 +179,15 @@ enemy_list = {
         'drops': [],
     },
     'spirit': {
-        'lv': 3,
+        'lv': 5,
         'name': 'spirit',
         'hp': 1200,
-        'power': 60,
+        'power': 120,
         'resistance': 120,
-        'agility': 17,
+        'agility': 25,
         'aim': 80,
         'class_type': 'enemy',
-        'exp': 70,
+        'exp': 120,
         'drops': [],
     },
     'bear': {
