@@ -520,7 +520,7 @@ area_transfer_coord_map = {
         'size_y': 60,
         'connections': {
             'open_fields_area12': (7, 15),
-            'chrono_mountains_area2': (15, 62),
+            'chrono_mountains_area2': (9, 78),
         },
     },
     'chrono_mountains_area2': {
