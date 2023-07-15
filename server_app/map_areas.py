@@ -317,15 +317,17 @@ areas = {
     },
     'chrono_mountains_area3': {
         'name': 'chrono_mountains_area3',
-        'size_x': 760,
-        'size_y': 760,
-        'connections': ['chrono_mountains_village', 'chrono_mountains_area2', 'chrono_mountains_elder_cave']
+        'size_x': 50,
+        'size_y': 70,
+        'max_enemies': 60,
+        'connections': ['chrono_mountains_village', 'chrono_mountains_dungeon']
     },
-    'chrono_mountains_elder_cave': {
-        'name': 'chrono_mountains_elder_cave',
-        'size_x': 760,
-        'size_y': 760,
-        'connections': ['chrono_mountains_area3', 'chrono_mountains_area2']
+    'chrono_mountains_dungeon': {
+        'name': 'chrono_mountains_dungeon',
+        'size_x': 200,
+        'size_y': 200,
+        'max_enemies': 250,
+        'connections': ['chrono_mountains_area3']
     },
     'chrono_mountains_village': {
         'name': 'chrono_mountains_village',
@@ -522,20 +524,15 @@ area_transfer_coord_map = {
         'chrono_mountains_area1': (52, 37),
         'chrono_mountains_village': (16, 38),
     },
-    # 'chrono_mountains_area3': {
-    #     'name': 'chrono_mountains_area3',
-    #     'size_x': 760,
-    #     'size_y': 760,
-    #     'connections': ['chrono_mountains_village', 'chrono_mountains_area2', 'chrono_mountains_elder_cave']
-    # },
-    # 'chrono_mountains_elder_cave': {
-    #     'name': 'chrono_mountains_elder_cave',
-    #     'size_x': 760,
-    #     'size_y': 760,
-    #     'connections': ['chrono_mountains_area3', 'chrono_mountains_area2']
-    # },
+    'chrono_mountains_area3': {
+        'chrono_mountains_dungeon': (21, 197),
+        'chrono_mountains_village': (38, 7),
+    },
+    'chrono_mountains_dungeon': {
+        'chrono_mountains_area3': (40, 5),
+    },
     'chrono_mountains_village': {
         'chrono_mountains_area2': (11, 2),
-        'chrono_mountains_area3': (16, 38),
+        'chrono_mountains_area3': (1, 27),
     },
 }
