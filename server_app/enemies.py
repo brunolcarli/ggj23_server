@@ -270,7 +270,7 @@ boss_spots = {
         'great_fairy': (42, 33)
     },
     'chrono_mountains_dungeon': {
-        'dagon': (170, 131)
+        'dagon': (170, 31)
     },
 }
 
