@@ -324,6 +324,11 @@ class EnemySpawnController:
             # randomly select a spawn position that this enemy allow
             spot = choice(possible_enemies[enemy_type['name']])
 
+            # check if theres any spawned enemy in current position
+            used_position = SpawnedEnemy.objects.filter(area_location=area, position_x=spot[0], position_y=spot[1])
+            if used_position.count() > 0:
+                continue
+
             # Creates a new atabase record for spawned enemy
             enemy = SpawnedEnemy.objects.create(
                 lv=enemy_type['lv'],
