@@ -126,7 +126,7 @@ areas = {
         'connections': [
             'open_fields_area7',
             'open_fields_area9',
-            'citadel_north_area'
+            'snow_fields_area1'
         ]
     },
     'open_fields_area9': {
@@ -271,36 +271,39 @@ areas = {
         'size_y': 760,
         'connections': ['vulcanic_zone_area1', 'vulcanic_zone_area3', 'vulcanic_zone_area2']
     },
-    'snowfields_area1': {
-        'name': 'snowfields_area1',
-        'size_x': 760,
-        'size_y': 760,
-        'connections': ['open_fields', 'snowfields_village']
+    'snow_fields_area1': {
+        'name': 'snow_fields_area1',
+        'size_x': 100,
+        'size_y': 100,
+        'max_enemies': 50,
+        'connections': ['open_fields_area8', 'snow_fields_area2']
     },
-    'snowfields_area2': {
-        'name': 'snowfields_area2',
-        'size_x': 760,
-        'size_y': 760,
-        'connections': ['snowfields_village', 'snowfields_area3', 'snowfields_elder_cave']
+    'snow_fields_area2': {
+        'name': 'snow_fields_area2',
+        'size_x': 60,
+        'size_y': 60,
+        'max_enemies': 26,
+        'connections': ['snow_fields_village', 'snow_fields_area1']
     },
-    'snowfields_area3': {
-        'name': 'snowfields_area3',
-        'size_x': 760,
-        'size_y': 760,
-        'connections': ['snowfields_village', 'snowfields_area2', 'snowfields_elder_cave']
-    },
-    'snowfields_elder_cave': {
-        'name': 'snowfields_elder_cave',
-        'size_x': 760,
-        'size_y': 760,
-        'connections': ['snowfields_area3', 'snowfields_area2']
-    },
-    'snowfields_village': {
-        'name': 'snowfields_village',
-        'size_x': 760,
-        'size_y': 760,
-        'connections': ['snowfields_area1', 'snowfields_area3', 'snowfields_area2']
-    },
+    # 'snow_fields_area3': {
+    #     'name': 'snow_fields_area3',
+    #     'size_x': 50,
+    #     'size_y': 50,
+    #     'max_enemies': 26,
+    #     'connections': ['snow_fields_village', 'snow_fields_dungeon']
+    # },
+    # 'snow_fields_dungeon': {
+    #     'name': 'snowfields_elder_cave',
+    #     'size_x': 760,
+    #     'size_y': 760,
+    #     'connections': ['snowfields_area3', 'snowfields_area2']
+    # },
+    # 'snow_fields_village': {
+    #     'name': 'snowfields_village',
+    #     'size_x': 760,
+    #     'size_y': 760,
+    #     'connections': ['snowfields_area1', 'snowfields_area3', 'snowfields_area2']
+    # },
     'chrono_mountains_area1': {
         'name': 'chrono_mountains_area1',
         'size_x': 60,
@@ -395,16 +398,17 @@ area_transfer_coord_map = {
     },
     'open_fields_area8': {
         'open_fields_area7': (48, 450),
-        'open_fields_area9': (569, 445),
-        'citadel_north_area':(300, 48)
+        'open_fields_area9': (68, 53),
+        'snow_fields_area1': (1, 89)
     },
     'open_fields_area9': {
-        'open_fields_area8': (48, 444),
-        'open_fields_area10': (590, 450)
+        'open_fields_area8': (1, 50),
+        'open_fields_area10': (57, 17),
+        'citadel_north_area':(300, 48)
     },
     'open_fields_area10': {
-        'open_fields_area9': (48, 445),
-        'open_fields_area11': (300, 48)
+        'open_fields_area9': (1, 54),
+        'open_fields_area11': (34, 2)
     },
     'open_fields_area11': {
         'open_fields_area12': (58, 13),
@@ -486,36 +490,25 @@ area_transfer_coord_map = {
     #     'size_y': 760,
     #     'connections': ['vulcanic_zone_area1', 'vulcanic_zone_area3', 'vulcanic_zone_area2']
     # },
-    # 'snowfields_area1': {
-    #     'name': 'snowfields_area1',
-    #     'size_x': 760,
-    #     'size_y': 760,
-    #     'connections': ['open_fields', 'snowfields_village']
-    # },
-    # 'snowfields_area2': {
-    #     'name': 'snowfields_area2',
-    #     'size_x': 760,
-    #     'size_y': 760,
-    #     'connections': ['snowfields_village', 'snowfields_area3', 'snowfields_elder_cave']
-    # },
-    # 'snowfields_area3': {
-    #     'name': 'snowfields_area3',
-    #     'size_x': 760,
-    #     'size_y': 760,
-    #     'connections': ['snowfields_village', 'snowfields_area2', 'snowfields_elder_cave']
-    # },
-    # 'snowfields_elder_cave': {
-    #     'name': 'snowfields_elder_cave',
-    #     'size_x': 760,
-    #     'size_y': 760,
-    #     'connections': ['snowfields_area3', 'snowfields_area2']
-    # },
-    # 'snowfields_village': {
-    #     'name': 'snowfields_village',
-    #     'size_x': 760,
-    #     'size_y': 760,
-    #     'connections': ['snowfields_area1', 'snowfields_area3', 'snowfields_area2']
-    # },
+    'snow_fields_area1': {
+        'open_fields_area8': (68, 8),
+        'snow_fields_area2': (22, 57),
+    },
+    'snow_fields_area2': {
+        'snow_fields_area1': (2, 1),
+        'snow_fields_village': (44, 78),
+    },
+    'snow_fields_area3': {
+        'snow_fields_village': (58, 13),
+        'snow_fields_dungeon': (44, 78),
+    },
+    'snow_fields_dungeon': {
+        'snow_fields_area3': (58, 13),
+    },
+    'snow_fields_village': {
+        'snow_fields_area2': (58, 13),
+        'snow_fields_area3': (44, 78),
+    },
     'chrono_mountains_area1': {
         'open_fields_area12': (7, 15),
         'chrono_mountains_area2': (9, 78),
